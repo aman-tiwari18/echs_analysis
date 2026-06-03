@@ -1,0 +1,76 @@
+Connecting to SSH...
+Connected.
+
+Fetching table list...
+  => 316 tables found.
+Fetching all columns...
+
+Building UNION count+date queries (skipping tables > 500 MB)...
+  Querying 281 tables exactly.
+  Skipped 35 large tables (approx rows used):
+    - audit_remarks: 24682 MB
+    - audit_status: 1621 MB
+    - audit_trail: 1330 MB
+    - bpa_claim_process: 692 MB
+    - cda_payment_response: 4743 MB
+    - cda_remarks: 1951 MB
+    - check_list_details: 6281 MB
+    - claim_folder: 1031 MB
+    - claim_intimation: 15814 MB
+    - claim_remarks: 49712 MB
+    - claim_submission: 12470 MB
+    - clinical_findings_int: 3516 MB
+    - clinical_findings_sub: 2042 MB
+    - diag_details: 6081 MB
+    - document_submitted: 25612 MB
+    - echs_64bit_card: 759 MB
+    - ecs_cr_recs: 7452 MB
+    - esm_bank_details: 540 MB
+    - his_document_submitted: 504 MB
+    - his_hosp_exp_det: 700 MB
+    - his_patient_register: 859 MB
+    - hosp_exp: 2252 MB
+    - hosp_exp_det: 35742 MB
+    - opd_ph_answers: 1960 MB
+    - pre_exist_ailment: 4576 MB
+    - prop_treatment: 2786 MB
+    - referal_details: 5740 MB
+    - referral_sessions: 563 MB
+    - settlement_details: 21954 MB
+    - settlement_valdate: 2205 MB
+    - sms_transaction: 1733 MB
+    - transaction_history: 4339 MB
+    - treatment_details: 2326 MB
+    - user_allot_archiwe: 4527 MB
+    - web_referral: 1081 MB
+  Batch 1/29 (10 tables)... got 10 results.
+  Batch 2/29 (10 tables)... got 10 results.
+  Batch 3/29 (10 tables)... got 10 results.
+  Batch 4/29 (10 tables)... got 10 results.
+  Batch 5/29 (10 tables)... got 10 results.
+  Batch 6/29 (10 tables)... got 10 results.
+  Batch 7/29 (10 tables)... got 10 results.
+  Batch 8/29 (10 tables)... got 10 results.
+  Batch 9/29 (10 tables)... got 10 results.
+  Batch 10/29 (10 tables)... got 10 results.
+  Batch 11/29 (10 tables)... got 10 results.
+  Batch 12/29 (10 tables)... got 10 results.
+  Batch 13/29 (10 tables)... got 10 results.
+  Batch 14/29 (10 tables)... got 10 results.
+  Batch 15/29 (10 tables)... got 10 results.
+  Batch 16/29 (10 tables)... got 10 results.
+  Batch 17/29 (10 tables)... got 10 results.
+  Batch 18/29 (10 tables)... got 10 results.
+  Batch 19/29 (10 tables)... got 10 results.
+  Batch 20/29 (10 tables)... got 10 results.
+  Batch 21/29 (10 tables)... got 10 results.
+  Batch 22/29 (10 tables)... got 10 results.
+  Batch 23/29 (10 tables)... got 10 results.
+  Batch 24/29 (10 tables)... got 10 results.
+  Batch 25/29 (10 tables)... got 10 results.
+  Batch 26/29 (10 tables)... got 10 results.
+  Batch 27/29 (10 tables)... got 10 results.
+  Batch 28/29 (10 tables)... got 10 results.
+  Batch 29/29 (1 tables)... got 1 results.
+
+Done. 316 tables saved to /home/aman/Desktop/echs_analysis/echs_db_metadata.json

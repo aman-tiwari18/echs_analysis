@@ -1,0 +1,88 @@
+
+================================================================================
+ECHS Point 11 Comprehensive Fraud Detection Analysis
+Execution Start Time: 2026-06-03 15:42:02.408210
+================================================================================
+
+Connecting to SSH server: samar.iitk.ac.in...
+✓ Connected successfully.
+
+
+[1/10] Executing: 01_Duplicate_Card_IDs
+Time: 2026-06-03 15:42:02.548512
+--------------------------------------------------------------------------------
+  [WARNING] ERROR 1146 (42S02) at line 1: Table 'ECHS.hospital_master' doesn't exist
+⚠ No data returned
+
+[2/10] Executing: 02_Simultaneous_Admissions
+Time: 2026-06-03 15:42:02.681388
+--------------------------------------------------------------------------------
+  [WARNING] ERROR 1146 (42S02) at line 1: Table 'ECHS.hospital_master' doesn't exist
+⚠ No data returned
+
+[3/10] Executing: 03_Duplicate_Bill_Numbers
+Time: 2026-06-03 15:42:02.735489
+--------------------------------------------------------------------------------
+  [WARNING] ERROR 1146 (42S02) at line 1: Table 'ECHS.hospital_master' doesn't exist
+⚠ No data returned
+
+[4/10] Executing: 04_Mobile_Number_Rings
+Time: 2026-06-03 15:42:02.789503
+--------------------------------------------------------------------------------
+  [WARNING] ERROR 1146 (42S02) at line 1: Table 'ECHS.hospital_master' doesn't exist
+⚠ No data returned
+
+[5/10] Executing: 05_UID_Duplication
+Time: 2026-06-03 15:42:02.844921
+--------------------------------------------------------------------------------
+  [WARNING] ERROR 1146 (42S02) at line 1: Table 'ECHS.hospital_master' doesn't exist
+⚠ No data returned
+
+[6/10] Executing: 06_Post_Death_Claims_Lazarus
+Time: 2026-06-03 15:42:02.900230
+--------------------------------------------------------------------------------
+  [WARNING] ERROR 1146 (42S02) at line 1: Table 'ECHS.hospital_master' doesn't exist
+⚠ No data returned
+
+[7/10] Executing: 07_Chronic_Stay_Forever_Patient
+Time: 2026-06-03 15:42:02.954678
+--------------------------------------------------------------------------------
+  [WARNING] ERROR 1146 (42S02) at line 1: Table 'ECHS.hospital_master' doesn't exist
+⚠ No data returned
+
+[8/10] Executing: 08_High_Frequency_Claims
+Time: 2026-06-03 15:42:03.007662
+--------------------------------------------------------------------------------
+  [WARNING] ERROR 1064 (42000) at line 1: You have an error in your SQL syntax; check the manual that corresponds to your MySQL server version for the right syntax to use near 'rank,             COUNT(DISTINCT ci
+⚠ No data returned
+
+[9/10] Executing: 09_Impossible_Dependent_Claims
+Time: 2026-06-03 15:42:03.059567
+--------------------------------------------------------------------------------
+  [WARNING] ERROR 1146 (42S02) at line 1: Table 'ECHS.hospital_master' doesn't exist
+⚠ No data returned
+
+[10/10] Executing: 10_Doctor_Teleportation
+Time: 2026-06-03 15:42:03.113565
+--------------------------------------------------------------------------------
+  [WARNING] ERROR 1146 (42S02) at line 1: Table 'ECHS.hospital_master' doesn't exist
+⚠ No data returned
+
+================================================================================
+ANALYSIS COMPLETE
+================================================================================
+
+Execution Summary:
+  Total Patterns Analyzed: 10
+  Successful: 0
+  No Data: 10
+  Errors: 0
+
+Total Records Found:
+
+✓ All data saved to individual CSV files
+✓ Comprehensive JSON report: Point11_Fraud_Detection_Complete_Data.json
+
+End Time: 2026-06-03 15:42:03.167244
+
+✓ SSH connection closed.

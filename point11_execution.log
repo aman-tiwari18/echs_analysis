@@ -1,0 +1,149 @@
+
+================================================================================
+ECHS Point 11 Comprehensive Fraud Detection Analysis
+Execution Start Time: 2026-06-03 16:09:08.659278
+================================================================================
+
+Connecting to SSH server: samar.iitk.ac.in...
+✓ Connected successfully.
+
+
+[1/10] Executing: 01_Duplicate_Card_IDs
+Time: 2026-06-03 16:09:08.799840
+--------------------------------------------------------------------------------
+✓ Query completed in 0:04:57.329779
+✓ Records found: 500
+✓ Saved to: 01_Duplicate_Card_IDs.csv
+
+Preview (first 3 records):
+  HEADERS: card_number | unique_service_numbers | unique_names | total_claims | unique_hospitals | total_claimed_amount | total_approved_amount | service_numbers | beneficiary_names | hospitals_used | locations | all_claim_ids | first_claim_date | last_claim_date | fraud_span_days
+  Row 1: 000001724273 | 2 | 1 | 157 | 1 | 71931982.00 | 67985226.00 | 6285365 | 6285365Y | BHUPAL SINGH | fortis@D1:Unknown | NULL | 34426823 | 32983338 | 3100...
+  Row 2: 000004046297 | 2 | 1 | 53 | 2 | 56476322.00 | 52637047.00 | 4003982 | 4003982F | PIARE LAL | echsfhm:Unknown | SHALBY@CHM:Unknown | NULL | 17927327 | ...
+  Row 3: 000006128034 | 2 | 1 | 108 | 1 | 35957941.00 | 35901690.00 | 4447911 | 4447911$ | MALKIT SINGH | FHLDH123:Unknown | NULL | 27668041 | 17781953 | 17890...
+  ... and 497 more records
+
+[2/10] Executing: 02_Simultaneous_Admissions
+Time: 2026-06-03 16:14:06.137416
+--------------------------------------------------------------------------------
+✓ Query completed in 0:00:58.727022
+✓ Records found: 500
+✓ Saved to: 02_Simultaneous_Admissions.csv
+
+Preview (first 3 records):
+  HEADERS: service_number | card_number | beneficiary_name | claim_id_1 | admission_date_1 | discharge_date_1 | hospital_1 | hospital_name_1 | city_1 | claim_id_2 | admission_date_2 | discharge_date_2 | hospital_2 | hospital_name_2 | city_2 | overlap_days | amount_1 | amount_2 | approved_1 | approved_2
+  Row 1:  | 000004684955 | JHIMI LAL RAI | 42953983 | 2026-02-19 23:10:00 | Still Admitted | rubanpatna | NULL | NULL | 43289604 | 2026-03-06 08:20:00 | Still ...
+  Row 2:  | 000000484889 |  | 42983642 | 2026-02-20 21:35:00 | Still Admitted | rubanpatna | NULL | NULL | 43289604 | 2026-03-06 08:20:00 | Still Admitted | ho...
+  Row 3:  | 0002700609 | HARI NARAYAN SHARMA | 42983454 | 2026-02-20 23:35:00 | Still Admitted | rubanpatna | NULL | NULL | 43289604 | 2026-03-06 08:20:00 | St...
+  ... and 497 more records
+
+[3/10] Executing: 03_Duplicate_Bill_Numbers
+Time: 2026-06-03 16:15:04.868090
+--------------------------------------------------------------------------------
+✓ Query completed in 0:03:46.065820
+✓ Records found: 500
+✓ Saved to: 03_Duplicate_Bill_Numbers.csv
+
+Preview (first 3 records):
+  HEADERS: bill_number | bill_date | duplicate_count | total_amount | total_approved | claim_ids | beneficiaries | card_numbers | hospitals | locations | admission_dates
+  Row 1: NA | NULL | 3149 | 23542559.00 | 2186.00 | 18102358 | 18554211 | 18575152 | 18593384 | 18599179 | 18603728 | 18606398 | 18613903 | 18637504 | 18651867...
+  Row 2: A002602 | 2022-07-27 | 547 | 280064.00 | 0.00 | 21939246 | 21939247 | 21939250 | 21939252 | 21939253 | 21939254 | 21939255 | 21939256 | 21939257 | 219...
+  Row 3: NA | 2024-12-06 | 531 | 2612940.00 | 1088813.00 | 34117447 | 34117628 | 34126206 | 34126344 | 34126355 | 34136845 | 34143129 | 34146417 | 34150681 | 3...
+  ... and 497 more records
+
+[4/10] Executing: 04_Mobile_Number_Rings
+Time: 2026-06-03 16:18:50.962303
+--------------------------------------------------------------------------------
+✓ Query completed in 0:04:49.218814
+✓ Records found: 500
+✓ Saved to: 04_Mobile_Number_Rings.csv
+
+Preview (first 3 records):
+  HEADERS: mobile_number | unique_cards | unique_service_numbers | total_claims | unique_hospitals | total_claimed_amount | total_approved_amount | card_numbers | beneficiaries | hospitals_used | locations | first_claim_date | last_claim_date
+  Row 1: 0000000000 | 2667 | 2652 | 4476 | 226 | 100711215.00 | 89609394.00 | 0000000 | 0000000000 | 0000005967 | 000002060512 | 000002498163 | 000002532225 | ...
+  Row 2: 9999999999 | 644 | 654 | 1314 | 50 | 15881609.00 | 14699407.00 | 000000472645 | 000003003835 | 000003140651 | 000003300285 | 000003565339 | 0000036645...
+  Row 3: 1234567890 | 189 | 188 | 846 | 20 | 5850787.00 | 5583376.00 | 000002205042 | 0000815922 | 0000969712 | 0001136848 | 0001384129 | 0001530626 | 00015731...
+  ... and 497 more records
+
+[5/10] Executing: 05_UID_Duplication
+Time: 2026-06-03 16:23:40.186719
+--------------------------------------------------------------------------------
+✓ Query completed in 0:01:04.105099
+✓ Records found: 500
+✓ Saved to: 05_UID_Duplication.csv
+
+Preview (first 3 records):
+  HEADERS: uid_number | unique_service_numbers | unique_cards | total_claims | unique_hospitals | total_claimed_amount | total_approved_amount | beneficiaries | card_numbers | hospitals_used | locations | first_claim_date | last_claim_date
+  Row 1: 837434937138 | 605 | 679 | 1355 | 2 | 2935995.00 | 2442195.00 | -6902244N:P V GOPALAKRISHNAN | $1136250$:K NARAYANAN NAIR   GNR | $1217726$:P J VARGHE...
+  Row 2: 482232383963 | 294 | 321 | 697 | 2 | 912829.00 | 649244.00 | -1175648-:R P RAGHAVAN | -1221281-:P G DAMODARAN PILLAI | -1319601$:P T CHACKO | -1335881...
+  Row 3: 258958837959 | 289 | 300 | 525 | 1 | 2083938.00 | 1985539.00 | $1136250$:K NARAYANAN NAIR   GNR | $1217726$:P J VARGHESE | $1226334M:PLANTHARAYIL THEV...
+  ... and 497 more records
+
+[6/10] Executing: 06_Post_Death_Claims_Lazarus
+Time: 2026-06-03 16:24:44.298911
+--------------------------------------------------------------------------------
+✓ Query completed in 0:03:23.085566
+✓ Records found: 500
+✓ Saved to: 06_Post_Death_Claims_Lazarus.csv
+
+Preview (first 3 records):
+  HEADERS: claim_id | service_number | card_number | beneficiary_name | patient_name | patient_age | patient_gender | relationship_code | relationship | death_date_in_claim | admission_date | claim_submission_date | days_after_death_admission | days_after_death_submission | claimed_amount | approved_amount | hospital_id | hospital_name | hospital_location | ailment | claim_stage | claim_status | treating_doctor
+  Row 1: 29173515 | 8812487$ | 000003102870 | P V KRISHNAN KUTTY KURUP | P DEVAKIKUTTY AMMA | 81 | F | 10 | Spouse | 2016-10-25 00:00:00 | 2024-02-17 09:35:00 ...
+  Row 2: 23284357 | IC14492$ | 000005295253 | SUKH DEV SINGH DHILLON | RAVINDER KAUR DHILLON | 79 | F | 10 | Spouse | 2019-11-12 00:00:00 | 2022-11-22 11:10:00...
+  Row 3: 35979086 | 268731F | 000002585536 | SUKUMARAN V P | VALSALA SUKUMARAN | 79 | F | 10 | Spouse | 2022-06-26 00:00:00 | 2025-03-17 17:35:00 | 2025-05-27 ...
+  ... and 497 more records
+
+[7/10] Executing: 07_Chronic_Stay_Forever_Patient
+Time: 2026-06-03 16:28:07.387787
+--------------------------------------------------------------------------------
+✓ Query completed in 0:02:43.216517
+✓ Records found: 506
+✓ Saved to: 07_Chronic_Stay_Forever_Patient.csv
+
+Preview (first 3 records):
+  HEADERS: service_number | card_number | beneficiary_name | patient_name | patient_age | patient_gender | relationship_code | relationship | claim_id | admission_date | discharge_date | stay_duration_days | hospital_id | hospital_name | hospital_location | hospital_address | room_type | ailment | treating_doctor | claimed_amount | approved_amount | claim_stage | claim_status
+  Row 1: 604432N | DL1000000012864 | MADHUSUDAN BHANGAR | MADHUSUDAN BHANGAR | 70 | M | 1 | Self | 38617781 | 1954-08-24 13:00:00 | NULL | 26216 | 9654438007 |...
+  Row 2: JC559456Y | PT000006484790 | VIDYA NAND PRASAD YADAV | VIDYA NAND PRASAD YADAV | 61 | M | 1 | Self | 34234508 | 1987-12-03 00:00:00 | NULL | 14062 | 9...
+  Row 3: 3194615Y | DL1000004497275 | DHARAMBIR | VIPIN KUMAR | 19 | M | 4 | Son | 30954031 | 2000-01-01 00:00:00 | NULL | 9650 | 8006295387 | NULL | NULL | NU...
+  ... and 503 more records
+
+[8/10] Executing: 08_High_Frequency_Claims
+Time: 2026-06-03 16:30:50.607431
+--------------------------------------------------------------------------------
+  [WARNING] ERROR 1054 (42S22) at line 1: Unknown column 'rm.rm_rank_name' in 'field list'
+⚠ No data returned
+
+[9/10] Executing: 09_Impossible_Dependent_Claims
+Time: 2026-06-03 16:30:50.657760
+--------------------------------------------------------------------------------
+⚠ No data returned
+
+[10/10] Executing: 10_Doctor_Teleportation
+Time: 2026-06-03 16:30:50.794088
+--------------------------------------------------------------------------------
+⚠ No data returned
+
+================================================================================
+ANALYSIS COMPLETE
+================================================================================
+
+Execution Summary:
+  Total Patterns Analyzed: 10
+  Successful: 7
+  No Data: 3
+  Errors: 0
+
+Total Records Found:
+  01_Duplicate_Card_IDs: 500 records
+  02_Simultaneous_Admissions: 500 records
+  03_Duplicate_Bill_Numbers: 500 records
+  04_Mobile_Number_Rings: 500 records
+  05_UID_Duplication: 500 records
+  06_Post_Death_Claims_Lazarus: 500 records
+  07_Chronic_Stay_Forever_Patient: 506 records
+
+✓ All data saved to individual CSV files
+✓ Comprehensive JSON report: Point11_Fraud_Detection_Complete_Data.json
+
+End Time: 2026-06-03 16:33:16.790060
+
+✓ SSH connection closed.
