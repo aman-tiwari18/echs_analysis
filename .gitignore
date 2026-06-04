@@ -41,5 +41,8 @@ Thumbs.db
 # *.csv
 # *.json
 
+# Module 13: large regenerable raw extract (keep the small derived CSVs)
+module_13/data/high_value_claims_base.csv
+
 # Logs
 *.log
