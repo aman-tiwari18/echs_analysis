@@ -1,0 +1,266 @@
+<!DOCTYPE html><html><head><meta charset="utf-8"><style>
+* { box-sizing:border-box; margin:0; padding:0; }
+body { font-family:'DejaVu Sans',Arial,Helvetica,sans-serif; font-size:9pt; color:#222b36; line-height:1.5; }
+@page { size:A4; margin:24mm 16mm 20mm 16mm;
+  @top-left { content:"ECHS FRAUD ANALYTICS  ·  MODULE 14  ·  CONFIDENTIAL"; font-family:'DejaVu Sans'; font-size:7.5pt; font-weight:bold; color:#1a2744; }
+  @top-right { content:"IIT Kanpur  ·  Page " counter(page); font-family:'DejaVu Sans'; font-size:7.5pt; color:#666; }
+  @bottom-left { content:"RESTRICTED — For internal audit and investigative use only. Not for distribution."; font-family:'DejaVu Sans'; font-size:7pt; color:#777; }
+  @bottom-right { content:"Generated: 05 June 2026"; font-family:'DejaVu Sans'; font-size:7pt; color:#777; } }
+@page cover { margin:0; @top-left{content:none} @top-right{content:none} @bottom-left{content:none} @bottom-right{content:none} }
+.cover { page:cover; background:#1a2744; width:210mm; height:297mm; position:relative; color:#fff; }
+.cover-band-t,.cover-band-b { position:absolute; left:0; right:0; height:11px; background:#c9a84c; }
+.cover-band-t { top:0; } .cover-band-b { bottom:0; }
+.cover-in { position:absolute; left:24mm; right:24mm; top:50mm; text-align:center; }
+.cover-gov { font-size:9pt; letter-spacing:1px; color:#aeb6c8; margin-bottom:32mm; }
+.cover-kick { font-size:8.5pt; letter-spacing:3px; color:#c9a84c; font-weight:bold; margin-bottom:12px; }
+.cover-title { font-size:31pt; font-weight:bold; letter-spacing:1px; line-height:1.1; margin-bottom:10px; }
+.cover-sub { font-size:13pt; color:#cfd5e2; margin-bottom:6px; }
+.cover-mod { font-size:9pt; letter-spacing:2px; color:#c9a84c; margin-bottom:24px; }
+.cover-rule { width:62mm; height:2px; background:#c9a84c; margin:0 auto 26px auto; }
+table.cover-boxes { margin:0 auto 30px auto; border-collapse:separate; border-spacing:6px; }
+.cover-box { background:rgba(255,255,255,0.07); border:1px solid rgba(255,255,255,0.16); padding:12px 14px; text-align:center; vertical-align:middle; }
+.cover-box-l { font-size:6.5pt; color:#aeb6c8; letter-spacing:1.5px; text-transform:uppercase; margin-bottom:6px; }
+.cover-box-v { font-size:13pt; font-weight:bold; color:#fff; }
+.cover-org { font-size:11pt; color:#c9a84c; font-weight:bold; margin-bottom:6px; }
+.cover-date { font-size:8.5pt; color:#aeb6c8; }
+.section { page-break-before:always; }
+.sec { border-left:5px solid #c9a84c; padding:3px 0 3px 14px; margin:0 0 14px 0; page-break-after:avoid; }
+table.sec-h { width:100%; border-collapse:collapse; }
+.sec-h-l { vertical-align:middle; } .sec-h-r { vertical-align:middle; text-align:right; width:56mm; font-size:8pt; color:#8a90a0; font-style:italic; line-height:1.35; }
+.sec-kick { font-size:7.5pt; font-weight:bold; letter-spacing:2px; color:#c9a84c; text-transform:uppercase; margin-bottom:4px; }
+.sec-title { font-size:15pt; font-weight:bold; color:#1a2744; letter-spacing:0.3px; }
+h2 { font-size:11pt; color:#1a2744; margin:16px 0 7px 0; page-break-after:avoid; }
+p { margin-bottom:9px; text-align:justify; } b { font-weight:700; } .muted { color:#667; } .lead { margin-bottom:11px; }
+table.metrics { width:100%; border-collapse:separate; border-spacing:6px; margin:6px 0 14px 0; }
+.mbox { background:#1a2744; color:#fff; padding:14px 12px; text-align:center; vertical-align:middle; }
+.mbox-l { font-size:6.8pt; color:#aeb6c8; text-transform:uppercase; letter-spacing:1px; margin-bottom:5px; }
+.mbox-v { font-size:15.5pt; font-weight:bold; } .mbox-s { font-size:6.8pt; color:#aeb6c8; margin-top:4px; }
+table.dt { width:100%; border-collapse:collapse; table-layout:fixed; margin:6px 0 16px 0; font-size:8pt; }
+table.dt thead tr { background:#1a2744; color:#fff; }
+table.dt thead th { padding:7px 9px; text-align:left; font-weight:700; font-size:7.8pt; border-bottom:2px solid #c9a84c; word-wrap:break-word; }
+table.dt tbody td { padding:6px 9px; border-bottom:1px solid #e7e9ee; vertical-align:top; word-wrap:break-word; overflow-wrap:break-word; }
+table.dt tbody tr:nth-child(even) { background:#f5f7fa; }
+.tcap { font-size:7.5pt; color:#7a8190; margin:2px 0 4px 0; font-weight:bold; letter-spacing:0.4px; }
+.num { font-weight:700; } .red { color:#c0392b; font-weight:700; }
+.kf { background:#faf7ef; border-left:3px solid #c9a84c; padding:8px 12px; margin-bottom:8px; font-size:8.5pt; line-height:1.5; }
+.kf-h { font-size:10.5pt; font-weight:bold; color:#1a2744; margin:12px 0 7px 0; }
+.callout { background:#fdf1f1; border:1px solid #e7b8b8; border-left:4px solid #c0392b; padding:10px 13px; margin:8px 0 12px 0; font-size:8.5pt; } .callout b { color:#a02020; }
+img.chart { width:100%; height:auto; border:1px solid #e2e5ec; margin:6px 0 14px 0; }
+ol.acts { margin:4px 0 6px 18px; } ol.acts li { margin-bottom:6px; font-size:8.6pt; }
+</style></head><body>
+
+<div class="cover"><div class="cover-band-t"></div>
+  <div class="cover-in">
+    <div class="cover-gov">GOVERNMENT OF INDIA &nbsp;·&nbsp; EX-SERVICEMEN CONTRIBUTORY HEALTH SCHEME</div>
+    <div class="cover-kick">FRAUD ANALYTICS &amp; INTELLIGENCE REPORT</div>
+    <div class="cover-title">ECHS FRAUD ANALYTICS</div>
+    <div class="cover-sub">Module 14 — Pre-Authorization Deviation</div>
+    <div class="cover-mod">PRE-AUTH ESTIMATE vs ACTUAL BILLED &nbsp;|&nbsp; LAST 5 YEARS &nbsp;|&nbsp; COST ESCALATION &amp; CONTROL BYPASS</div>
+    <div class="cover-rule"></div>
+    <table class="cover-boxes"><tr>
+      <td class="cover-box"><div class="cover-box-l">Pre-Auth Claims</div><div class="cover-box-v">142,200</div></td>
+      <td class="cover-box"><div class="cover-box-l">Gross Billed</div><div class="cover-box-v">₹2,143.68 Cr</div></td>
+      <td class="cover-box"><div class="cover-box-l">Sanctioned</div><div class="cover-box-v">₹1,044.58 Cr</div></td>
+      <td class="cover-box"><div class="cover-box-l">Excess Billed</div><div class="cover-box-v">₹1,276.37 Cr</div></td>
+      <td class="cover-box"><div class="cover-box-l">Bill / Sanction</div><div class="cover-box-v">2.05×</div></td>
+    </tr></table>
+    <div class="cover-org">IIT KANPUR — Data Analytics &amp; Fraud Intelligence Division</div>
+    <div class="cover-date">05 June 2026 &nbsp;|&nbsp; Classification: RESTRICTED</div>
+  </div><div class="cover-band-b"></div></div>
+<div class="section"><div class="sec"><table class="sec-h"><tr><td class="sec-h-l"><div class="sec-title">Executive Summary</div></td><td class="sec-h-r"></td></tr></table></div>
+<p class="lead">Module 14 examines the <b>pre-authorization</b> control: the gap between what a hospital
+declares (and ECHS sanctions) <i>before</i> treatment and what it actually <b>bills</b> afterwards. Over the last five
+years, <b>142,200</b> claims passed through the live unlisted-procedure pre-auth channel with
+both a sanction and a final bill. They were sanctioned for <b>₹1,044.58 Cr</b> but billed
+<b>₹2,143.68 Cr</b> — an overall <b>2.05× </b> ratio and
+<b>₹1,276.37 Cr</b> billed above sanction.
+<table class="metrics"><tr><td class="mbox"><div class="mbox-l">Gross Billed</div><div class="mbox-v">₹2,143.68 Cr</div><div class="mbox-s">actual hospital bills</div></td><td class="mbox"><div class="mbox-l">Sanctioned</div><div class="mbox-v">₹1,044.58 Cr</div><div class="mbox-s">pre-auth approved</div></td><td class="mbox"><div class="mbox-l">Excess Billed</div><div class="mbox-v" style="color:#e74c3c">₹1,276.37 Cr</div><div class="mbox-s">above sanction</div></td><td class="mbox"><div class="mbox-l">Exceeded Sanction</div><div class="mbox-v">71.4%</div><div class="mbox-s">of claims billed &gt; sanction</div></td><td class="mbox"><div class="mbox-l">Breach (&gt;25%)</div><div class="mbox-v">56.6%</div><div class="mbox-s">of claims</div></td></tr></table>
+<p>By composite risk band, <b>12</b> hospital logins (of
+723 with ≥20 pre-auth claims) fall in the CRITICAL/HIGH tiers. The bill-to-sanction
+ratio has risen steadily from 1.82× to
+2.07× across the period — a sustained escalation, not a one-off.</p>
+<div class="kf-h">Patterns at a glance</div><table class="dt"><colgroup><col style="width:6%"/><col style="width:27%"/><col style="width:45%"/><col style="width:13%"/><col style="width:9%"/></colgroup><thead><tr><th>#</th><th>Pattern</th><th>What it detects</th><th>Metric</th><th>Risk</th></tr></thead><tbody>
+<tr><td>1</td><td><b>Bill inflation above sanction</b></td><td>Hospitals billing far more than the pre-authorised amount</td><td class="num">71.4% exceed</td><td><span style="color:#c0392b;font-weight:700">CRITICAL</span></td></tr>
+<tr><td>2</td><td><b>Excess billed</b></td><td>Total actual bill beyond what was sanctioned</td><td class="num">₹1,276.37 Cr</td><td><span style="color:#c0392b;font-weight:700">CRITICAL</span></td></tr>
+<tr><td>3</td><td><b>Hospital systematic overbilling</b></td><td>Specific logins with large, consistent excess</td><td class="num">723 logins</td><td><span style="color:#c0392b;font-weight:700">CRITICAL</span></td></tr>
+<tr><td>4</td><td><b>Cost escalation</b></td><td>Bill/sanction ratio rising year on year</td><td class="num">1.82→2.07×</td><td><span style="color:#d4680a;font-weight:700">HIGH</span></td></tr>
+<tr><td>5</td><td><b>Rubber-stamp sanction</b></td><td>Sanction set equal to the hospital's own estimate (no scrutiny)</td><td class="num">≈1.00× at stage 2</td><td><span style="color:#d4680a;font-weight:700">HIGH</span></td></tr>
+<tr><td>6</td><td><b>Pre-auth coverage gap</b></td><td>High-value claims not routed through pre-auth (context)</td><td class="num">5.9% covered</td><td><span style="color:#7f8c8d;font-weight:700">MEDIUM</span></td></tr>
+</tbody></table>
+<div class="kf-h">Immediate recommended actions</div><ol class="acts">
+<li><b>Audit the top-excess hospitals</b> (723 logins ≥20 claims) — reconcile a sample of bills against their pre-auth sanctions and CGHS package rates.</li>
+<li><b>Introduce partial sanction / CGHS benchmarking at Stage 2</b> — today the sanction simply equals the hospital's own estimate, so there is no financial gate.</li>
+<li><b>Investigate the steepest bill/sanction ratios</b> — they reached 2.07× on average and far higher per claim.</li>
+<li><b>Recover demonstrable overbilling</b> where the actual bill cannot be justified against the sanctioned, documented procedure.</li>
+</ol></div>
+<div class="section"><div class="sec"><table class="sec-h"><tr><td class="sec-h-l"><div class="sec-kick">How the analysis works</div><div class="sec-title">Parameters &amp; Methodology</div></td><td class="sec-h-r"></td></tr></table></div>
+<p class="lead"><b>Data.</b> The live pre-auth system (<b>unlisted_procedure</b>, Dec 2021 onward) joined to
+its claim (<b>claim_intimation</b> for the treating hospital via office master, <b>claim_submission</b> for the actual
+billed and UTI-approved amounts). Revised pre-auth rows are deduplicated to the latest per (claim, procedure), then
+summed per claim.</p>
+<p><b>Five-stage pipeline.</b> (1) hospital submits a pre-auth request with a cost estimate → (2) ECHS sanctions it
+(in practice, at the declared estimate) → (3) hospital treats and submits the actual bill → (4) UTI audits and approves
+→ (5) net payment. Module 14 measures the gap between the <b>Stage-2 sanction</b> and the <b>Stage-3 actual bill</b>.</p>
+<div class="tcap">Table P.1 — Parameters &amp; definitions</div><table class="dt"><colgroup><col style="width:26%"/><col style="width:74%"/></colgroup><thead><tr><th>Parameter</th><th>Definition</th></tr></thead><tbody>
+<tr><td><b>Pre-auth sanction</b></td><td>SUM(UP_SANC_TOTAL) per claim — the amount ECHS authorised before treatment</td></tr>
+<tr><td><b>Actual billed</b></td><td>CS_GR_CLAIM_AMT — the gross amount the hospital billed after treatment</td></tr>
+<tr><td><b>Bill / Sanction ratio</b></td><td>actual billed ÷ pre-auth sanction (aggregate: total billed ÷ total sanction)</td></tr>
+<tr><td><b>Excess billed</b></td><td>actual billed − sanction, summed over claims that exceeded sanction</td></tr>
+<tr><td><b>Exceedance</b></td><td>share of claims with bill &gt; sanction (ratio &gt; 1.0)</td></tr>
+<tr><td><b>Breach</b></td><td>bill &gt; 1.25× sanction (the framework's '&gt;25% above estimate')</td></tr>
+<tr><td><b>Disallow %</b></td><td>(billed − UTI approved) / billed — the share the UTI audit later cut</td></tr>
+<tr><td><b>Matched claim</b></td><td>a pre-auth claim with both a sanction (&gt;0) and a final bill (&gt;0)</td></tr>
+</tbody></table>
+<div class="kf-h">Hospital risk score — component weights (0–100, no ML)</div>
+<p>Bands: <span style="color:#c0392b;font-weight:700">CRITICAL</span> ≥ 70, <span style="color:#d4680a;font-weight:700">HIGH</span> 45–69, <span style="color:#7f8c8d;font-weight:700">MEDIUM</span> &lt; 45. A plain weighted sum of normalised signals — fully reconstructable from the source rows.</p>
+<table class="dt"><colgroup><col style="width:74%"/><col style="width:26%"/></colgroup><thead><tr><th>Component</th><th>Weight</th></tr></thead><tbody>
+<tr><td>Excess Magnitude</td><td class="num">35</td></tr>
+<tr><td>Avg Ratio</td><td class="num">30</td></tr>
+<tr><td>Breach Rate</td><td class="num">20</td></tr>
+<tr><td>Volume</td><td class="num">15</td></tr>
+</tbody></table></div>
+<div class="section"><div class="sec"><table class="sec-h"><tr><td class="sec-h-l"><div class="sec-title">Limitations &amp; Assumptions</div></td><td class="sec-h-r"></td></tr></table></div>
+<div class="callout">
+<p style="margin-bottom:6px">• <b>A ratio above 1 is partly structural.</b> The pre-auth sanction covers only the <i>unlisted procedure</i>, while the final bill includes the whole admission (room, nursing, drugs, listed packages). So a bill above sanction is expected; what is anomalous is an <b>extreme and consistent</b> gap across many claims at one hospital.</p>
+<p style="margin-bottom:6px">• <b>Aggregate ratio, not mean-of-ratios.</b> We rank by absolute excess billed and report the aggregate bill/sanction ratio (total bill ÷ total sanction). Per-claim ratios can look far higher because some sanctions are tiny — we avoid that denominator inflation.</p>
+<p style="margin-bottom:6px">• <b>Coverage, not bypass.</b> Only 5.9% of &gt;₹1L claims went through this pre-auth channel — because most are listed-package claims that do not require unlisted-procedure pre-auth. The 1,296,165 'no pre-auth' claims are a coverage observation, NOT a fraud count.</p>
+<p style="margin-bottom:6px">• <b>Identifiers, not verdicts.</b> Hospital/office names are identifiers; a high deduction or ratio is an investigative lead. Every case needs verification before any action.</p>
+<p style="margin-bottom:6px">• <b>Scope.</b> Primary analysis = last five years (Type-2 unlisted_procedure). The legacy pre_auth system (Type-1, 2012–2017) is summarised separately as historical context.</p>
+<p style="margin:0"><b>ALL CASES REQUIRE VERIFICATION BY QUALIFIED AUDITORS BEFORE ANY ACTION IS TAKEN.</b></p></div></div>
+<div class="section"><div class="sec"><table class="sec-h"><tr><td class="sec-h-l"><div class="sec-kick">Q14c · year-on-year</div><div class="sec-title">Cost Escalation</div></td><td class="sec-h-r">Bill-to-sanction gap by financial year</td></tr></table></div>
+<div class="tcap">Table Q14c.1 — Average sanction vs actual billed, by financial year</div>
+<table class="dt"><colgroup><col style="width:16%"/><col style="width:13%"/><col style="width:21%"/><col style="width:21%"/><col style="width:17%"/><col style="width:12%"/></colgroup><thead><tr><th>FY</th><th>Claims</th><th>Avg Sanction</th><th>Avg Billed</th><th>Avg UTI Approved</th><th>Bill/Sanc</th></tr></thead><tbody>
+<tr><td><b>FY2021-22</b></td><td class="num">1,251</td><td>₹75,921</td><td class="num">₹1.38 L</td><td>₹1.26 L</td><td class="red">1.82×</td></tr>
+<tr><td><b>FY2022-23</b></td><td class="num">18,393</td><td>₹66,009</td><td class="num">₹1.28 L</td><td>₹1.16 L</td><td class="red">1.93×</td></tr>
+<tr><td><b>FY2023-24</b></td><td class="num">31,044</td><td>₹68,368</td><td class="num">₹1.39 L</td><td>₹1.18 L</td><td class="red">2.04×</td></tr>
+<tr><td><b>FY2024-25</b></td><td class="num">38,932</td><td>₹74,625</td><td class="num">₹1.56 L</td><td>₹1.26 L</td><td class="red">2.1×</td></tr>
+<tr><td><b>FY2025-26</b></td><td class="num">52,580</td><td>₹78,147</td><td class="num">₹1.62 L</td><td>₹90,186</td><td class="red">2.07×</td></tr>
+</tbody></table>
+<img class="chart" src="charts/escalation.png"/>
+<p>The average bill has pulled steadily away from the average sanction every year, while the sanction itself barely moves — consistent with hospitals treating the pre-auth as an entry token rather than a cost ceiling. Sanction amounts also cluster at round figures:</p>
+<img class="chart" src="charts/clustering.png"/>
+<p>The spike at ₹2 lakh is notable: it is <b>not</b> a formal ECHS threshold (₹1 L and ₹3 L are), yet it draws more sanctions than either — suggesting estimates are deliberately set just under the level that would trigger higher scrutiny.</p></div>
+<div class="section"><div class="sec"><table class="sec-h"><tr><td class="sec-h-l"><div class="sec-kick">Q14a · Provider-level</div><div class="sec-title">Hospital Deviation Scorecard — Top 20</div></td><td class="sec-h-r">Pre-auth hospitals ranked by excess billed above sanction</td></tr></table></div>
+<div class="tcap">Table Q14a.1 — Top 20 hospitals by excess billed</div>
+<table class="dt"><colgroup><col style="width:11%"/><col style="width:30%"/><col style="width:9%"/><col style="width:12%"/><col style="width:12%"/><col style="width:11%"/><col style="width:8%"/><col style="width:7%"/></colgroup><thead><tr><th>Risk</th><th>Hospital</th><th>Claims</th><th>Billed</th><th>Excess</th><th>Avg B/S</th><th>Disallow</th><th>Breach</th></tr></thead><tbody>
+<tr><td><span style="color:#c0392b;font-weight:700">CRITICAL</span> <span style="color:#555">76.4</span></td><td>PARK HOSPITAL (A UNIT OF UMKAL HEALTHCA…</td><td class="num">1,748</td><td>₹88.69 Cr</td><td class="num">₹73.11 Cr</td><td class="red">5.56×</td><td>32.9%</td><td>1,639</td></tr>
+<tr><td><span style="color:#d4680a;font-weight:700">HIGH</span> <span style="color:#555">56.7</span></td><td>MEDANTA THE MEDICITY - GURGAON</td><td class="num">5,961</td><td>₹122.44 Cr</td><td class="num">₹65.99 Cr</td><td class="red">1.6×</td><td>33.0%</td><td>2,622</td></tr>
+<tr><td><span style="color:#d4680a;font-weight:700">HIGH</span> <span style="color:#555">61.0</span></td><td>PARK HOSPITAL (A UNIT OF PARK MEDICENTR…</td><td class="num">1,407</td><td>₹74.82 Cr</td><td class="num">₹56.33 Cr</td><td class="red">3.73×</td><td>40.6%</td><td>1,104</td></tr>
+<tr><td><span style="color:#d4680a;font-weight:700">HIGH</span> <span style="color:#555">60.2</span></td><td>VENKATESHWAR HOSPITAL - DWARKA</td><td class="num">3,772</td><td>₹73.30 Cr</td><td class="num">₹55.21 Cr</td><td class="red">3.61×</td><td>31.8%</td><td>2,624</td></tr>
+<tr><td><span style="color:#d4680a;font-weight:700">HIGH</span> <span style="color:#555">55.6</span></td><td>HUMAN CARE MEDICAL CHARITABLE TRUST</td><td class="num">3,564</td><td>₹65.42 Cr</td><td class="num">₹47.61 Cr</td><td class="red">3.24×</td><td>33.6%</td><td>2,476</td></tr>
+<tr><td><span style="color:#d4680a;font-weight:700">HIGH</span> <span style="color:#555">50.6</span></td><td>MANIPAL HEALTH ENTERPRISES PRIVATE LIMI…</td><td class="num">2,077</td><td>₹52.52 Cr</td><td class="num">₹36.97 Cr</td><td class="red">2.83×</td><td>29.9%</td><td>1,642</td></tr>
+<tr><td><span style="color:#d4680a;font-weight:700">HIGH</span> <span style="color:#555">47.6</span></td><td>SARVODAYA HOSPITAL &amp; RESEARCH CENTRE - …</td><td class="num">3,261</td><td>₹58.77 Cr</td><td class="num">₹36.62 Cr</td><td class="red">2.21×</td><td>18.7%</td><td>2,211</td></tr>
+<tr><td><span style="color:#d4680a;font-weight:700">HIGH</span> <span style="color:#555">48.7</span></td><td>METRO HEART INSTITUTE - FARIDABAD</td><td class="num">1,434</td><td>₹52.35 Cr</td><td class="num">₹35.00 Cr</td><td class="red">2.81×</td><td>48.6%</td><td>1,112</td></tr>
+<tr><td><span style="color:#d4680a;font-weight:700">HIGH</span> <span style="color:#555">58.9</span></td><td>THE SIGNATURE HOSPITAL (A UNIT OF PARK …</td><td class="num">935</td><td>₹37.98 Cr</td><td class="num">₹32.83 Cr</td><td class="red">7.09×</td><td>25.9%</td><td>857</td></tr>
+<tr><td><span style="color:#7f8c8d;font-weight:700">MEDIUM</span> <span style="color:#555">39.2</span></td><td>Krishna Institute of Medical Sciences L…</td><td class="num">2,520</td><td>₹32.35 Cr</td><td class="num">₹22.23 Cr</td><td class="red">2.59×</td><td>17.7%</td><td>1,465</td></tr>
+<tr><td><span style="color:#7f8c8d;font-weight:700">MEDIUM</span> <span style="color:#555">37.2</span></td><td>Amrita Institute of Medical Sciences An…</td><td class="num">2,416</td><td>₹27.70 Cr</td><td class="num">₹21.26 Cr</td><td class="red">2.44×</td><td>25.9%</td><td>1,265</td></tr>
+<tr><td><span style="color:#7f8c8d;font-weight:700">MEDIUM</span> <span style="color:#555">38.8</span></td><td>Aditya Birla Health Services Ltd</td><td class="num">1,316</td><td>₹29.73 Cr</td><td class="num">₹19.68 Cr</td><td class="red">2.3×</td><td>17.2%</td><td>937</td></tr>
+<tr><td><span style="color:#7f8c8d;font-weight:700">MEDIUM</span> <span style="color:#555">31.3</span></td><td>ARTEMIS MEDICARE SERVICES LIMITED - GUR…</td><td class="num">2,412</td><td>₹53.25 Cr</td><td class="num">₹17.73 Cr</td><td class="red">1.25×</td><td>24.0%</td><td>1,065</td></tr>
+<tr><td><span style="color:#7f8c8d;font-weight:700">MEDIUM</span> <span style="color:#555">38.2</span></td><td>MAX SUPER SPECIALITY HOSPITAL - SHALIMA…</td><td class="num">890</td><td>₹23.66 Cr</td><td class="num">₹16.76 Cr</td><td class="red">2.86×</td><td>21.4%</td><td>646</td></tr>
+<tr><td><span style="color:#7f8c8d;font-weight:700">MEDIUM</span> <span style="color:#555">39.9</span></td><td>FORTIS ESCORTS HOSPITAL (A UNIT OF FHL …</td><td class="num">1,377</td><td>₹26.41 Cr</td><td class="num">₹15.65 Cr</td><td class="red">2.43×</td><td>15.9%</td><td>1,162</td></tr>
+<tr><td><span style="color:#7f8c8d;font-weight:700">MEDIUM</span> <span style="color:#555">33.6</span></td><td>GRAPHIC ERA INSTITUTE OF MEDICAL SCIENC…</td><td class="num">793</td><td>₹21.11 Cr</td><td class="num">₹14.16 Cr</td><td class="red">2.67×</td><td>47.9%</td><td>464</td></tr>
+<tr><td><span style="color:#7f8c8d;font-weight:700">MEDIUM</span> <span style="color:#555">29.7</span></td><td>MAX HEALTH CARE INSTITUTE LTD - DEHRADUN</td><td class="num">2,474</td><td>₹28.85 Cr</td><td class="num">₹13.50 Cr</td><td class="red">1.67×</td><td>14.7%</td><td>1,032</td></tr>
+<tr><td><span style="color:#7f8c8d;font-weight:700">MEDIUM</span> <span style="color:#555">40.3</span></td><td>ACCORD SUPER SPECIALITY HOSPITAL</td><td class="num">644</td><td>₹17.32 Cr</td><td class="num">₹13.12 Cr</td><td class="red">3.4×</td><td>33.7%</td><td>570</td></tr>
+<tr><td><span style="color:#7f8c8d;font-weight:700">MEDIUM</span> <span style="color:#555">35.1</span></td><td>FORTIS HOSPITAL - SHALIMAR BAGH</td><td class="num">615</td><td>₹17.29 Cr</td><td class="num">₹12.32 Cr</td><td class="red">2.91×</td><td>39.4%</td><td>431</td></tr>
+<tr><td><span style="color:#d4680a;font-weight:700">HIGH</span> <span style="color:#555">48.8</span></td><td>EMC Super Speciality Hospital Pvt. Ltd.</td><td class="num">387</td><td>₹14.11 Cr</td><td class="num">₹12.10 Cr</td><td class="red">7.0×</td><td>24.0%</td><td>384</td></tr>
+</tbody></table>
+<img class="chart" src="charts/top_hospitals.png"/>
+<h2>Hospital deep-dives</h2>
+<div class="kf"><b>PARK HOSPITAL (A UNIT OF UMKAL HEALTHCARE PVT LTD)</b> — 1,748 pre-auth claims, billed ₹88.69 Cr against ₹15.96 Cr sanctioned, i.e. <b>₹73.11 Cr excess</b> (aggregate 5.56× bill/sanction). The UTI audit later disallowed 32.9% of the billed amount, and 1,639 of its claims breached the 25% threshold — a consistent, hospital-wide pattern of billing well beyond the authorised estimate.</div>
+<div class="kf"><b>MEDANTA THE MEDICITY - GURGAON</b> — 5,961 pre-auth claims, billed ₹122.44 Cr against ₹76.30 Cr sanctioned, i.e. <b>₹65.99 Cr excess</b> (aggregate 1.6× bill/sanction). The UTI audit later disallowed 33.0% of the billed amount, and 2,622 of its claims breached the 25% threshold — a consistent, hospital-wide pattern of billing well beyond the authorised estimate.</div>
+<div class="kf"><b>PARK HOSPITAL (A UNIT OF PARK MEDICENTRES &amp; INSTITUTIONS PVT LTD) - GURGAON</b> — 1,407 pre-auth claims, billed ₹74.82 Cr against ₹20.04 Cr sanctioned, i.e. <b>₹56.33 Cr excess</b> (aggregate 3.73× bill/sanction). The UTI audit later disallowed 40.6% of the billed amount, and 1,104 of its claims breached the 25% threshold — a consistent, hospital-wide pattern of billing well beyond the authorised estimate.</div>
+</div>
+<div class="section"><div class="sec"><table class="sec-h"><tr><td class="sec-h-l"><div class="sec-kick">Q14a · Claim-level</div><div class="sec-title">Top High-Deviation Claims</div></td><td class="sec-h-r">Individual claims with the largest gap between sanction and actual bill</td></tr></table></div>
+<div class="tcap">Table Q14a.2 — Top 20 claims by excess billed above sanction</div>
+<table class="dt"><colgroup><col style="width:24%"/><col style="width:16%"/><col style="width:26%"/><col style="width:12%"/><col style="width:12%"/><col style="width:10%"/></colgroup><thead><tr><th>Beneficiary</th><th>Card</th><th>Hospital</th><th>Sanctioned</th><th>Billed</th><th>B/S</th></tr></thead><tbody>
+<tr><td>HEM JOSHI</td><td>000008854010</td><td>MAYO MEDICAL CENTRE PVT LTD</td><td>₹5.61 L</td><td class="num">₹99.48 L</td><td class="red">17.74×</td></tr>
+<tr><td>ROHTASH KUMAR</td><td>DL1000002724960</td><td>METRO HEART INSTITUTE - FAR…</td><td>₹1.02 L</td><td class="num">₹73.32 L</td><td class="red">71.53×</td></tr>
+<tr><td>PAWAN KUMAR</td><td>000009088126</td><td>AMRITA HOSPITAL</td><td>₹1.81 L</td><td class="num">₹65.48 L</td><td class="red">36.26×</td></tr>
+<tr><td>SURESH CHANDRA UPADHY…</td><td>DH000003043976</td><td>GRAPHIC ERA INSTITUTE OF ME…</td><td>₹1.95 L</td><td class="num">₹55.86 L</td><td class="red">28.65×</td></tr>
+<tr><td>BRAJ NARAYAN SINGH</td><td>JB000004358846</td><td>MEDANTA THE MEDICITY - GURG…</td><td>₹0.50 L</td><td class="num">₹52.63 L</td><td class="red">104.94×</td></tr>
+<tr><td>VEER SINGH GANGWAR</td><td>BR000006499925</td><td>MEDANTA THE MEDICITY - GURG…</td><td>₹2.62 L</td><td class="num">₹50.48 L</td><td class="red">19.25×</td></tr>
+<tr><td>SUMER SINGH</td><td>000004738364</td><td>FORTIS HOSPITAL LTD - JAIPUR</td><td>₹0.22 L</td><td class="num">₹45.87 L</td><td class="red">210.01×</td></tr>
+<tr><td>NARAIN SINGH</td><td>JA000005774061</td><td>METRO HEART INSTITUTE - FAR…</td><td>₹0.30 L</td><td class="num">₹45.78 L</td><td class="red">152.61×</td></tr>
+<tr><td>COSMOS SYLVESTER S</td><td>BA000007557145</td><td>ST. JOHNS MEDICAL COLLEGE A…</td><td>₹0.15 L</td><td class="num">₹45.13 L</td><td class="red">300.88×</td></tr>
+<tr><td>MAHABIR SINGH YADAV</td><td>JA000002247343</td><td>NORTH EAST HEALTHCARE PVT L…</td><td>₹2.75 L</td><td class="num">₹46.67 L</td><td class="red">16.97×</td></tr>
+<tr><td>TEJ RAM</td><td>DL1000002662028</td><td>METRO HEART INSTITUTE - FAR…</td><td>₹3.82 L</td><td class="num">₹47.32 L</td><td class="red">12.38×</td></tr>
+<tr><td>DAMBAR SINGH</td><td>BR000002245802</td><td>MEDANTA THE MEDICITY - GURG…</td><td>₹0.13 L</td><td class="num">₹43.20 L</td><td class="red">333.11×</td></tr>
+<tr><td>SATISH KUMAR</td><td>DL1000002421736</td><td>MEDANTA THE MEDICITY - GURG…</td><td>₹0.56 L</td><td class="num">₹41.40 L</td><td class="red">73.43×</td></tr>
+<tr><td>KIRAN PAL SINGH</td><td>DL1000008254523</td><td>VENKATESHWAR HOSPITAL - DWA…</td><td>₹1.34 L</td><td class="num">₹41.75 L</td><td class="red">31.11×</td></tr>
+<tr><td>SEWA SINGH GILL</td><td>HI000003702136</td><td>MEDANTA THE MEDICITY - GURG…</td><td>₹3.42 L</td><td class="num">₹42.89 L</td><td class="red">12.54×</td></tr>
+<tr><td>GAJENDER SINGH TOMAR</td><td>000004383368</td><td>METRO HEART INSTITUTE - FAR…</td><td>₹2.13 L</td><td class="num">₹41.35 L</td><td class="red">19.37×</td></tr>
+<tr><td>AKSHYA KUMAR DAS</td><td>000002871145</td><td>QRG MEDICARE LIMITED</td><td>₹0.23 L</td><td class="num">₹39.14 L</td><td class="red">167.77×</td></tr>
+<tr><td>SHIV DUTT</td><td>000006410216</td><td>SARVODAYA HOSPITAL &amp; RESEAR…</td><td>₹9.69 L</td><td class="num">₹48.38 L</td><td class="red">4.99×</td></tr>
+<tr><td>M MANGI SINGHA</td><td>000003895764</td><td>AMRITA HOSPITAL</td><td>₹1.34 L</td><td class="num">₹39.79 L</td><td class="red">29.59×</td></tr>
+<tr><td>NANDI RAM</td><td>DL1000005776299</td><td>VENKATESHWAR HOSPITAL - DWA…</td><td>₹1.63 L</td><td class="num">₹40.04 L</td><td class="red">24.64×</td></tr>
+</tbody></table>
+<p class="muted" style="font-size:8pt">Note: a large gap can reflect a small unlisted-procedure sanction against a large whole-admission bill; these are leads for line-item verification, not confirmed overbilling.</p></div>
+<div class="section"><div class="sec"><table class="sec-h"><tr><td class="sec-h-l"><div class="sec-kick">Q14b · context</div><div class="sec-title">Pre-Auth Coverage &amp; Control Bypass</div></td><td class="sec-h-r">How much of the high-value claim flow actually passes through pre-auth</td></tr></table></div>
+<p class="lead">Of <b>1,378,161</b> high-value claims (&gt;₹1 lakh) in the last five years
+(₹31,702.55 Cr gross), only <b>5.9%</b> went through the
+unlisted-procedure pre-auth channel. The remaining <b>1,296,165</b> (₹29,259.12 Cr)
+carry no pre-auth record.</p>
+<div class="callout"><b>Read this as coverage, not fraud.</b> ECHS pre-auth (unlisted procedure) is required only for specific non-package procedures; the vast majority of high-value claims are listed-package admissions that legitimately need no pre-auth. The figure simply shows how narrow the pre-auth net is — and therefore how few high-value claims are subject to any pre-treatment cost check.</div>
+<div class="tcap">Table Q14b.1 — Largest high-value claims with no pre-auth record (sample)</div>
+<table class="dt"><colgroup><col style="width:26%"/><col style="width:16%"/><col style="width:26%"/><col style="width:16%"/><col style="width:16%"/></colgroup><thead><tr><th>Beneficiary</th><th>Card</th><th>Hospital</th><th>Billed</th><th>UTI Approved</th></tr></thead><tbody>
+<tr><td>SURENDRA SINGH</td><td>PT000006563832</td><td>Ara Bhojapur</td><td class="num">₹86.88 L</td><td>₹0</td></tr>
+<tr><td>HARISH KUMAR SHARMA</td><td>MU000004121457</td><td>Mumbai - Colaba</td><td class="num">₹74.14 L</td><td>₹0</td></tr>
+<tr><td>AMRIT LAL CHADHA</td><td>DL1000004517957</td><td>Delhi Cantt (BHDC)</td><td class="num">₹67.16 L</td><td>₹0</td></tr>
+<tr><td>RAMESH NAGPAL</td><td>DL2000006699939</td><td>Lodhi Road</td><td class="num">₹66.53 L</td><td>₹0</td></tr>
+<tr><td>NARESH KUMAR BUDHWAR</td><td>HI000006658647</td><td>Rohtak</td><td class="num">₹63.67 L</td><td>₹25.00 L</td></tr>
+<tr><td>ARUN KUMAR SHOREY</td><td>DL1000004878364</td><td>Gurgaon (Dhundahera)</td><td class="num">₹63.64 L</td><td>₹0</td></tr>
+<tr><td>NIRANJAN DAS</td><td>BU000007183756</td><td>Bhubaneswar (RC Bhubneshwar)</td><td class="num">₹62.24 L</td><td>₹0</td></tr>
+<tr><td>APURBA MAITY</td><td>MU000002562990</td><td>Nerul</td><td class="num">₹58.11 L</td><td>₹0</td></tr>
+<tr><td>OM SINGH</td><td>000004552995</td><td>HEALTHCARE GLOBAL ENTERPRIS…</td><td class="num">₹58.10 L</td><td>₹0</td></tr>
+<tr><td>RAJARAM RAJA SANJAY</td><td>CH000002350873</td><td>Chennai</td><td class="num">₹56.21 L</td><td>₹13.06 L</td></tr>
+<tr><td>M S GANGA RAO</td><td>BA000004372854</td><td>Bangalore (Deactivated)</td><td class="num">₹55.68 L</td><td>₹0</td></tr>
+<tr><td>PREM SHANKAR TEWARI</td><td>MU000007835581</td><td>Nerul</td><td class="num">₹55.30 L</td><td>₹0</td></tr>
+</tbody></table>
+</div>
+<div class="section"><div class="sec"><table class="sec-h"><tr><td class="sec-h-l"><div class="sec-kick">2012–2017</div><div class="sec-title">Legacy Pre-Auth System (Type-1) — Historical Note</div></td><td class="sec-h-r">The discontinued pre_auth table, for context</td></tr></table></div>
+<p>Before the current system, ECHS ran a separate <b>pre_auth</b> table (2012–2017, now discontinued). It held
+just <b>2,949</b> records, of which <b>97.3%</b> were marked rejected
+(PA_APPROVED = N) — yet historical analysis showed rejected pre-auths were still settled and paid at almost the same rate
+as approved ones. In other words, the legacy approval gate had little bearing on payment. It is included here only as
+historical context; the last-five-year analysis above is based entirely on the live unlisted-procedure system.</p>
+<div class="tcap">Table T1.1 — Legacy pre_auth decisions (2012–2017)</div>
+<table class="dt"><colgroup><col style="width:34%"/><col style="width:33%"/><col style="width:33%"/></colgroup><thead><tr><th>Decision</th><th>Claims</th><th>Est. cost (₹L)</th></tr></thead><tbody>
+<tr><td>N — Rejected</td><td class="num">2,869</td><td>₹341.27 L</td></tr>
+<tr><td>Y — Approved</td><td class="num">65</td><td>₹4.13 L</td></tr>
+<tr><td>X — Cancelled</td><td class="num">15</td><td>₹0.16 L</td></tr>
+</tbody></table>
+</div>
+<div class="section"><div class="sec"><table class="sec-h"><tr><td class="sec-h-l"><div class="sec-title">Conclusions</div></td><td class="sec-h-r"></td></tr></table></div>
+<p class="lead">The pre-authorization control, as currently operated, does not constrain cost. Across
+142,200 pre-auth claims in the last five years, hospitals billed
+<b>₹2,143.68 Cr</b> against <b>₹1,044.58 Cr</b> sanctioned —
+<b>₹1,276.37 Cr</b> in excess, with <b>71.4%</b> of claims billed above their
+sanction.</p>
+<p>The root cause is structural: ECHS sanctions at the hospital's own declared estimate, with no partial
+sanction, CGHS benchmarking or cost negotiation at Stage 2. The pre-auth therefore functions as an entry token, not a
+ceiling — and the gap has widened every year. The concentration of excess at a small set of hospitals, and the deliberate
+clustering of estimates just under scrutiny thresholds, are the clearest leads for audit.</p>
+<p>The fix is a financial gate at Stage 2 (partial sanction against CGHS/package rates), backed by post-hoc
+audit of the top-excess hospitals. As always, these are prioritised leads — each must be confirmed against itemised bills
+and clinical records before recovery or enforcement.</p></div>
+<div class="section"><div class="sec"><table class="sec-h"><tr><td class="sec-h-l"><div class="sec-title">Consolidated Risk Register &amp; Recommendations</div></td><td class="sec-h-r"></td></tr></table></div>
+<div class="tcap">Table R.1 — Risk register</div><table class="dt"><colgroup><col style="width:36%"/><col style="width:24%"/><col style="width:24%"/><col style="width:16%"/></colgroup><thead><tr><th>Signal</th><th>Scale</th><th>Exposure</th><th>Risk</th></tr></thead><tbody>
+<tr><td><b>Excess billed above sanction</b></td><td>71.4% of claims</td><td>₹1,276.37 Cr</td><td><span style="color:#c0392b;font-weight:700">CRITICAL</span></td></tr>
+<tr><td><b>Hospital systematic overbilling</b></td><td>723 logins</td><td>see scorecard</td><td><span style="color:#c0392b;font-weight:700">CRITICAL</span></td></tr>
+<tr><td><b>Cost escalation (year on year)</b></td><td>1.82→2.07×</td><td>widening gap</td><td><span style="color:#d4680a;font-weight:700">HIGH</span></td></tr>
+<tr><td><b>Rubber-stamp sanction (Stage 2)</b></td><td>≈1.00× sanction:estimate</td><td>no financial gate</td><td><span style="color:#d4680a;font-weight:700">HIGH</span></td></tr>
+<tr><td><b>Pre-auth coverage gap</b></td><td>5.9% of &gt;₹1L covered</td><td>₹29,259.12 Cr outside</td><td><span style="color:#7f8c8d;font-weight:700">MEDIUM</span></td></tr>
+<tr><td><b>Legacy approval gate (Type-1)</b></td><td>97.3% rejected yet paid</td><td>historical</td><td><span style="color:#7f8c8d;font-weight:700">MEDIUM</span></td></tr>
+</tbody></table>
+<div class="tcap" style="margin-top:6px">Table R.2 — Strategic recommendations (priority · SLA · target)</div>
+<table class="dt"><colgroup><col style="width:11%"/><col style="width:12%"/><col style="width:30%"/><col style="width:47%"/></colgroup><thead><tr><th>Priority</th><th>SLA</th><th>Recommendation</th><th>Action</th></tr></thead><tbody>
+<tr><td><span style="color:#c0392b;font-weight:700">CRITICAL</span></td><td>30 days</td><td><b>Audit the top-excess hospital</b></td><td>PARK HOSPITAL (A UNIT OF UMKAL HEALTHCARE PVT LTD) — billed ₹88.69 Cr vs sanctioned, ₹73.11 Cr excess (5.56×). Reconcile a 25-claim line-item sample against sanctioned procedures and CGHS rates.</td></tr>
+<tr><td><span style="color:#c0392b;font-weight:700">CRITICAL</span></td><td>60 days</td><td><b>Install a financial gate at Stage 2</b></td><td>Replace rubber-stamp sanctioning (sanction = estimate) with partial sanction against CGHS/package benchmarks and a documented cost-negotiation step.</td></tr>
+<tr><td><span style="color:#d4680a;font-weight:700">HIGH</span></td><td>60 days</td><td><b>Profile the top-20 deviation hospitals</b></td><td>All 723 logins with ≥20 pre-auth claims and high excess — empanelment review + billing audit; suspend the worst pending audit.</td></tr>
+<tr><td><span style="color:#d4680a;font-weight:700">HIGH</span></td><td>90 days</td><td><b>Investigate estimate clustering at ₹2 L</b></td><td>The ₹2-lakh spike is not a formal threshold; review why estimates bunch there and whether it is used to stay under scrutiny limits.</td></tr>
+<tr><td><span style="color:#7f8c8d;font-weight:700">MEDIUM</span></td><td>Ongoing</td><td><b>Widen pre-auth coverage of high-value claims</b></td><td>Only 5.9% of &gt;₹1L claims pass any pre-treatment check; extend pre-auth to more high-cost admissions.</td></tr>
+<tr><td><span style="color:#7f8c8d;font-weight:700">MEDIUM</span></td><td>Ongoing</td><td><b>Operationalise the deviation score</b></td><td>Recompute the hospital deviation score each cycle and route CRITICAL-band hospitals to audit before settlement.</td></tr>
+</tbody></table>
+<div class="callout" style="margin-top:10px"><b>This report is produced by an automated screening system.</b> Every flagged case is an investigative lead, not a confirmed finding, and must be reviewed by a qualified auditor before any action is taken.</div>
+<p style="text-align:center;font-size:7.5pt;color:#777;margin-top:10px">Prepared by IIT Kanpur — Data Analytics &amp; Fraud Intelligence Division &nbsp;|&nbsp; 05 June 2026 &nbsp;|&nbsp; RESTRICTED</p></div>
+</body></html>

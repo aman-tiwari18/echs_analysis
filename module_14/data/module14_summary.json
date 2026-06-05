@@ -1,0 +1,60 @@
+{
+  "scope": "Last 5 years (unlisted_procedure pre-auth, Dec 2021 onward)",
+  "up_rows": 305585,
+  "preauth_claims": 225705,
+  "matched_claims": 142200,
+  "total_sanction_cr": 1044.58,
+  "total_billed_cr": 2143.68,
+  "total_excess_cr": 1276.37,
+  "total_uti_cr": 1561.66,
+  "overall_ratio": 2.05,
+  "breach_pct": 56.6,
+  "exceed_pct": 71.4,
+  "median_ratio": 1.38,
+  "n_flagged_hospitals": 723,
+  "band_dist": {
+    "CRITICAL": 1,
+    "HIGH": 11,
+    "MEDIUM": 711
+  },
+  "q14b": {
+    "hv_claims": 1378161,
+    "hv_gross_cr": 31702.55,
+    "no_preauth_claims": 1296165,
+    "no_preauth_gross_cr": 29259.12,
+    "preauth_coverage_pct": 5.9
+  },
+  "type1": {
+    "total": 2949,
+    "rejected": 2869,
+    "rejected_pct": 97.3,
+    "by_status": [
+      {
+        "status": "N",
+        "claims": 2869,
+        "est_lakh": 341.27
+      },
+      {
+        "status": "Y",
+        "claims": 65,
+        "est_lakh": 4.13
+      },
+      {
+        "status": "X",
+        "claims": 15,
+        "est_lakh": 0.16
+      }
+    ]
+  },
+  "weights": {
+    "excess_magnitude": 35,
+    "avg_ratio": 30,
+    "breach_rate": 20,
+    "volume": 15
+  },
+  "bands": {
+    "CRITICAL": 70,
+    "HIGH": 45,
+    "MEDIUM": 0
+  }
+}

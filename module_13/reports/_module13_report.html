@@ -1,0 +1,407 @@
+<!DOCTYPE html><html><head><meta charset="utf-8"><style>
+* { box-sizing:border-box; margin:0; padding:0; }
+body { font-family:'DejaVu Sans',Arial,Helvetica,sans-serif; font-size:9pt; color:#222b36; line-height:1.5; }
+
+@page {
+  size:A4; margin:24mm 16mm 20mm 16mm;
+  @top-left { content:"ECHS FRAUD ANALYTICS  ·  MODULE 13  ·  CONFIDENTIAL";
+              font-family:'DejaVu Sans'; font-size:7.5pt; font-weight:bold; color:#1a2744; }
+  @top-right { content:"IIT Kanpur  ·  Page " counter(page);
+               font-family:'DejaVu Sans'; font-size:7.5pt; color:#666; }
+  @bottom-left { content:"RESTRICTED — For internal audit and investigative use only. Not for distribution.";
+                 font-family:'DejaVu Sans'; font-size:7pt; color:#777; }
+  @bottom-right { content:"Generated: 05 June 2026"; font-family:'DejaVu Sans'; font-size:7pt; color:#777; }
+}
+@page cover { margin:0; @top-left{content:none} @top-right{content:none}
+              @bottom-left{content:none} @bottom-right{content:none} }
+
+/* ---- cover ---- */
+.cover { page:cover; background:#1a2744; width:210mm; height:297mm; position:relative; color:#fff; }
+.cover-band-t,.cover-band-b { position:absolute; left:0; right:0; height:11px; background:#c9a84c; }
+.cover-band-t { top:0; } .cover-band-b { bottom:0; }
+.cover-in { position:absolute; left:24mm; right:24mm; top:52mm; text-align:center; }
+.cover-gov { font-size:9pt; letter-spacing:1px; color:#aeb6c8; margin-bottom:34mm; }
+.cover-kick { font-size:8.5pt; letter-spacing:3px; color:#c9a84c; font-weight:bold; margin-bottom:12px; }
+.cover-title { font-size:31pt; font-weight:bold; letter-spacing:1px; line-height:1.1; margin-bottom:10px; }
+.cover-sub { font-size:13pt; color:#cfd5e2; margin-bottom:6px; }
+.cover-mod { font-size:9pt; letter-spacing:2px; color:#c9a84c; margin-bottom:24px; }
+.cover-rule { width:62mm; height:2px; background:#c9a84c; margin:0 auto 26px auto; }
+table.cover-boxes { margin:0 auto 30px auto; border-collapse:separate; border-spacing:6px; }
+.cover-box { background:rgba(255,255,255,0.07); border:1px solid rgba(255,255,255,0.16);
+             padding:12px 14px; text-align:center; vertical-align:middle; }
+.cover-box-l { font-size:6.5pt; color:#aeb6c8; letter-spacing:1.5px; text-transform:uppercase; margin-bottom:6px; }
+.cover-box-v { font-size:13pt; font-weight:bold; color:#fff; }
+.cover-org { font-size:11pt; color:#c9a84c; font-weight:bold; margin-bottom:6px; }
+.cover-date { font-size:8.5pt; color:#aeb6c8; }
+
+/* ---- sections ---- */
+.section { page-break-before:always; }
+.sec { border-left:5px solid #c9a84c; padding:3px 0 3px 14px; margin:0 0 14px 0; page-break-after:avoid; }
+table.sec-h { width:100%; border-collapse:collapse; }
+.sec-h-l { vertical-align:middle; }
+.sec-h-r { vertical-align:middle; text-align:right; width:56mm; font-size:8pt; color:#8a90a0;
+           font-style:italic; line-height:1.35; }
+.sec-kick { font-size:7.5pt; font-weight:bold; letter-spacing:2px; color:#c9a84c;
+            text-transform:uppercase; margin-bottom:4px; }
+.sec-title { font-size:15pt; font-weight:bold; color:#1a2744; letter-spacing:0.3px; }
+h2 { font-size:11pt; color:#1a2744; margin:16px 0 7px 0; page-break-after:avoid; }
+
+p { margin-bottom:9px; text-align:justify; }
+b { font-weight:700; } .muted { color:#667; }
+.lead { margin-bottom:11px; }
+
+/* ---- metric boxes ---- */
+table.metrics { width:100%; border-collapse:separate; border-spacing:6px; margin:6px 0 14px 0; }
+.mbox { background:#1a2744; color:#fff; padding:14px 12px; text-align:center; vertical-align:middle; }
+.mbox-l { font-size:6.8pt; color:#aeb6c8; text-transform:uppercase; letter-spacing:1px; margin-bottom:5px; }
+.mbox-v { font-size:16pt; font-weight:bold; }
+.mbox-s { font-size:6.8pt; color:#aeb6c8; margin-top:4px; }
+
+/* ---- data tables ---- */
+table.dt { width:100%; border-collapse:collapse; table-layout:fixed; margin:6px 0 16px 0; font-size:8pt; }
+table.dt thead tr { background:#1a2744; color:#fff; }
+table.dt thead th { padding:7px 9px; text-align:left; font-weight:700; font-size:7.8pt;
+                    border-bottom:2px solid #c9a84c; word-wrap:break-word; }
+table.dt tbody td { padding:6px 9px; border-bottom:1px solid #e7e9ee; vertical-align:top;
+                    word-wrap:break-word; overflow-wrap:break-word; }
+table.dt tbody tr:nth-child(even) { background:#f5f7fa; }
+.tcap { font-size:7.5pt; color:#7a8190; margin:2px 0 4px 0; font-weight:bold; letter-spacing:0.4px; }
+.num { font-weight:700; } .red { color:#c0392b; font-weight:700; }
+
+/* ---- key findings + callout ---- */
+.kf { background:#faf7ef; border-left:3px solid #c9a84c; padding:8px 12px; margin-bottom:8px;
+      font-size:8.5pt; line-height:1.5; }
+.kf-h { font-size:10.5pt; font-weight:bold; color:#1a2744; margin:12px 0 7px 0; }
+.callout { background:#fdf1f1; border:1px solid #e7b8b8; border-left:4px solid #c0392b;
+           padding:10px 13px; margin:8px 0 12px 0; font-size:8.5pt; }
+.callout b { color:#a02020; }
+
+/* ---- case studies ---- */
+.case { border:1px solid #e2e5ec; border-top:3px solid #c9a84c; padding:11px 14px; margin-bottom:12px;
+        page-break-inside:avoid; }
+.case-h { font-size:11pt; font-weight:bold; color:#1a2744; margin-bottom:7px; }
+table.facts { width:100%; border-collapse:collapse; margin-bottom:8px; font-size:8.2pt; }
+table.facts td { padding:4px 8px; border-bottom:1px solid #eef0f4; vertical-align:top; }
+table.facts td.k { width:30mm; font-weight:bold; color:#1a2744; background:#f4f6f9; }
+.action { font-size:8.4pt; color:#1a2744; }
+
+/* ---- recommendations / register ---- */
+ol.acts { margin:4px 0 6px 18px; } ol.acts li { margin-bottom:6px; font-size:8.6pt; }
+</style></head><body>
+
+<div class="cover">
+  <div class="cover-band-t"></div>
+  <div class="cover-in">
+    <div class="cover-gov">GOVERNMENT OF INDIA &nbsp;·&nbsp; EX-SERVICEMEN CONTRIBUTORY HEALTH SCHEME</div>
+    <div class="cover-kick">FRAUD ANALYTICS &amp; INTELLIGENCE REPORT</div>
+    <div class="cover-title">ECHS FRAUD ANALYTICS</div>
+    <div class="cover-sub">Module 13 — High-Value Claim Risk Scoring</div>
+    <div class="cover-mod">CLAIMS ABOVE ₹5 LAKH &nbsp;|&nbsp; LAST 5 YEARS &nbsp;|&nbsp; RULE-BASED SIGNALS + COMPOSITE RISK SCORE</div>
+    <div class="cover-rule"></div>
+    <table class="cover-boxes"><tr>
+      <td class="cover-box"><div class="cover-box-l">High-Value Claims</div><div class="cover-box-v">74,593</div></td>
+      <td class="cover-box"><div class="cover-box-l">Total Exposure</div><div class="cover-box-v">₹5,630.76 Cr</div></td>
+      <td class="cover-box"><div class="cover-box-l">Deducted</div><div class="cover-box-v">₹1,785.08 Cr</div></td>
+      <td class="cover-box"><div class="cover-box-l">100% Deducted</div><div class="cover-box-v">9,717</div></td>
+      <td class="cover-box"><div class="cover-box-l">Flagged Logins</div><div class="cover-box-v">392</div></td>
+    </tr></table>
+    <div class="cover-org">IIT KANPUR — Data Analytics &amp; Fraud Intelligence Division</div>
+    <div class="cover-date">05 June 2026 &nbsp;|&nbsp; Classification: RESTRICTED</div>
+  </div>
+  <div class="cover-band-b"></div>
+</div>
+<div class="section"><div class="sec"><table class="sec-h"><tr><td class="sec-h-l"><div class="sec-title">Executive Summary</div></td><td class="sec-h-r"></td></tr></table></div>
+<p class="lead">Module 13 targets the highest-financial-risk stratum of the ECHS claim ecosystem:
+individual claims exceeding <b>₹5 lakh</b> per admission, analysed across the <b>last five years</b> from the
+<b>claim_intimation</b> and <b>claim_submission</b> tables. Each claim, hospital login and beneficiary card is
+scored with a transparent, rule-based composite risk score (0–100) — no machine learning, so every score is
+auditable. <b>Total Financial Exposure</b> is the gross claimed value of the flagged claims (approximate; the
+recoverable amount is set at audit).</p>
+<table class="metrics"><tr><td class="mbox"><div class="mbox-l">Total Exposure</div><div class="mbox-v">₹5,630.76 Cr</div><div class="mbox-s">gross claimed, &gt;₹5L</div></td><td class="mbox"><div class="mbox-l">Total Deducted</div><div class="mbox-v" style="color:#e74c3c">₹1,785.08 Cr</div><div class="mbox-s">31.7% overall</div></td><td class="mbox"><div class="mbox-l">100% Deducted</div><div class="mbox-v">9,717</div><div class="mbox-s">approved at ₹0</div></td><td class="mbox"><div class="mbox-l">Chronic Claimants</div><div class="mbox-v">3,135</div><div class="mbox-s">≥3 high-value claims</div></td><td class="mbox"><div class="mbox-l">Bulk Events</div><div class="mbox-v">19</div><div class="mbox-s">5 system-compromise</div></td></tr></table>
+<p>By composite risk band, <b>132</b> beneficiary cards and
+<b>15</b> hospital logins fall in the CRITICAL/HIGH tiers and head the
+verification queue. Flagged claims span 2011-09-08 to 2026-03-31.</p>
+<div class="kf-h">Fraud patterns at a glance</div>
+<table class="dt"><colgroup><col style="width:7%"/><col style="width:27%"/><col style="width:44%"/><col style="width:13%"/><col style="width:9%"/></colgroup><thead><tr><th>#</th><th>Pattern</th><th>What it detects</th><th>Count</th><th>Risk</th></tr></thead><tbody>
+<tr><td>1</td><td><b>High-value claims (&gt;₹5L)</b></td><td>Exposure concentration in the top claim stratum</td><td class="num">74,593</td><td><span style="color:#c0392b;font-weight:700">CRITICAL</span></td></tr>
+<tr><td>2</td><td><b>100% deduction</b></td><td>Multi-lakh bills approved at ₹0 — billing beyond the package ceiling</td><td class="num">9,717</td><td><span style="color:#c0392b;font-weight:700">CRITICAL</span></td></tr>
+<tr><td>3</td><td><b>Hospital overcharging</b></td><td>Logins with avg deduction &gt; 25% on high-value claims</td><td class="num">392 logins</td><td><span style="color:#c0392b;font-weight:700">CRITICAL</span></td></tr>
+<tr><td>4</td><td><b>Chronic repeat claimants</b></td><td>One card with ≥3 high-value claims</td><td class="num">3,135</td><td><span style="color:#d4680a;font-weight:700">HIGH</span></td></tr>
+<tr><td>5</td><td><b>Same-day duplicate billing</b></td><td>Same card+date+amount under multiple intimation IDs</td><td class="num">71 groups</td><td><span style="color:#c0392b;font-weight:700">CRITICAL</span></td></tr>
+<tr><td>6</td><td><b>Bulk claim injection</b></td><td>Hundreds of intimation IDs created in one day (programmatic)</td><td class="num">19 events</td><td><span style="color:#c0392b;font-weight:700">CRITICAL</span></td></tr>
+<tr><td>7</td><td><b>Ghost / anomalous hospital ID</b></td><td>High-value claims with NULL or phone-like hospital IDs</td><td class="num">23,959</td><td><span style="color:#d4680a;font-weight:700">HIGH</span></td></tr>
+<tr><td>8</td><td><b>ECHS polyclinic abuse</b></td><td>Polyclinic logins routing high-value IPD claims (high deduction)</td><td class="num">4,499</td><td><span style="color:#d4680a;font-weight:700">HIGH</span></td></tr>
+</tbody></table>
+<div class="kf-h">Immediate recommended actions</div><ol class="acts">
+<li><b>Treat bulk-injection events as a security incident</b> (19 events) — pull portal access logs and escalate to ECHS IT / CERT-In.</li>
+<li><b>Recover on same-day duplicates</b> (71 groups) — confirm which submissions were paid and reclaim the surplus.</li>
+<li><b>Physically verify the top chronic claimants</b> (3,135 cards ≥3 claims) — discharge-summary sampling.</li>
+<li><b>Audit the top-deduction hospital logins</b> (392 logins &gt;25% deduction) — empanelment + package-rate review.</li>
+<li><b>Reject invalid hospital IDs at intake</b> (23,959 claims, ₹1,729.34 Cr) — block NULL/phone-like IDs.</li>
+</ol></div>
+<div class="section"><div class="sec"><table class="sec-h"><tr><td class="sec-h-l"><div class="sec-kick">How the analysis works</div><div class="sec-title">Parameters &amp; Methodology</div></td><td class="sec-h-r"></td></tr></table></div>
+<p class="lead"><b>Data.</b> High-value claims (gross claimed &gt; ₹5 lakh) over the last five years,
+joined from <b>claim_intimation</b> and <b>claim_submission</b> on the intimation ID. Regional figures use the
+pre-aggregated <b>settlement_stat</b> table.</p>
+<p><b>Claim pipeline.</b> A claim flows: intimation (admission notified) → submission (hospital bills the gross
+amount) → UTI audit (an approved amount is set; the balance is the <b>deduction</b>) → settlement. A 100%
+deduction means the audit approved nothing on a multi-lakh bill.</p>
+<div class="tcap">Table P.1 — Parameters &amp; definitions</div>
+<table class="dt"><colgroup><col style="width:26%"/><col style="width:74%"/></colgroup><thead><tr><th>Parameter</th><th>Definition / threshold</th></tr></thead><tbody>
+<tr><td><b>High-value claim</b></td><td>Gross claimed amount &gt; ₹5,00,000 for a single admission</td></tr>
+<tr><td><b>Deduction %</b></td><td>(gross claimed − UTI approved) / gross claimed × 100</td></tr>
+<tr><td><b>Chronic repeat claimant</b></td><td>One beneficiary card with ≥ 3 high-value claims</td></tr>
+<tr><td><b>Single-hospital lock-in</b></td><td>Share of a card's high-value claims filed at one hospital login</td></tr>
+<tr><td><b>Bulk injection (tiers)</b></td><td>Same-day intimations per card: &gt;300 = system compromise; 100–300 = account abuse; 50–100 = watch</td></tr>
+<tr><td><b>Anomalous hospital ID</b></td><td>NULL, −1/0 placeholder, or a numeric/phone-like value (not a real login)</td></tr>
+<tr><td><b>Total Financial Exposure</b></td><td>Sum of gross claimed on flagged claims (approximate; recovery set at audit)</td></tr>
+</tbody></table>
+<div class="kf-h">Composite risk score — component weights (0–100, no ML)</div>
+<p>Bands: <span style="color:#c0392b;font-weight:700">CRITICAL</span> ≥ 70, <span style="color:#d4680a;font-weight:700">HIGH</span> 45–69, <span style="color:#7f8c8d;font-weight:700">MEDIUM</span> &lt; 45. Each score is a plain weighted sum of normalised signals — fully reconstructable from the source rows.</p>
+<div class="tcap">Claim-level score</div><table class="dt"><colgroup><col style="width:74%"/><col style="width:26%"/></colgroup><thead><tr><th>Component</th><th>Weight</th></tr></thead><tbody>
+<tr><td>Deduction</td><td class="num">35</td></tr>
+<tr><td>Magnitude</td><td class="num">25</td></tr>
+<tr><td>Full Deduction</td><td class="num">15</td></tr>
+<tr><td>Same Day Duplicate</td><td class="num">15</td></tr>
+<tr><td>Anomalous Hospital</td><td class="num">10</td></tr>
+</tbody></table>
+<div class="tcap">Hospital-level score</div><table class="dt"><colgroup><col style="width:74%"/><col style="width:26%"/></colgroup><thead><tr><th>Component</th><th>Weight</th></tr></thead><tbody>
+<tr><td>Avg Deduction</td><td class="num">40</td></tr>
+<tr><td>Absolute Deducted</td><td class="num">30</td></tr>
+<tr><td>Volume</td><td class="num">15</td></tr>
+<tr><td>Full Deduction Share</td><td class="num">15</td></tr>
+</tbody></table>
+<div class="tcap">Claimant-level score</div><table class="dt"><colgroup><col style="width:74%"/><col style="width:26%"/></colgroup><thead><tr><th>Component</th><th>Weight</th></tr></thead><tbody>
+<tr><td>Volume</td><td class="num">35</td></tr>
+<tr><td>Single Hospital Lockin</td><td class="num">25</td></tr>
+<tr><td>Total Claimed</td><td class="num">25</td></tr>
+<tr><td>Bulk Injection</td><td class="num">15</td></tr>
+</tbody></table>
+</div>
+<div class="section"><div class="sec"><table class="sec-h"><tr><td class="sec-h-l"><div class="sec-title">Limitations &amp; Assumptions</div></td><td class="sec-h-r"></td></tr></table></div>
+<div class="callout">
+<p style="margin-bottom:6px">• <b>Red flags, not verdicts.</b> Every item is an automated investigative lead, not a confirmed finding. A qualified auditor must verify each case before any action.</p>
+<p style="margin-bottom:6px">• <b>Deduction is not fraud.</b> A high deduction can reflect a legitimate package ceiling, a coding error, or incomplete documentation — it flags where billed value was removed, not why.</p>
+<p style="margin-bottom:6px">• <b>Login codes are identifiers.</b> Hospital login codes (e.g. parkhosg, pol.3325) are used as identifiers only; this report does not assert their real-world hospital identity.</p>
+<p style="margin-bottom:6px">• <b>Data quality.</b> Findings depend on the accuracy of the intimation/submission tables and the UTI deduction codes; systemic gaps (e.g. missing hospital IDs) can both create and hide signals.</p>
+<p style="margin-bottom:6px">• <b>Scope.</b> Analysis covers the last five years only; older claims are out of scope by design.</p>
+<p style="margin:0"><b>ALL CASES REQUIRE VERIFICATION BY QUALIFIED AUDITORS BEFORE ANY ACTION IS TAKEN.</b></p>
+</div></div>
+<div class="section"><div class="sec"><table class="sec-h"><tr><td class="sec-h-l"><div class="sec-kick">Q13 · data-derived</div><div class="sec-title">Key Fraud Signals</div></td><td class="sec-h-r">Derived directly from the last-5-year scan; risk band reflects the composite score</td></tr></table></div>
+<table class="dt"><colgroup><col style="width:5%"/><col style="width:26%"/><col style="width:55%"/><col style="width:14%"/></colgroup><thead><tr><th>#</th><th>Signal</th><th>Finding</th><th>Risk</th></tr></thead><tbody>
+<tr><td>1</td><td><b>Largest single high-value claim</b></td><td>₹99.48 L at hos.3651 (HEM JOSHI); 100.0% deducted.</td><td><span style="color:#c0392b;font-weight:700">CRITICAL</span></td></tr>
+<tr><td>2</td><td><b>Highest hospital deduction rate</b></td><td>pol.3325: 74.34% avg deduction on 74 high-value claims.</td><td><span style="color:#c0392b;font-weight:700">CRITICAL</span></td></tr>
+<tr><td>3</td><td><b>Largest absolute hospital deduction</b></td><td>parkhosg: ₹64.43 Cr deducted across 2,399 claims.</td><td><span style="color:#d4680a;font-weight:700">HIGH</span></td></tr>
+<tr><td>4</td><td><b>100% deduction claims</b></td><td>9,717 high-value claims approved at ₹0 — billing beyond the package ceiling.</td><td><span style="color:#d4680a;font-weight:700">HIGH</span></td></tr>
+<tr><td>5</td><td><b>Same-day duplicate billing</b></td><td>BHISHAM DEO SHUKLA (card CH000003881057): 2 identical ₹32.73 L claims on 2022-11-11.</td><td><span style="color:#c0392b;font-weight:700">CRITICAL</span></td></tr>
+<tr><td>6</td><td><b>Chronic repeat claimant</b></td><td>BHUPAL SINGH (card 000001724273): 117 HV claims, ₹7.13 Cr exposure, 86% at fortis@D1.</td><td><span style="color:#c0392b;font-weight:700">CRITICAL</span></td></tr>
+<tr><td>7</td><td><b>Extreme bulk claim injection</b></td><td>GURJIT SINGH: 546 intimation IDs in one day at p.fatesahi (SYSTEM COMPROMISE).</td><td><span style="color:#c0392b;font-weight:700">CRITICAL</span></td></tr>
+<tr><td>8</td><td><b>Anomalous / missing hospital IDs</b></td><td>23,959 high-value claims (₹1,729.34 Cr) carry NULL or phone-like hospital IDs — probable ghost admissions.</td><td><span style="color:#d4680a;font-weight:700">HIGH</span></td></tr>
+</tbody></table></div>
+<div class="section"><div class="sec"><table class="sec-h"><tr><td class="sec-h-l"><div class="sec-kick">Representative flagged cases</div><div class="sec-title">Case Studies</div></td><td class="sec-h-r">Drawn directly from the data; each is a lead for verification, not a verdict</td></tr></table></div>
+<div class="case"><div class="case-h">Case 1 — Chronic Repeat Claimant</div><table class="facts"><tr><td class="k">Beneficiary</td><td>BHUPAL SINGH (card 000001724273)</td></tr><tr><td class="k">Pattern</td><td>117 high-value claims; 86% at one login (fortis@D1)</td></tr><tr><td class="k">Exposure</td><td>₹7.13 Cr claimed / ₹6.73 Cr approved (5.5% deducted)</td></tr><tr><td class="k">Window</td><td>2021-10-05 to 2026-03-20 (~54 months; on average one admission every 14 days)</td></tr></table><p>BHUPAL SINGH filed <b>117 separate high-value claims</b> in about 54 months — on average one admission every <b>14 days</b>. The low 5.5% deduction means most claims pass audit, so the test is documentary: either a genuine chronic condition needing case management, or manufactured admission episodes generating a fresh base fee each time.</p><p class="action"><b>Action:</b> pull discharge summaries for a 20-claim sample and reconcile admission dates / ICU notes (14 days).</p></div>
+<div class="case"><div class="case-h">Case 2 — Ghost-Hospital Repeat Claimant</div><table class="facts"><tr><td class="k">Beneficiary</td><td>AJAYA KUMAR NAYAK (card 000005455660)</td></tr><tr><td class="k">Pattern</td><td>45 high-value claims; primary hospital ID = NULL (untraceable)</td></tr><tr><td class="k">Exposure</td><td>₹5.96 Cr claimed (28.9% deducted)</td></tr></table><p>Every one of AJAYA KUMAR NAYAK's 45 high-value claims (₹5.96 Cr) carries no traceable hospital ID — a classic <b>ghost-admission</b> pattern; the partial deduction shows the system flags but does not fully reject them.</p><p class="action"><b>Action:</b> trace the servicing facility from settlement/bank records; if none exists, treat as fabricated (30 days).</p></div>
+<div class="case"><div class="case-h">Case 3 — Same-Day Duplicate Billing</div><table class="facts"><tr><td class="k">Beneficiary</td><td>BHISHAM DEO SHUKLA (card CH000003881057)</td></tr><tr><td class="k">Duplicate</td><td>2 identical ₹32.73 L claims on 2022-11-11 at 8983336860</td></tr><tr><td class="k">Intimation IDs</td><td>23367707, 23367744</td></tr></table><p>The same card, admission date and amount (₹32.73 L) were submitted under 2 different intimation IDs — the textbook signature of duplicate billing to collect reimbursement more than once.</p><p class="action"><b>Action:</b> confirm whether more than one submission was paid, recover the surplus, sweep the login for other duplicates (7 days).</p></div>
+<div class="case"><div class="case-h">Case 4 — Possible Card-ID Manipulation</div><table class="facts"><tr><td class="k">Beneficiary</td><td>AMRIT LAL CHADHA</td></tr><tr><td class="k">Two cards</td><td>DL1000004517957 &nbsp;vs&nbsp; DL2000004517957 (differ by one character)</td></tr><tr><td class="k">Combined</td><td>7 high-value claims, ₹2.00 Cr, at p.delhicnt</td></tr></table><p>The same beneficiary name appears on two card numbers that differ by a single character (<b>DL1000004517957</b> vs <b>DL2000004517957</b>). This can indicate duplicate card issuance / card-ID manipulation used to split a fraud trail — or, less likely, two distinct people sharing a common name. It is a lead, not a conclusion.</p><p class="action"><b>Action:</b> verify both cards against the service record — one pensioner or two? (immediate).</p></div>
+<div class="case"><div class="case-h">Case 5 — Extreme Bulk Claim Injection</div><table class="facts"><tr><td class="k">Beneficiary</td><td>GURJIT SINGH</td></tr><tr><td class="k">Event</td><td>546 intimation IDs in ONE day (2022-08-04) at p.fatesahi</td></tr><tr><td class="k">ID range</td><td>21939246 – 21939907  (near-consecutive)</td></tr><tr><td class="k">Tier</td><td>SYSTEM COMPROMISE</td></tr></table><p><b>546 claim-intimation records created for one card on a single day</b> is far beyond manual web-portal entry. The near-consecutive ID range is the signature of programmatic batch insertion — portal credential compromise or insider database access, not ordinary claim fraud.</p><p class="action"><b>Action:</b> obtain portal access logs (IP/session/timestamps) for that date, suspend the login, escalate to ECHS IT / CERT-In (immediate).</p></div>
+</div>
+<div class="section"><div class="sec"><table class="sec-h"><tr><td class="sec-h-l"><div class="sec-kick">Q13a · Claim-level</div><div class="sec-title">Top High-Value Individual Claims</div></td><td class="sec-h-r">Ranked by gross claimed (exposure). Ded% = (claimed − approved) / claimed</td></tr></table></div>
+<div class="tcap">Table Q13a.1 — Top 30 high-value claims</div>
+<table class="dt"><colgroup><col style="width:13%"/><col style="width:23%"/><col style="width:14%"/><col style="width:12%"/><col style="width:20%"/><col style="width:11%"/><col style="width:7%"/></colgroup><thead><tr><th>Risk</th><th>Beneficiary</th><th>Hospital</th><th>Admission</th><th>Diagnosis</th><th>Exposure</th><th>Ded%</th></tr></thead><tbody>
+<tr><td><span style="color:#c0392b;font-weight:700">CRITICAL</span> <span style="color:#555">74.9</span></td><td>HEM JOSHI</td><td>hos.3651</td><td>2024-08-22</td><td>chest cengestion and fever si…</td><td class="num">₹99.48 L</td><td><span class="red">100.0</span></td></tr>
+<tr><td><span style="color:#c0392b;font-weight:700">CRITICAL</span> <span style="color:#555">81.7</span></td><td>SURENDRA SINGH</td><td>6206305629</td><td>2023-04-06</td><td>medical bill calaim</td><td class="num">₹86.88 L</td><td><span class="red">100.0</span></td></tr>
+<tr><td><span style="color:#d4680a;font-weight:700">HIGH</span> <span style="color:#555">68.5</span></td><td>HARISH KUMAR SHARMA</td><td>pol.1928</td><td>2023-03-17</td><td>RIGHT SIDED INTRACEREBRAL BLE…</td><td class="num">₹74.14 L</td><td><span class="red">100.0</span></td></tr>
+<tr><td><span style="color:#d4680a;font-weight:700">HIGH</span> <span style="color:#555">68.3</span></td><td>ROHTASH KUMAR</td><td>metro</td><td>2023-07-05</td><td>SUDDEN LOC</td><td class="num">₹73.32 L</td><td><span class="red">100.0</span></td></tr>
+<tr><td><span style="color:#d4680a;font-weight:700">HIGH</span> <span style="color:#555">66.8</span></td><td>AMRIT LAL CHADHA</td><td>p.delhicnt</td><td>2023-04-27</td><td>LRTI , COPD ,OSA ,DM ,AF </td><td class="num">₹67.16 L</td><td><span class="red">100.0</span></td></tr>
+<tr><td><span style="color:#d4680a;font-weight:700">HIGH</span> <span style="color:#555">66.6</span></td><td>RAMESH NAGPAL</td><td>p.lodhird1</td><td>2025-03-22</td><td>ACUTE ISCHEMIC STROKE</td><td class="num">₹66.53 L</td><td><span class="red">100.0</span></td></tr>
+<tr><td><span style="color:#c0392b;font-weight:700">CRITICAL</span> <span style="color:#555">76.4</span></td><td>PAWAN KUMAR</td><td>NULL</td><td>2025-10-18</td><td>CASE OF DIFFUSE LARGE B-CELL …</td><td class="num">₹65.48 L</td><td><span class="red">100.0</span></td></tr>
+<tr><td><span style="color:#7f8c8d;font-weight:700">MEDIUM</span> <span style="color:#555">37.2</span></td><td>NARESH KUMAR BUDHWAR</td><td>p.rohtak</td><td>2023-06-29</td><td>Interstitial lung disease wit…</td><td class="num">₹63.67 L</td><td>60.73</td></tr>
+<tr><td><span style="color:#d4680a;font-weight:700">HIGH</span> <span style="color:#555">65.9</span></td><td>ARUN KUMAR SHOREY</td><td>p.gurgaon</td><td>2023-11-12</td><td>LRTI WITH RESPIRATORY FAILURE…</td><td class="num">₹63.64 L</td><td><span class="red">100.0</span></td></tr>
+<tr><td><span style="color:#c0392b;font-weight:700">CRITICAL</span> <span style="color:#555">75.6</span></td><td>NIRANJAN DAS</td><td>8327741223</td><td>2025-07-18</td><td>MEDICINE</td><td class="num">₹62.24 L</td><td><span class="red">100.0</span></td></tr>
+<tr><td><span style="color:#c0392b;font-weight:700">CRITICAL</span> <span style="color:#555">74.5</span></td><td>APURBA MAITY</td><td>9757020120</td><td>2025-12-03</td><td>Treatment for provisional dia…</td><td class="num">₹58.11 L</td><td><span class="red">100.0</span></td></tr>
+<tr><td><span style="color:#c0392b;font-weight:700">CRITICAL</span> <span style="color:#555">74.5</span></td><td>OM SINGH</td><td>NULL</td><td>2025-01-06</td><td>EARLY RELAPSED DLBCL</td><td class="num">₹58.10 L</td><td><span class="red">100.0</span></td></tr>
+<tr><td><span style="color:#7f8c8d;font-weight:700">MEDIUM</span> <span style="color:#555">40.9</span></td><td>RAJARAM RAJA SANJAY</td><td>p.chennai</td><td>2024-09-10</td><td>ACUTE PULMONARY  EDEMA  ACS A…</td><td class="num">₹56.21 L</td><td>76.77</td></tr>
+<tr><td><span style="color:#d4680a;font-weight:700">HIGH</span> <span style="color:#555">64.0</span></td><td>SURESH CHANDRA UPADHYAY</td><td>hos.4364</td><td>2024-07-17</td><td>Lower Respiratory Tract Infec…</td><td class="num">₹55.86 L</td><td><span class="red">100.0</span></td></tr>
+<tr><td><span style="color:#d4680a;font-weight:700">HIGH</span> <span style="color:#555">63.9</span></td><td>M S GANGA RAO</td><td>p.adolfp</td><td>2023-04-07</td><td></td><td class="num">₹55.68 L</td><td><span class="red">100.0</span></td></tr>
+<tr><td><span style="color:#d4680a;font-weight:700">HIGH</span> <span style="color:#555">63.8</span></td><td>PREM SHANKAR TEWARI</td><td>pol.3341</td><td>2023-09-24</td><td>SEPTIC SHOCK, DECOMPENSATED C…</td><td class="num">₹55.30 L</td><td><span class="red">100.0</span></td></tr>
+<tr><td><span style="color:#d4680a;font-weight:700">HIGH</span> <span style="color:#555">63.7</span></td><td>OMKAR SINGH</td><td>metro</td><td>2023-05-29</td><td>sudden onset of severe headac…</td><td class="num">₹54.84 L</td><td><span class="red">100.0</span></td></tr>
+<tr><td><span style="color:#d4680a;font-weight:700">HIGH</span> <span style="color:#555">63.4</span></td><td>GYAN BAHADUR CHHETRI</td><td>hos.5750</td><td>2025-05-15</td><td>SUSPECTED HYPOXIC BRAIN  INJU…</td><td class="num">₹53.79 L</td><td><span class="red">100.0</span></td></tr>
+<tr><td><span style="color:#d4680a;font-weight:700">HIGH</span> <span style="color:#555">63.4</span></td><td>SURYA KANT</td><td>metro</td><td>2025-10-13</td><td>SEVER COUGH AND COLD,WEIGHT L…</td><td class="num">₹53.74 L</td><td><span class="red">100.0</span></td></tr>
+<tr><td><span style="color:#7f8c8d;font-weight:700">MEDIUM</span> <span style="color:#555">32.1</span></td><td>M RAMESH</td><td>p.secundm</td><td>2022-01-09</td><td></td><td class="num">₹53.61 L</td><td>53.37</td></tr>
+<tr><td><span style="color:#d4680a;font-weight:700">HIGH</span> <span style="color:#555">63.2</span></td><td>BRAJ NARAYAN SINGH</td><td>medantae</td><td>2023-03-18</td><td>Fever under evaluation.</td><td class="num">₹52.63 L</td><td><span class="red">100.0</span></td></tr>
+<tr><td><span style="color:#d4680a;font-weight:700">HIGH</span> <span style="color:#555">63.1</span></td><td>PARMOD</td><td>metro</td><td>2024-05-28</td><td>high grade fever</td><td class="num">₹52.54 L</td><td><span class="red">100.0</span></td></tr>
+<tr><td><span style="color:#d4680a;font-weight:700">HIGH</span> <span style="color:#555">63.1</span></td><td>SITA RAM VERMA</td><td>vhasha16</td><td>2022-10-14</td><td>AS PER ER PERSCRIPTION</td><td class="num">₹52.21 L</td><td><span class="red">100.0</span></td></tr>
+<tr><td><span style="color:#d4680a;font-weight:700">HIGH</span> <span style="color:#555">62.9</span></td><td>YOGESH KUMAR</td><td>hos.4245</td><td>2025-11-01</td><td>MEDICAL MANAGEMENT</td><td class="num">₹51.41 L</td><td><span class="red">100.0</span></td></tr>
+<tr><td><span style="color:#d4680a;font-weight:700">HIGH</span> <span style="color:#555">62.6</span></td><td>VEER SINGH GANGWAR</td><td>medantae</td><td>2023-10-01</td><td>ARDS/SEPSIS/SEPTIC SHOCK.</td><td class="num">₹50.48 L</td><td><span class="red">100.0</span></td></tr>
+<tr><td><span style="color:#d4680a;font-weight:700">HIGH</span> <span style="color:#555">62.4</span></td><td>PAWAN KUMAR</td><td>yhgnech2</td><td>2025-01-14</td><td>C/O SUDDEN ONSET RIGHT SIDE W…</td><td class="num">₹49.56 L</td><td><span class="red">100.0</span></td></tr>
+<tr><td><span style="color:#d4680a;font-weight:700">HIGH</span> <span style="color:#555">62.1</span></td><td>RAM SEWAK</td><td>p.agra1</td><td>2025-06-09</td><td></td><td class="num">₹48.58 L</td><td><span class="red">100.0</span></td></tr>
+<tr><td><span style="color:#d4680a;font-weight:700">HIGH</span> <span style="color:#555">62.1</span></td><td>SHIV DUTT</td><td>shrcechs</td><td>2023-07-20</td><td>CLL</td><td class="num">₹48.38 L</td><td><span class="red">100.0</span></td></tr>
+<tr><td><span style="color:#7f8c8d;font-weight:700">MEDIUM</span> <span style="color:#555">18.3</span></td><td>ATUL SEHGAL</td><td>p.secundm</td><td>2023-01-07</td><td></td><td class="num">₹48.27 L</td><td>17.91</td></tr>
+<tr><td><span style="color:#c0392b;font-weight:700">CRITICAL</span> <span style="color:#555">72.0</span></td><td>VIJAI BAHADUR YADAVA</td><td>NULL</td><td>2025-06-07</td><td>FOR ALLOGENIC HAPLO-IDENTICAL…</td><td class="num">₹48.11 L</td><td><span class="red">100.0</span></td></tr>
+</tbody></table>
+<h2>Ghost &amp; anomalous-hospital claims</h2>
+<p>High-value claims whose hospital ID is missing (NULL), a placeholder, or a phone number — i.e. no traceable provider. These are prime ghost-admission leads.</p>
+<div class="tcap">Table Q13a.2 — Top ghost / anomalous-hospital claims</div>
+<table class="dt"><colgroup><col style="width:26%"/><col style="width:18%"/><col style="width:16%"/><col style="width:15%"/><col style="width:16%"/><col style="width:9%"/></colgroup><thead><tr><th>Beneficiary</th><th>Hospital ID</th><th>Type</th><th>Admission</th><th>Exposure</th><th>Ded%</th></tr></thead><tbody>
+<tr><td>SURENDRA SINGH</td><td>6206305629</td><td>Phone-like</td><td>2023-04-06</td><td class="num">₹86.88 L</td><td>100.0</td></tr>
+<tr><td>PAWAN KUMAR</td><td>NULL</td><td>NULL (missing)</td><td>2025-10-18</td><td class="num">₹65.48 L</td><td>100.0</td></tr>
+<tr><td>NIRANJAN DAS</td><td>8327741223</td><td>Phone-like</td><td>2025-07-18</td><td class="num">₹62.24 L</td><td>100.0</td></tr>
+<tr><td>APURBA MAITY</td><td>9757020120</td><td>Phone-like</td><td>2025-12-03</td><td class="num">₹58.11 L</td><td>100.0</td></tr>
+<tr><td>OM SINGH</td><td>NULL</td><td>NULL (missing)</td><td>2025-01-06</td><td class="num">₹58.10 L</td><td>100.0</td></tr>
+<tr><td>VIJAI BAHADUR YADAVA</td><td>NULL</td><td>NULL (missing)</td><td>2025-06-07</td><td class="num">₹48.11 L</td><td>100.0</td></tr>
+<tr><td>SUMER SINGH</td><td>NULL</td><td>NULL (missing)</td><td>2024-02-08</td><td class="num">₹45.87 L</td><td>100.0</td></tr>
+<tr><td>SHAIK RIYAJ BASHA</td><td>NULL</td><td>NULL (missing)</td><td>2025-08-21</td><td class="num">₹45.16 L</td><td>100.0</td></tr>
+<tr><td>GORE DEVIDAS BHIKAJI</td><td>NULL</td><td>NULL (missing)</td><td>2023-05-18</td><td class="num">₹44.92 L</td><td>100.0</td></tr>
+<tr><td>TIBURCIO MENEZES</td><td>7039463672</td><td>Phone-like</td><td>2023-12-06</td><td class="num">₹43.36 L</td><td>100.0</td></tr>
+<tr><td>GAJENDER SINGH TOMAR</td><td>NULL</td><td>NULL (missing)</td><td>2025-02-28</td><td class="num">₹41.35 L</td><td>100.0</td></tr>
+<tr><td>HEM CHANDRA</td><td>NULL</td><td>NULL (missing)</td><td>2024-04-27</td><td class="num">₹40.92 L</td><td>100.0</td></tr>
+</tbody></table>
+</div>
+<div class="section"><div class="sec"><table class="sec-h"><tr><td class="sec-h-l"><div class="sec-kick">Q13b · Provider-level</div><div class="sec-title">Hospital Risk Scorecard — Top 20</div></td><td class="sec-h-r">Logins with ≥10 high-value claims and avg deduction &gt; 25%, ranked by absolute deduction</td></tr></table></div>
+<div class="tcap">Table Q13b.1 — Top 20 hospital logins by absolute deduction</div>
+<table class="dt"><colgroup><col style="width:6%"/><col style="width:13%"/><col style="width:18%"/><col style="width:11%"/><col style="width:13%"/><col style="width:13%"/><col style="width:10%"/><col style="width:16%"/></colgroup><thead><tr><th>Rank</th><th>Login</th><th>HV Claims</th><th>Exposure</th><th>Deducted</th><th>Avg Ded%</th><th>100% Ded</th><th>Risk</th></tr></thead><tbody>
+<tr><td>1</td><td><b>parkhosg</b></td><td class="num">2,399</td><td>₹186.91 Cr</td><td class="num">₹64.43 Cr</td><td>34.47</td><td>224</td><td><span style="color:#d4680a;font-weight:700">HIGH</span> <span style="color:#555">60.2</span></td></tr>
+<tr><td>2</td><td><b>metro</b></td><td class="num">892</td><td>₹80.90 Cr</td><td class="num">₹42.12 Cr</td><td><span class="red">52.07</span></td><td>242</td><td><span style="color:#d4680a;font-weight:700">HIGH</span> <span style="color:#555">57.6</span></td></tr>
+<tr><td>3</td><td><b>metrc2</b></td><td class="num">1,317</td><td>₹103.19 Cr</td><td class="num">₹35.41 Cr</td><td>34.32</td><td>116</td><td><span style="color:#d4680a;font-weight:700">HIGH</span> <span style="color:#555">45.4</span></td></tr>
+<tr><td>4</td><td><b>medantae</b></td><td class="num">1,017</td><td>₹94.52 Cr</td><td class="num">₹33.32 Cr</td><td>35.25</td><td>136</td><td><span style="color:#d4680a;font-weight:700">HIGH</span> <span style="color:#555">45.0</span></td></tr>
+<tr><td>5</td><td><b>met13pvg</b></td><td class="num">1,449</td><td>₹114.24 Cr</td><td class="num">₹33.24 Cr</td><td>29.1</td><td>121</td><td><span style="color:#7f8c8d;font-weight:700">MEDIUM</span> <span style="color:#555">42.4</span></td></tr>
+<tr><td>6</td><td><b>yhgnech2</b></td><td class="num">612</td><td>₹53.15 Cr</td><td class="num">₹22.98 Cr</td><td>43.23</td><td>79</td><td><span style="color:#7f8c8d;font-weight:700">MEDIUM</span> <span style="color:#555">42.3</span></td></tr>
+<tr><td>7</td><td><b>ivyhosp</b></td><td class="num">867</td><td>₹72.82 Cr</td><td class="num">₹22.13 Cr</td><td>30.38</td><td>103</td><td><span style="color:#7f8c8d;font-weight:700">MEDIUM</span> <span style="color:#555">37.3</span></td></tr>
+<tr><td>8</td><td><b>MHCIPV</b></td><td class="num">558</td><td>₹49.55 Cr</td><td class="num">₹21.17 Cr</td><td>42.72</td><td>106</td><td><span style="color:#7f8c8d;font-weight:700">MEDIUM</span> <span style="color:#555">42.0</span></td></tr>
+<tr><td>9</td><td><b>vhasha16</b></td><td class="num">536</td><td>₹52.71 Cr</td><td class="num">₹20.04 Cr</td><td>38.02</td><td>98</td><td><span style="color:#7f8c8d;font-weight:700">MEDIUM</span> <span style="color:#555">39.4</span></td></tr>
+<tr><td>10</td><td><b>hos.4245</b></td><td class="num">341</td><td>₹29.88 Cr</td><td class="num">₹15.41 Cr</td><td><span class="red">51.57</span></td><td>73</td><td><span style="color:#7f8c8d;font-weight:700">MEDIUM</span> <span style="color:#555">42.3</span></td></tr>
+<tr><td>11</td><td><b>jaypeerc2</b></td><td class="num">388</td><td>₹37.15 Cr</td><td class="num">₹15.28 Cr</td><td>41.13</td><td>85</td><td><span style="color:#7f8c8d;font-weight:700">MEDIUM</span> <span style="color:#555">38.3</span></td></tr>
+<tr><td>12</td><td><b>healing</b></td><td class="num">875</td><td>₹55.93 Cr</td><td class="num">₹14.87 Cr</td><td>26.59</td><td>50</td><td><span style="color:#7f8c8d;font-weight:700">MEDIUM</span> <span style="color:#555">31.5</span></td></tr>
+<tr><td>13</td><td><b>parashos</b></td><td class="num">327</td><td>₹29.92 Cr</td><td class="num">₹14.52 Cr</td><td>48.51</td><td>89</td><td><span style="color:#7f8c8d;font-weight:700">MEDIUM</span> <span style="color:#555">41.4</span></td></tr>
+<tr><td>14</td><td><b>hos.2256</b></td><td class="num">421</td><td>₹36.61 Cr</td><td class="num">₹14.09 Cr</td><td>38.5</td><td>82</td><td><span style="color:#7f8c8d;font-weight:700">MEDIUM</span> <span style="color:#555">36.5</span></td></tr>
+<tr><td>15</td><td><b>sksoni</b></td><td class="num">589</td><td>₹43.87 Cr</td><td class="num">₹13.70 Cr</td><td>31.24</td><td>95</td><td><span style="color:#7f8c8d;font-weight:700">MEDIUM</span> <span style="color:#555">33.6</span></td></tr>
+<tr><td>16</td><td><b>hos.2179</b></td><td class="num">740</td><td>₹50.31 Cr</td><td class="num">₹13.66 Cr</td><td>27.15</td><td>42</td><td><span style="color:#7f8c8d;font-weight:700">MEDIUM</span> <span style="color:#555">30.8</span></td></tr>
+<tr><td>17</td><td><b>artemis1</b></td><td class="num">521</td><td>₹43.77 Cr</td><td class="num">₹13.47 Cr</td><td>30.78</td><td>75</td><td><span style="color:#7f8c8d;font-weight:700">MEDIUM</span> <span style="color:#555">32.8</span></td></tr>
+<tr><td>18</td><td><b>emc51296</b></td><td class="num">479</td><td>₹35.92 Cr</td><td class="num">₹12.19 Cr</td><td>33.93</td><td>76</td><td><span style="color:#7f8c8d;font-weight:700">MEDIUM</span> <span style="color:#555">33.5</span></td></tr>
+<tr><td>19</td><td><b>ivyasr@jal</b></td><td class="num">448</td><td>₹37.63 Cr</td><td class="num">₹10.69 Cr</td><td>28.41</td><td>40</td><td><span style="color:#7f8c8d;font-weight:700">MEDIUM</span> <span style="color:#555">29.4</span></td></tr>
+<tr><td>20</td><td><b>hos.4364</b></td><td class="num">165</td><td>₹17.59 Cr</td><td class="num">₹10.68 Cr</td><td><span class="red">60.72</span></td><td>62</td><td><span style="color:#7f8c8d;font-weight:700">MEDIUM</span> <span style="color:#555">44.8</span></td></tr>
+</tbody></table>
+<h2>Hospital deep-dives</h2>
+<div class="kf"><b>parkhosg</b> — 2,399 high-value claims, ₹186.91 Cr exposure, ₹64.43 Cr deducted (34.47% average), of which <b>224</b> were approved at ₹0. Beneficiaries with a 100% deduction here include SPS PANWAR (₹28.66 L), BHARAT SINGH (₹25.00 L), SATVIR SINGH (₹24.41 L), VIJAY KUMAR (₹22.29 L), BEH RAM SINGH (₹21.95 L), SOHAN LAL (₹19.20 L). Different beneficiaries at one login all hitting 100% deduction points to systematic billing above the package ceiling rather than isolated patient fraud.</div>
+<div class="kf"><b>metro</b> — 892 high-value claims, ₹80.90 Cr exposure, ₹42.12 Cr deducted (52.07% average), of which <b>242</b> were approved at ₹0. Beneficiaries with a 100% deduction here include ROHTASH KUMAR (₹73.32 L), OMKAR SINGH (₹54.84 L), SURYA KANT (₹53.74 L), PARMOD (₹52.54 L), TEJ RAM (₹47.32 L), NARANDER NATH SHARMA (₹45.98 L). Different beneficiaries at one login all hitting 100% deduction points to systematic billing above the package ceiling rather than isolated patient fraud.</div>
+<div class="kf"><b>metrc2</b> — 1,317 high-value claims, ₹103.19 Cr exposure, ₹35.41 Cr deducted (34.32% average), of which <b>116</b> were approved at ₹0. Beneficiaries with a 100% deduction here include DARWAN SINGH (₹33.79 L), ATTAR SINGH (₹31.44 L), CHANDER DHAR (₹28.22 L), BRAHMA CHANDRA (₹25.71 L), RAM ISHWAR BHAGAT (₹24.27 L), RAGHUVIR SINGH (₹23.92 L). Different beneficiaries at one login all hitting 100% deduction points to systematic billing above the package ceiling rather than isolated patient fraud.</div>
+<h2>ECHS polyclinic login pattern</h2>
+<div class="kf">Login codes of the form <b>p.</b> / <b>pol.</b> (ECHS polyclinics) carry 4,499 high-value claims with ₹237.10 Cr deducted at a 57.53% average — far above private-hospital norms. Highest-deduction polyclinic logins: p.giddalur (81.56%), pol.3341 (80.15%), p.kumba (76.96%), p.agra1 (75.19%), p.golconda (75.05%). Polyclinic credentials routing high-value IPD claims that are then almost entirely rejected suggests these internal channels are being used to bypass pre-authorisation controls.</div>
+</div>
+<div class="section"><div class="sec"><table class="sec-h"><tr><td class="sec-h-l"><div class="sec-kick">Q13c · Region-level</div><div class="sec-title">Regional Risk Distribution</div></td><td class="sec-h-r">From the pre-aggregated settlement statistics; a region-level proxy</td></tr></table></div>
+<div class="tcap">Table Q13c.1 — Regional claimed value and deduction rate (top 16 by exposure)</div>
+<table class="dt"><colgroup><col style="width:9%"/><col style="width:31%"/><col style="width:17%"/><col style="width:16%"/><col style="width:16%"/><col style="width:11%"/></colgroup><thead><tr><th>Region</th><th>ECHS Command</th><th>Claims</th><th>Exposure</th><th>Deducted</th><th>Ded%</th></tr></thead><tbody>
+<tr><td>1</td><td>NEW DELHI</td><td>2,477,067</td><td>₹5,259.84 Cr</td><td class="num">₹482.07 Cr</td><td>9.17</td></tr>
+<tr><td>9</td><td>PUNE</td><td>957,803</td><td>₹4,242.99 Cr</td><td class="num">₹280.18 Cr</td><td>6.6</td></tr>
+<tr><td>4</td><td>BANGALORE</td><td>1,398,702</td><td>₹3,639.80 Cr</td><td class="num">₹209.50 Cr</td><td>5.76</td></tr>
+<tr><td>8</td><td>JAIPUR</td><td>1,388,115</td><td>₹3,295.25 Cr</td><td class="num">₹554.97 Cr</td><td><span style="color:#d4680a;font-weight:700">16.84</span></td></tr>
+<tr><td>29</td><td>Region 29</td><td>1,919,597</td><td>₹3,033.42 Cr</td><td class="num">₹348.87 Cr</td><td>11.5</td></tr>
+<tr><td>27</td><td>Region 27</td><td>1,053,792</td><td>₹2,730.28 Cr</td><td class="num">₹305.53 Cr</td><td>11.19</td></tr>
+<tr><td>24</td><td>Region 24</td><td>659,799</td><td>₹2,015.48 Cr</td><td class="num">₹192.28 Cr</td><td>9.54</td></tr>
+<tr><td>30</td><td>Region 30</td><td>918,795</td><td>₹1,376.91 Cr</td><td class="num">₹125.07 Cr</td><td>9.08</td></tr>
+<tr><td>7</td><td>DEHRADUN</td><td>1,436,946</td><td>₹1,285.61 Cr</td><td class="num">₹87.53 Cr</td><td>6.81</td></tr>
+<tr><td>2</td><td>MUMBAI</td><td>1,944,603</td><td>₹1,199.17 Cr</td><td class="num">₹87.59 Cr</td><td>7.3</td></tr>
+<tr><td>3</td><td>KOLKATA</td><td>670,906</td><td>₹1,028.64 Cr</td><td class="num">₹143.27 Cr</td><td>13.93</td></tr>
+<tr><td>17</td><td>Region 17</td><td>646,784</td><td>₹859.70 Cr</td><td class="num">₹91.98 Cr</td><td>10.7</td></tr>
+<tr><td>6</td><td>CHENNAI</td><td>271,050</td><td>₹826.39 Cr</td><td class="num">₹155.41 Cr</td><td><span style="color:#d4680a;font-weight:700">18.81</span></td></tr>
+<tr><td>5</td><td>HYDERABAD</td><td>526,668</td><td>₹713.08 Cr</td><td class="num">₹87.80 Cr</td><td>12.31</td></tr>
+<tr><td>12</td><td>PATNA</td><td>350,304</td><td>₹685.19 Cr</td><td class="num">₹38.14 Cr</td><td>5.57</td></tr>
+<tr><td>15</td><td>Region 15</td><td>466,128</td><td>₹680.27 Cr</td><td class="num">₹54.79 Cr</td><td>8.05</td></tr>
+</tbody></table>
+<h2>Regional implications</h2>
+<p><b>CHENNAI</b> shows the highest deduction rate (18.81%) — the command where claim scrutiny removes the largest share of billed value. <b>NEW DELHI</b> carries the largest absolute exposure (₹5,259.84 Cr): a concentration of high-volume hospital logins makes it the biggest absolute leakage surface even at a moderate rate. High-deduction commands warrant a region-level audit of their top high-value hospitals.</p>
+</div>
+<div class="section"><div class="sec"><table class="sec-h"><tr><td class="sec-h-l"><div class="sec-kick">Q13d · Beneficiary-level</div><div class="sec-title">Chronic Repeat High-Value Claimants</div></td><td class="sec-h-r">Cards with ≥3 high-value claims, ranked by total exposure. Lock-in = share at a single login</td></tr></table></div>
+<div class="tcap">Table Q13d.1 — Top 20 chronic repeat claimants</div>
+<table class="dt"><colgroup><col style="width:12%"/><col style="width:19%"/><col style="width:16%"/><col style="width:8%"/><col style="width:12%"/><col style="width:12%"/><col style="width:13%"/><col style="width:8%"/></colgroup><thead><tr><th>Risk</th><th>Beneficiary</th><th>Card</th><th>Claims</th><th>Exposure</th><th>Deducted</th><th>Primary Hosp</th><th>Lock-in</th></tr></thead><tbody>
+<tr><td><span style="color:#c0392b;font-weight:700">CRITICAL</span> <span style="color:#555">81.6</span></td><td>BHUPAL SINGH</td><td>000001724273</td><td class="num">117</td><td>₹7.13 Cr</td><td class="num">₹0.39 Cr</td><td>fortis@D1</td><td>86%</td></tr>
+<tr><td><span style="color:#c0392b;font-weight:700">CRITICAL</span> <span style="color:#555">74.0</span></td><td>AJAYA KUMAR NAYAK</td><td>000005455660</td><td class="num">45</td><td>₹5.96 Cr</td><td class="num">₹1.72 Cr</td><td>NULL</td><td>100%</td></tr>
+<tr><td><span style="color:#d4680a;font-weight:700">HIGH</span> <span style="color:#555">65.5</span></td><td>PIARE LAL</td><td>000004046297</td><td class="num">49</td><td>₹5.55 Cr</td><td class="num">₹0.38 Cr</td><td>NULL</td><td>69%</td></tr>
+<tr><td><span style="color:#d4680a;font-weight:700">HIGH</span> <span style="color:#555">63.6</span></td><td>JOGINDER SINGH</td><td>000003916849</td><td class="num">72</td><td>₹4.21 Cr</td><td class="num">₹0.09 Cr</td><td>medantae</td><td>69%</td></tr>
+<tr><td><span style="color:#d4680a;font-weight:700">HIGH</span> <span style="color:#555">63.4</span></td><td>MALKIT SINGH</td><td>000006128034</td><td class="num">59</td><td>₹3.48 Cr</td><td class="num">₹0.00 Cr</td><td>FHLDH123</td><td>85%</td></tr>
+<tr><td><span style="color:#d4680a;font-weight:700">HIGH</span> <span style="color:#555">57.6</span></td><td>PUSHKAR SINGH JETHI</td><td>000004735826</td><td class="num">53</td><td>₹3.10 Cr</td><td class="num">₹0.02 Cr</td><td>medantae</td><td>70%</td></tr>
+<tr><td><span style="color:#d4680a;font-weight:700">HIGH</span> <span style="color:#555">60.5</span></td><td>KASHMIR SINGH</td><td>000003083761</td><td class="num">52</td><td>₹3.06 Cr</td><td class="num">₹0.00 Cr</td><td>echsfeha</td><td>83%</td></tr>
+<tr><td><span style="color:#d4680a;font-weight:700">HIGH</span> <span style="color:#555">58.3</span></td><td>KHIM SINGH</td><td>000002488287</td><td class="num">53</td><td>₹3.04 Cr</td><td class="num">₹0.07 Cr</td><td>msshshb1</td><td>74%</td></tr>
+<tr><td><span style="color:#d4680a;font-weight:700">HIGH</span> <span style="color:#555">61.0</span></td><td>PARAS RAM</td><td>000003100630</td><td class="num">52</td><td>₹2.93 Cr</td><td class="num">₹0.08 Cr</td><td>NULL</td><td>86%</td></tr>
+<tr><td><span style="color:#d4680a;font-weight:700">HIGH</span> <span style="color:#555">52.4</span></td><td>RAJ SINGH</td><td>000003881511</td><td class="num">43</td><td>₹2.56 Cr</td><td class="num">₹0.02 Cr</td><td>SMVDNSH</td><td>63%</td></tr>
+<tr><td><span style="color:#d4680a;font-weight:700">HIGH</span> <span style="color:#555">48.8</span></td><td>SATYAVIR  SINGH</td><td>000002571829</td><td class="num">38</td><td>₹2.49 Cr</td><td class="num">₹0.30 Cr</td><td>metroprt12</td><td>53%</td></tr>
+<tr><td><span style="color:#d4680a;font-weight:700">HIGH</span> <span style="color:#555">54.3</span></td><td>ROSHAN LAL</td><td>000006117161</td><td class="num">39</td><td>₹2.45 Cr</td><td class="num">₹0.37 Cr</td><td>INDUS01</td><td>74%</td></tr>
+<tr><td><span style="color:#d4680a;font-weight:700">HIGH</span> <span style="color:#555">57.6</span></td><td>ATMA SINGH</td><td>000004735685</td><td class="num">38</td><td>₹2.39 Cr</td><td class="num">₹0.07 Cr</td><td>capitol1</td><td>90%</td></tr>
+<tr><td><span style="color:#d4680a;font-weight:700">HIGH</span> <span style="color:#555">52.1</span></td><td>BHAJAN LAL</td><td>000006965080</td><td class="num">39</td><td>₹2.38 Cr</td><td class="num">₹0.00 Cr</td><td>capitol1</td><td>67%</td></tr>
+<tr><td><span style="color:#d4680a;font-weight:700">HIGH</span> <span style="color:#555">54.9</span></td><td>PITRAM SINGH</td><td>000005476164</td><td class="num">38</td><td>₹2.37 Cr</td><td class="num">₹0.02 Cr</td><td>sksoni</td><td>79%</td></tr>
+<tr><td><span style="color:#d4680a;font-weight:700">HIGH</span> <span style="color:#555">56.7</span></td><td>RAJINDER SINGH</td><td>000005778375</td><td class="num">40</td><td>₹2.35 Cr</td><td class="num">₹0.26 Cr</td><td>msshshb1</td><td>85%</td></tr>
+<tr><td><span style="color:#d4680a;font-weight:700">HIGH</span> <span style="color:#555">53.1</span></td><td>HARGOPAL</td><td>000004267450</td><td class="num">37</td><td>₹2.32 Cr</td><td class="num">₹0.20 Cr</td><td>guruhari</td><td>73%</td></tr>
+<tr><td><span style="color:#d4680a;font-weight:700">HIGH</span> <span style="color:#555">48.5</span></td><td>RAMESH CHAND</td><td>000004086189</td><td class="num">40</td><td>₹2.31 Cr</td><td class="num">₹0.00 Cr</td><td>NULL</td><td>52%</td></tr>
+<tr><td><span style="color:#d4680a;font-weight:700">HIGH</span> <span style="color:#555">52.4</span></td><td>KRISHAN PAL YADAV</td><td>000004356844</td><td class="num">32</td><td>₹2.29 Cr</td><td class="num">₹0.01 Cr</td><td>jaypeerc2</td><td>75%</td></tr>
+<tr><td><span style="color:#d4680a;font-weight:700">HIGH</span> <span style="color:#555">48.8</span></td><td>AMARJIT SINGH</td><td>000003397402</td><td class="num">37</td><td>₹2.25 Cr</td><td class="num">₹0.01 Cr</td><td>guruhari</td><td>57%</td></tr>
+</tbody></table>
+<h2>Single-hospital lock-in</h2>
+<p>Natural medical histories spread across providers. Near-perfect single-hospital concentration over dozens of high-value admissions is the strongest repeat-claimant signal — it points to a fixed beneficiary-hospital relationship that should be examined for any financial arrangement. Examples: MALKIT SINGH (59 claims, 85% at FHLDH123); KASHMIR SINGH (52 claims, 83% at echsfeha); RAJINDER SINGH (40 claims, 85% at msshshb1).</p>
+</div>
+<div class="section"><div class="sec"><table class="sec-h"><tr><td class="sec-h-l"><div class="sec-kick">Q13f · System-level</div><div class="sec-title">Extreme Bulk Claim Injection</div></td><td class="sec-h-r">Hundreds of intimation IDs for one card on one day. Tiers: &gt;300 = system compromise, 100–300 = account abuse, 50–100 = watch</td></tr></table></div>
+<div class="tcap">Table Q13f.1 — Bulk-injection events (same-day mass intimation)</div>
+<table class="dt"><colgroup><col style="width:20%"/><col style="width:17%"/><col style="width:13%"/><col style="width:12%"/><col style="width:10%"/><col style="width:18%"/><col style="width:10%"/></colgroup><thead><tr><th>Beneficiary</th><th>Card</th><th>Hospital</th><th>Date</th><th>Intim.</th><th>ID Range</th><th>Tier</th></tr></thead><tbody>
+<tr><td>GURJIT SINGH</td><td>CM000002580629</td><td>p.fatesahi</td><td>2022-08-04</td><td class="red">546</td><td>21939246–21939907</td><td><span style="color:#c0392b;font-weight:700">SYSTEM COMPROMISE</span></td></tr>
+<tr><td>P SHYAM SUNDER</td><td>MU000002699039</td><td>pol.1928</td><td>2024-09-14</td><td class="red">476</td><td>32661117–32661631</td><td><span style="color:#c0392b;font-weight:700">SYSTEM COMPROMISE</span></td></tr>
+<tr><td>NARENDRA SINGH</td><td>DL1000007590557</td><td>p.lodhird1</td><td>2024-12-12</td><td class="red">349</td><td>34229861–34230245</td><td><span style="color:#c0392b;font-weight:700">SYSTEM COMPROMISE</span></td></tr>
+<tr><td>RAPURUVENKATASUBBAI…</td><td>HY000000136855</td><td>p.nello1</td><td>2024-08-10</td><td class="red">330</td><td>32051504–32052554</td><td><span style="color:#c0392b;font-weight:700">SYSTEM COMPROMISE</span></td></tr>
+<tr><td>SHREE RAM GODIYALA</td><td>KL000003494970</td><td>nbnc2012</td><td>2026-02-26</td><td class="red">315</td><td>43103293–43103870</td><td><span style="color:#c0392b;font-weight:700">SYSTEM COMPROMISE</span></td></tr>
+<tr><td>JALESHWAR RAI</td><td>000009122940</td><td>p.chapra</td><td>2025-07-19</td><td class="red">257</td><td>38480768–38483104</td><td><span style="color:#d4680a;font-weight:700">ACCOUNT ABUSE</span></td></tr>
+<tr><td>GURDIAL SINGH</td><td>CM000006679942</td><td>hos.4458</td><td>2025-07-18</td><td class="red">176</td><td>38457875–38458066</td><td><span style="color:#d4680a;font-weight:700">ACCOUNT ABUSE</span></td></tr>
+<tr><td>SURENDER KUMAR DHIN…</td><td>DL1000005286568</td><td>p.shakurb</td><td>2025-08-04</td><td class="red">131</td><td>38796043–38797429</td><td><span style="color:#d4680a;font-weight:700">ACCOUNT ABUSE</span></td></tr>
+<tr><td>THOMAS MATHEW</td><td>TR000005523638</td><td>muthmed</td><td>2026-03-12</td><td class="red">108</td><td>43403614–43403782</td><td><span style="color:#d4680a;font-weight:700">ACCOUNT ABUSE</span></td></tr>
+<tr><td>KURIAN V M</td><td>TR000002099834</td><td>muthmed</td><td>2026-03-07</td><td class="red">84</td><td>43283816–43283906</td><td><span style="color:#7f8c8d;font-weight:700">WATCH</span></td></tr>
+<tr><td>RAVINDRA NATH PAL</td><td>LU000001767189</td><td>9453698544</td><td>2024-07-27</td><td class="red">82</td><td>31817295–31826023</td><td><span style="color:#7f8c8d;font-weight:700">WATCH</span></td></tr>
+<tr><td>JAGRUP SINGH</td><td>JM000004151522</td><td>p.palam</td><td>2021-10-27</td><td class="red">75</td><td>19043261–19043343</td><td><span style="color:#7f8c8d;font-weight:700">WATCH</span></td></tr>
+<tr><td>RAMBAHADUR SINGH</td><td>DL1000006342019</td><td>SMH@D1</td><td>2024-09-07</td><td class="red">74</td><td>32544983–32545161</td><td><span style="color:#7f8c8d;font-weight:700">WATCH</span></td></tr>
+<tr><td>MOHANAN P</td><td>KO000003204217</td><td>p.thrissur</td><td>2026-03-17</td><td class="red">72</td><td>43514670–43514832</td><td><span style="color:#7f8c8d;font-weight:700">WATCH</span></td></tr>
+<tr><td>THOMAS J</td><td>TR000003125639</td><td>p.mavelik</td><td>2024-05-09</td><td class="red">71</td><td>30491190–30491262</td><td><span style="color:#7f8c8d;font-weight:700">WATCH</span></td></tr>
+<tr><td>DOST MOHAMMED</td><td>000009227651</td><td>p.chapra</td><td>2025-07-18</td><td class="red">68</td><td>38460060–38460216</td><td><span style="color:#7f8c8d;font-weight:700">WATCH</span></td></tr>
+</tbody></table>
+<h2>Why this matters</h2>
+<p>The top event — <b>GURJIT SINGH</b> at <b>p.fatesahi</b> on 2022-08-04 — created <b>546 intimation IDs in a single day</b>, spanning IDs 21939246–21939907 (near-consecutive). Creating hundreds of records in one day is impossible through manual web-portal entry; near-consecutive ID ranges are the signature of programmatic batch insertion — portal credential compromise or insider database access, not ordinary claim fraud.</p>
+<p>These 19 events span <b>9 distinct card-prefix codes</b> (each encoding an issuing ECHS region, including Delhi, Mumbai, Hyderabad, Kerala) — so this is not a single compromised login but a multi-region pattern. Response: pull portal access logs (IP, session, timestamps) for these dates and escalate to ECHS IT / CERT-In.</p>
+</div>
+<div class="section"><div class="sec"><table class="sec-h"><tr><td class="sec-h-l"><div class="sec-title">Conclusions</div></td><td class="sec-h-r"></td></tr></table></div>
+<p class="lead">Across the last five years, <b>74,593 claims above ₹5 lakh</b>
+represent <b>₹5,630.76 Cr</b> of gross exposure, of which <b>₹1,785.08 Cr
+(31.7%)</b> was removed at audit — a deduction rate far above routine norms and evidence that
+high-value billing is systematically inflated.</p>
+<p>The single largest issue is <b>data integrity</b>: 23,959 high-value claims
+(₹1,729.34 Cr) carry no traceable hospital ID. Fraud then concentrates in three places —
+<b>providers</b> (a handful of logins and the ECHS-polyclinic channel drive most of the absolute deduction),
+<b>beneficiaries</b> (chronic claimants with extreme admission frequency and near-total single-hospital lock-in), and a
+<b>system-security</b> exposure (same-day bulk injection of hundreds of intimation IDs across multiple regions, indicating
+credential compromise rather than ordinary fraud).</p>
+<p>The composite risk score turns these signals into a single ranked queue, so auditors can act on the
+CRITICAL/HIGH tier first. Because every score is a transparent weighted sum, each ranking can be explained and defended.
+None of these findings is a conviction — they are prioritised leads, and each must be confirmed against physical records
+(discharge summaries, portal access logs, service records) before recovery or enforcement.</p>
+</div>
+<div class="section"><div class="sec"><table class="sec-h"><tr><td class="sec-h-l"><div class="sec-title">Consolidated Risk Register &amp; Recommendations</div></td><td class="sec-h-r"></td></tr></table></div>
+<div class="tcap">Table R.1 — Risk register</div>
+<table class="dt"><colgroup><col style="width:34%"/><col style="width:20%"/><col style="width:30%"/><col style="width:16%"/></colgroup><thead><tr><th>Fraud signal</th><th>Scale</th><th>Exposure</th><th>Risk</th></tr></thead><tbody>
+<tr><td><b>High-value claims (&gt;₹5L)</b></td><td>74,593 claims</td><td>₹5,630.76 Cr</td><td><span style="color:#c0392b;font-weight:700">CRITICAL</span></td></tr>
+<tr><td><b>100% deduction claims</b></td><td>9,717 claims</td><td>billed beyond ceiling</td><td><span style="color:#c0392b;font-weight:700">CRITICAL</span></td></tr>
+<tr><td><b>Hospital overcharging (&gt;25% ded)</b></td><td>392 logins</td><td>see scorecard</td><td><span style="color:#c0392b;font-weight:700">CRITICAL</span></td></tr>
+<tr><td><b>ECHS polyclinic abuse</b></td><td>4,499 claims</td><td>₹237.10 Cr deducted</td><td><span style="color:#d4680a;font-weight:700">HIGH</span></td></tr>
+<tr><td><b>Chronic repeat claimants</b></td><td>3,135 cards</td><td>≥3 high-value claims</td><td><span style="color:#d4680a;font-weight:700">HIGH</span></td></tr>
+<tr><td><b>Same-day duplicates</b></td><td>71 groups</td><td>double billing</td><td><span style="color:#c0392b;font-weight:700">CRITICAL</span></td></tr>
+<tr><td><b>Bulk claim injection</b></td><td>19 events</td><td>5 system-compromise</td><td><span style="color:#c0392b;font-weight:700">CRITICAL</span></td></tr>
+<tr><td><b>Ghost / anomalous hospital IDs</b></td><td>23,959 claims</td><td>₹1,729.34 Cr</td><td><span style="color:#d4680a;font-weight:700">HIGH</span></td></tr>
+</tbody></table>
+<div class="tcap" style="margin-top:6px">Table R.2 — Strategic recommendations (priority · SLA · named case)</div>
+<table class="dt"><colgroup><col style="width:11%"/><col style="width:11%"/><col style="width:30%"/><col style="width:48%"/></colgroup><thead><tr><th>Priority</th><th>SLA</th><th>Recommendation</th><th>Action</th></tr></thead><tbody>
+<tr><td><span style="color:#c0392b;font-weight:700">CRITICAL</span></td><td>Immediate</td><td><b>Portal-security investigation of bulk injection</b></td><td>GURJIT SINGH created 546 intimation IDs in one day at p.fatesahi. Pull portal access logs for all 19 events, suspend the logins, escalate to ECHS IT / CERT-In.</td></tr>
+<tr><td><span style="color:#c0392b;font-weight:700">CRITICAL</span></td><td>7 days</td><td><b>Recover same-day duplicate payments</b></td><td>BHISHAM DEO SHUKLA: 2 identical ₹32.73 L claims on 2022-11-11 at 8983336860. Confirm which were paid, recover the surplus, sweep the login.</td></tr>
+<tr><td><span style="color:#c0392b;font-weight:700">CRITICAL</span></td><td>14 days</td><td><b>Physically verify the top chronic claimant</b></td><td>BHUPAL SINGH — 117 high-value claims at fortis@D1. Obtain discharge summaries for a 20-claim sample; reconcile admission dates / ICU notes.</td></tr>
+<tr><td><span style="color:#c0392b;font-weight:700">CRITICAL</span></td><td>Immediate</td><td><b>Investigate possible card-ID manipulation</b></td><td>AMRIT LAL CHADHA on two near-identical cards (DL1000004517957 / DL2000004517957). Verify against the service record — one pensioner or two?</td></tr>
+<tr><td><span style="color:#d4680a;font-weight:700">HIGH</span></td><td>60 days</td><td><b>Empanelment &amp; billing audit of top-deduction login</b></td><td>parkhosg — ₹64.43 Cr deducted across 2,399 claims (224 at 100%). Audit package rates and a 10-claim line-item sample.</td></tr>
+<tr><td><span style="color:#d4680a;font-weight:700">HIGH</span></td><td>60 days</td><td><b>Segregate ECHS polyclinic claim channels</b></td><td>Polyclinic logins carry 4,499 high-value claims. Restrict them to OPD/pharmacy; quarantine high-value IPD claims submitted through them.</td></tr>
+<tr><td><span style="color:#d4680a;font-weight:700">HIGH</span></td><td>30 days</td><td><b>Reject invalid hospital identifiers at intake</b></td><td>23,959 claims (₹1,729.34 Cr) carry NULL/phone-like IDs. Block submission where the hospital ID is not a valid portal login.</td></tr>
+<tr><td><span style="color:#7f8c8d;font-weight:700">MEDIUM</span></td><td>Ongoing</td><td><b>Operationalise the risk score</b></td><td>Run the composite score nightly and route CRITICAL-band claims to auditors before settlement.</td></tr>
+</tbody></table>
+<div class="callout" style="margin-top:10px"><b>This report is produced by an automated screening system.</b> Every flagged case is an investigative lead, not a confirmed finding, and must be reviewed by a qualified auditor before any action is taken.</div>
+<p style="text-align:center;font-size:7.5pt;color:#777;margin-top:10px">Prepared by IIT Kanpur — Data Analytics &amp; Fraud Intelligence Division &nbsp;|&nbsp; 05 June 2026 &nbsp;|&nbsp; RESTRICTED</p>
+</div>
+</body></html>

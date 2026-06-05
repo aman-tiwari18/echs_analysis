@@ -46,3 +46,6 @@ module_13/data/high_value_claims_base.csv
 
 # Logs
 *.log
+
+module_14/data/up_base.csv
+module_14/data/_run.log
