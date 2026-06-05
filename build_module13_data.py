@@ -15,6 +15,9 @@ Writes processed, report-ready CSVs + a headline-metrics JSON:
     q13c_regional.csv            cleaned (Region <id> when command name missing)
     q13f_bulk_injection.csv      + severity tier
     module13_summary.json        headline metrics for the executive summary
+    module13_cases.json          structured facts for the narrative case studies
+    module13_hospital_deepdive.json  top-hospital deep-dives + ECHS-polyclinic view
+    module13_ghost_claims.csv    HV claims with NULL/numeric/phone hospital IDs
 
 Risk scores are transparent weighted sums (0-100) - NO machine learning. The
 weights are emitted to module13_summary.json so the report can print them.
@@ -239,6 +242,197 @@ def process_bulk():
     return b, set(b["card_id"].unique())
 
 
+# ---------------------------------------------------------------------------
+# Narrative-detail derivations (all from the existing base extract; no new DB).
+# These feed the case studies / deep-dives / ghost-claim tables in the report.
+# ---------------------------------------------------------------------------
+STATE_PREFIX = {"DL": "Delhi", "MU": "Mumbai", "HY": "Hyderabad", "KL": "Kerala",
+                "CH": "Chandigarh", "PN": "Pune", "BL": "Bangalore", "JP": "Jaipur",
+                "KK": "Kolkata", "AH": "Ahmedabad", "LK": "Lucknow"}
+POLY_RE = r"^p(ol)?\."   # ECHS polyclinic login codes: p.<x> / pol.<x>
+
+
+def _ghost_category(code):
+    c = str(code).strip()
+    if c in ("", "NULL"):
+        return "NULL (missing)"
+    if c in ("-1", "0"):
+        return "Placeholder"
+    if c.isdigit() and len(c) >= 10:
+        return "Phone-like"
+    if c.isdigit():
+        return "Numeric"
+    return "Other"
+
+
+def _band_dist(series):
+    vc = series.value_counts()
+    return {b: int(vc.get(b, 0)) for b in ("CRITICAL", "HIGH", "MEDIUM")}
+
+
+def _claimant_detail(base, card):
+    sub = base[base["card_id"] == card]
+    dates = pd.to_datetime(sub["admission_date"], errors="coerce").dropna().sort_values()
+    n = int(len(sub))
+    span_days = int((dates.iloc[-1] - dates.iloc[0]).days) if len(dates) >= 2 else 0
+    exp = float(sub["claimed"].sum())
+    ded = float(sub["ded_amt"].sum())
+    vc = sub["hospital_code"].value_counts()
+    prim_hosp, prim_n = str(vc.index[0]), int(vc.iloc[0])
+    return {
+        "beneficiary": str(sub["beneficiary"].iloc[0]), "card_id": str(card), "claims": n,
+        "exposure_cr": round(exp / CRORE, 2), "approved_cr": round(float(sub["approved"].sum()) / CRORE, 2),
+        "deducted_cr": round(ded / CRORE, 2), "ded_pct": round(ded / exp * 100, 1) if exp else 0,
+        "primary_hospital": prim_hosp, "lockin_pct": round(prim_n / n * 100) if n else 0,
+        "distinct_hospitals": int(sub["hospital_code"].nunique()),
+        "first_admit": str(dates.iloc[0].date()) if len(dates) else "",
+        "last_admit": str(dates.iloc[-1].date()) if len(dates) else "",
+        "span_months": round(span_days / 30.4, 1) if span_days else 0,
+        "avg_interval_days": round(span_days / (n - 1), 1) if n > 1 and span_days else 0,
+        "distinct_diagnoses": int(sub.loc[sub["diagnosis"] != "", "diagnosis"].nunique()),
+        "anomalous_primary": bool(is_anomalous_hospital(prim_hosp)),
+    }
+
+
+def _detect_card_variation(base):
+    """Possible card-ID manipulation: ONE beneficiary on TWO near-identical card
+    numbers (equal length, differing by a single character in the first 3
+    positions, e.g. DL1...517957 vs DL2...517957). Strict to avoid common-name
+    coincidence: a real single fraudster holds very few cards, so we only look at
+    names with 2-4 distinct cards and report ONLY the matching pair (not the name
+    aggregate). Returned hedged in the report - it is a lead, not a conclusion."""
+    best = None
+    by_name = base[base["card_id"] != ""].groupby("beneficiary")["card_id"]
+    for name, s in by_name:
+        cards = sorted(set(s))
+        if not name or not (2 <= len(cards) <= 4):
+            continue
+        for i in range(len(cards)):
+            for j in range(i + 1, len(cards)):
+                a, b = cards[i], cards[j]
+                if len(a) != len(b):
+                    continue
+                diffs = [k for k in range(len(a)) if a[k] != b[k]]
+                if len(diffs) == 1 and diffs[0] < 3:
+                    pair = base[base["card_id"].isin([a, b])]   # ONLY the two cards
+                    if len(pair) < 3:
+                        continue
+                    cand = {"beneficiary": str(name), "card_a": a, "card_b": b,
+                            "diff_pos": int(diffs[0]), "claims": int(len(pair)),
+                            "exposure_cr": round(float(pair["claimed"].sum()) / CRORE, 2),
+                            "hospitals": sorted(set(pair["hospital_code"]))[:4]}
+                    if best is None or cand["exposure_cr"] > best["exposure_cr"]:
+                        best = cand
+    return best
+
+
+def derive_cases(base, q13d, dups, bulk):
+    cases = {}
+    # chronic repeat claimant (most claims) + a ghost-hospital variant
+    if len(q13d):
+        top_card = q13d.loc[q13d["hv_claims"].idxmax(), "card_id"]
+        cases["top_repeat_claimant"] = _claimant_detail(base, top_card)
+        ghosts = q13d[q13d["primary_hospital"].map(is_anomalous_hospital)]
+        if len(ghosts):
+            cases["ghost_repeat_claimant"] = _claimant_detail(
+                base, ghosts.sort_values("claimed_cr", ascending=False).iloc[0]["card_id"])
+        lock = q13d[(q13d["hv_claims"] >= 40) & (q13d["lockin"] >= 0.8)
+                    & (~q13d["primary_hospital"].map(is_anomalous_hospital))
+                    & (q13d["card_id"] != top_card)]      # don't repeat the headline claimant
+        lock = lock.sort_values("hv_claims", ascending=False).head(3)
+        cases["lockin_examples"] = [
+            {"beneficiary": str(r["beneficiary"]), "claims": int(r["hv_claims"]),
+             "hospital": str(r["primary_hospital"]), "lockin_pct": round(float(r["lockin"]) * 100),
+             "exposure_cr": round(float(r["claimed_cr"]), 2)}
+            for _, r in lock.iterrows()]
+    # top same-day duplicate
+    if len(dups):
+        d = dups.iloc[0]
+        ids = [int(x) for x in str(d["intimation_ids"]).replace(" ", "").split(",") if x.strip().isdigit()]
+        consecutive = (max(ids) - min(ids) <= len(ids) * 3) if len(ids) >= 2 else False
+        cases["top_duplicate"] = {
+            "beneficiary": str(d["beneficiary"]), "card_id": str(d["card_id"]),
+            "hospital": str(d["hospital_code"]), "admission_date": str(d["admission_date"])[:10],
+            "exposure": float(d["claimed"]), "dup_count": int(d["dup_count"]),
+            "intimation_ids": ids[:6], "consecutive": bool(consecutive),
+        }
+    # card-ID variation (best-effort)
+    cv = _detect_card_variation(base)
+    if cv:
+        cases["card_variation"] = cv
+    # top bulk-injection event + multi-region spread
+    if len(bulk):
+        b0 = bulk.iloc[0]
+        fid, lid = str(b0["first_intimation_id"]), str(b0["last_intimation_id"])
+        span = (int(lid) - int(fid) + 1) if fid.isdigit() and lid.isdigit() else 0
+        cnt = int(b0["intimation_count"])
+        pref = re.match(r"^[A-Za-z]+", str(b0["card_id"]))
+        cases["top_bulk"] = {
+            "beneficiary": str(b0["beneficiary"]), "hospital": str(b0["hospital_code"]),
+            "date": str(b0["creation_date"])[:10], "count": cnt,
+            "first_id": fid, "last_id": lid, "id_span": span,
+            "consecutive": bool(span and span <= cnt * 3),
+            "tier": str(b0["tier"]), "card_prefix": pref.group(0) if pref else "",
+        }
+        prefixes = {}
+        for _, r in bulk.iterrows():
+            m = re.match(r"^[A-Za-z]+", str(r["card_id"]))
+            if m:
+                p = m.group(0)
+                prefixes[p] = prefixes.get(p, 0) + 1
+        cases["bulk_spread"] = {
+            "n_events": int(len(bulk)),
+            "prefixes": [{"prefix": p, "region": STATE_PREFIX.get(p, ""), "events": n}
+                         for p, n in sorted(prefixes.items(), key=lambda kv: -kv[1])],
+        }
+    return cases
+
+
+def derive_hospital_deepdive(base, q13b):
+    out = {"hospitals": [], "polyclinic": {}}
+    if len(q13b):
+        codes = list(dict.fromkeys(
+            list(q13b.sort_values("deducted_cr", ascending=False).head(3)["hospital_code"])
+            + [q13b.sort_values("avg_ded_pct", ascending=False).iloc[0]["hospital_code"]]))
+        for code in codes:
+            row = q13b[q13b["hospital_code"] == code].iloc[0]
+            sub = base[(base["hospital_code"] == code) & (base["full_ded"] == 1)]
+            named = sub.sort_values("claimed", ascending=False).head(10)[["beneficiary", "claimed"]]
+            out["hospitals"].append({
+                "hospital_code": str(code), "hv_claims": int(row["hv_claims"]),
+                "exposure_cr": round(float(row["claimed_cr"]), 2),
+                "deducted_cr": round(float(row["deducted_cr"]), 2),
+                "avg_ded_pct": round(float(row["avg_ded_pct"]), 2),
+                "full_ded_claims": int(row["full_ded_claims"]),
+                "is_polyclinic": bool(re.match(POLY_RE, str(code))),
+                "named_full_ded": [{"beneficiary": str(b), "exposure": float(c)}
+                                   for b, c in named.values],
+            })
+    poly = base[base["hospital_code"].str.match(POLY_RE, na=False)]
+    if len(poly):
+        exp = float(poly["claimed"].sum()); ded = float(poly["ded_amt"].sum())
+        out["polyclinic"] = {"claims": int(len(poly)), "exposure_cr": round(exp / CRORE, 2),
+                             "deducted_cr": round(ded / CRORE, 2),
+                             "avg_ded_pct": round(ded / exp * 100, 2) if exp else 0,
+                             "top_logins": []}
+        if len(q13b):
+            pq = q13b[q13b["hospital_code"].str.match(POLY_RE, na=False)]
+            pq = pq.sort_values("avg_ded_pct", ascending=False).head(6)
+            out["polyclinic"]["top_logins"] = [
+                {"hospital_code": str(r["hospital_code"]), "avg_ded_pct": round(float(r["avg_ded_pct"]), 2),
+                 "hv_claims": int(r["hv_claims"]), "deducted_cr": round(float(r["deducted_cr"]), 2)}
+                for _, r in pq.iterrows()]
+    return out
+
+
+def derive_ghost_claims(base):
+    g = base[base["anom_hosp"] == 1].sort_values("claimed", ascending=False).head(30).copy()
+    g["category"] = g["hospital_code"].map(_ghost_category)
+    g = g.rename(columns={"claimed": "exposure"})
+    cols = ["beneficiary", "exposure", "hospital_code", "category", "admission_date", "ded_pct"]
+    g[cols].to_csv(os.path.join(DATA, "module13_ghost_claims.csv"), index=False)
+
+
 def main():
     base = add_duplicate_flag(load_base())
     bulk, bulk_cards = process_bulk()
@@ -249,11 +443,26 @@ def main():
     q13b = build_q13b(base)
     q13d = build_q13d(base, bulk_cards)
 
+    # narrative-detail artifacts (case studies / hospital deep-dives / ghost table)
+    cases = derive_cases(base, q13d, dups, bulk)
+    deepdive = derive_hospital_deepdive(base, q13b)
+    derive_ghost_claims(base)
+    with open(os.path.join(DATA, "module13_cases.json"), "w") as f:
+        json.dump(cases, f, indent=2, default=str)
+    with open(os.path.join(DATA, "module13_hospital_deepdive.json"), "w") as f:
+        json.dump(deepdive, f, indent=2, default=str)
+
+    adm = pd.to_datetime(base["admission_date"], errors="coerce").dropna()
+    anom = base[base["anom_hosp"] == 1].copy()
+    anom["category"] = anom["hospital_code"].map(_ghost_category)
+    anom_breakdown = {cat: {"claims": int(c),
+                            "exposure_cr": round(float(anom.loc[anom["category"] == cat, "claimed"].sum()) / CRORE, 2)}
+                      for cat, c in anom["category"].value_counts().items()}
+
     total_claimed_cr = round(base["claimed"].sum() / CRORE, 2)
     total_deducted_cr = round(base["ded_amt"].sum() / CRORE, 2)
-    anom = base[base["anom_hosp"] == 1]
     summary = {
-        "scope": "Full history (all years)",
+        "scope": "Last 5 years (CI_CR_DATE >= current date - 5 years)",
         "hv_threshold_rs": HV,
         "total_hv_claims": int(len(base)),
         "total_exposure_cr": total_claimed_cr,
@@ -261,14 +470,22 @@ def main():
         "overall_ded_pct": round(total_deducted_cr / total_claimed_cr * 100, 2) if total_claimed_cr else 0,
         "full_deduction_hv_claims": int(base["full_ded"].sum()),
         "n_anomalous_hv_claims": int(len(anom)),
-        "anomalous_exposure_cr": round(anom["claimed"].sum() / CRORE, 2),
+        "anomalous_exposure_cr": round(float(anom["claimed"].sum()) / CRORE, 2),
+        "anomalous_breakdown": anom_breakdown,
         "top_single_claim_cr": round(base["claimed"].max() / CRORE, 2),
+        "earliest_admit": str(adm.min().date()) if len(adm) else "",
+        "latest_admit": str(adm.max().date()) if len(adm) else "",
         "n_flagged_hospitals": int(len(q13b)),
         "n_chronic_claimants": int((base.groupby("card_id").size() >= 3).sum()),
         "n_duplicate_groups": int(len(dups)),
         "n_bulk_events": int(len(bulk)),
         "n_bulk_system_compromise": int((bulk["tier"] == "SYSTEM COMPROMISE").sum()) if len(bulk) else 0,
         "n_regions": int(len(regional)) if regional is not None else 0,
+        "claims_band_dist": _band_dist(q13a["risk_band"]) if len(q13a) else {},
+        "hospitals_band_dist": _band_dist(q13b["risk_band"]) if len(q13b) else {},
+        "claimants_band_dist": _band_dist(q13d["risk_band"]) if len(q13d) else {},
+        "n_polyclinic_claims": deepdive.get("polyclinic", {}).get("claims", 0),
+        "polyclinic_deducted_cr": deepdive.get("polyclinic", {}).get("deducted_cr", 0),
         "weights": {"claim": CLAIM_WEIGHTS, "hospital": HOSPITAL_WEIGHTS, "claimant": CLAIMANT_WEIGHTS},
         "bands": {label: cut for cut, label in BANDS},
     }
@@ -285,6 +502,9 @@ def main():
     print(f"  duplicate groups      : {summary['n_duplicate_groups']:,}")
     print(f"  bulk-injection events : {summary['n_bulk_events']} (system-compromise: {summary['n_bulk_system_compromise']})")
     print("  top hospitals:", ", ".join(q13b["hospital_code"].head(6))) if len(q13b) else None
+    print(f"  polyclinic HV claims  : {summary['n_polyclinic_claims']:,} (deducted Rs {summary['polyclinic_deducted_cr']:,.2f} Cr)")
+    print(f"  anomalous HV claims   : {summary['n_anomalous_hv_claims']:,} (Rs {summary['anomalous_exposure_cr']:,.2f} Cr)")
+    print(f"  case studies built    : {', '.join(cases.keys()) if cases else '(none)'}")
 
 
 if __name__ == "__main__":

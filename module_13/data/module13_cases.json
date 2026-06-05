@@ -1,0 +1,147 @@
+{
+  "top_repeat_claimant": {
+    "beneficiary": "BHUPAL SINGH",
+    "card_id": "000001724273",
+    "claims": 117,
+    "exposure_cr": 7.13,
+    "approved_cr": 6.73,
+    "deducted_cr": 0.39,
+    "ded_pct": 5.5,
+    "primary_hospital": "fortis@D1",
+    "lockin_pct": 86,
+    "distinct_hospitals": 2,
+    "first_admit": "2021-10-05",
+    "last_admit": "2026-03-20",
+    "span_months": 53.5,
+    "avg_interval_days": 14.0,
+    "distinct_diagnoses": 8,
+    "anomalous_primary": false
+  },
+  "ghost_repeat_claimant": {
+    "beneficiary": "AJAYA KUMAR NAYAK",
+    "card_id": "000005455660",
+    "claims": 45,
+    "exposure_cr": 5.96,
+    "approved_cr": 4.24,
+    "deducted_cr": 1.72,
+    "ded_pct": 28.9,
+    "primary_hospital": "NULL",
+    "lockin_pct": 100,
+    "distinct_hospitals": 1,
+    "first_admit": "2021-12-01",
+    "last_admit": "2025-11-12",
+    "span_months": 47.4,
+    "avg_interval_days": 32.8,
+    "distinct_diagnoses": 3,
+    "anomalous_primary": true
+  },
+  "lockin_examples": [
+    {
+      "beneficiary": "MALKIT SINGH",
+      "claims": 59,
+      "hospital": "FHLDH123",
+      "lockin_pct": 85,
+      "exposure_cr": 3.48
+    },
+    {
+      "beneficiary": "KASHMIR SINGH",
+      "claims": 52,
+      "hospital": "echsfeha",
+      "lockin_pct": 83,
+      "exposure_cr": 3.06
+    },
+    {
+      "beneficiary": "RAJINDER SINGH",
+      "claims": 40,
+      "hospital": "msshshb1",
+      "lockin_pct": 85,
+      "exposure_cr": 2.35
+    }
+  ],
+  "top_duplicate": {
+    "beneficiary": "BHISHAM DEO SHUKLA",
+    "card_id": "CH000003881057",
+    "hospital": "8983336860",
+    "admission_date": "2022-11-11",
+    "exposure": 3272590.0,
+    "dup_count": 2,
+    "intimation_ids": [
+      23367707,
+      23367744
+    ],
+    "consecutive": false
+  },
+  "card_variation": {
+    "beneficiary": "AMRIT LAL CHADHA",
+    "card_a": "DL1000004517957",
+    "card_b": "DL2000004517957",
+    "diff_pos": 2,
+    "claims": 7,
+    "exposure_cr": 2.0,
+    "hospitals": [
+      "p.delhicnt"
+    ]
+  },
+  "top_bulk": {
+    "beneficiary": "GURJIT SINGH",
+    "hospital": "p.fatesahi",
+    "date": "2022-08-04",
+    "count": 546,
+    "first_id": "21939246",
+    "last_id": "21939907",
+    "id_span": 662,
+    "consecutive": true,
+    "tier": "SYSTEM COMPROMISE",
+    "card_prefix": "CM"
+  },
+  "bulk_spread": {
+    "n_events": 19,
+    "prefixes": [
+      {
+        "prefix": "DL",
+        "region": "Delhi",
+        "events": 3
+      },
+      {
+        "prefix": "TR",
+        "region": "",
+        "events": 3
+      },
+      {
+        "prefix": "CM",
+        "region": "",
+        "events": 2
+      },
+      {
+        "prefix": "KO",
+        "region": "",
+        "events": 2
+      },
+      {
+        "prefix": "MU",
+        "region": "Mumbai",
+        "events": 1
+      },
+      {
+        "prefix": "HY",
+        "region": "Hyderabad",
+        "events": 1
+      },
+      {
+        "prefix": "KL",
+        "region": "Kerala",
+        "events": 1
+      },
+      {
+        "prefix": "LU",
+        "region": "",
+        "events": 1
+      },
+      {
+        "prefix": "JM",
+        "region": "",
+        "events": 1
+      }
+    ]
+  }
+}

@@ -1,0 +1,252 @@
+{
+  "hospitals": [
+    {
+      "hospital_code": "parkhosg",
+      "hv_claims": 2399,
+      "exposure_cr": 186.91,
+      "deducted_cr": 64.43,
+      "avg_ded_pct": 34.47,
+      "full_ded_claims": 224,
+      "is_polyclinic": false,
+      "named_full_ded": [
+        {
+          "beneficiary": "SPS PANWAR",
+          "exposure": 2866281.0
+        },
+        {
+          "beneficiary": "BHARAT SINGH",
+          "exposure": 2500143.0
+        },
+        {
+          "beneficiary": "SATVIR SINGH",
+          "exposure": 2440551.0
+        },
+        {
+          "beneficiary": "VIJAY KUMAR",
+          "exposure": 2228801.0
+        },
+        {
+          "beneficiary": "BEH RAM SINGH",
+          "exposure": 2194813.0
+        },
+        {
+          "beneficiary": "SOHAN LAL",
+          "exposure": 1920425.0
+        },
+        {
+          "beneficiary": "DEEPAK VERMA",
+          "exposure": 1911874.0
+        },
+        {
+          "beneficiary": "KISHAN CHAND",
+          "exposure": 1902371.0
+        },
+        {
+          "beneficiary": "RAM KANWAR SINGH",
+          "exposure": 1849128.0
+        },
+        {
+          "beneficiary": "RAM KANWAR",
+          "exposure": 1844327.0
+        }
+      ]
+    },
+    {
+      "hospital_code": "metro",
+      "hv_claims": 892,
+      "exposure_cr": 80.9,
+      "deducted_cr": 42.12,
+      "avg_ded_pct": 52.07,
+      "full_ded_claims": 242,
+      "is_polyclinic": false,
+      "named_full_ded": [
+        {
+          "beneficiary": "ROHTASH KUMAR",
+          "exposure": 7331615.0
+        },
+        {
+          "beneficiary": "OMKAR SINGH",
+          "exposure": 5483992.0
+        },
+        {
+          "beneficiary": "SURYA KANT",
+          "exposure": 5373634.0
+        },
+        {
+          "beneficiary": "PARMOD",
+          "exposure": 5253694.0
+        },
+        {
+          "beneficiary": "TEJ RAM",
+          "exposure": 4732484.0
+        },
+        {
+          "beneficiary": "NARANDER NATH SHARMA",
+          "exposure": 4598177.0
+        },
+        {
+          "beneficiary": "NARAIN SINGH",
+          "exposure": 4578326.0
+        },
+        {
+          "beneficiary": "ROHTASH SINGH",
+          "exposure": 4352529.0
+        },
+        {
+          "beneficiary": "IKRAM SINGH",
+          "exposure": 4044015.0
+        },
+        {
+          "beneficiary": "RAM SWAROOP",
+          "exposure": 3758671.0
+        }
+      ]
+    },
+    {
+      "hospital_code": "metrc2",
+      "hv_claims": 1317,
+      "exposure_cr": 103.19,
+      "deducted_cr": 35.41,
+      "avg_ded_pct": 34.32,
+      "full_ded_claims": 116,
+      "is_polyclinic": false,
+      "named_full_ded": [
+        {
+          "beneficiary": "DARWAN SINGH",
+          "exposure": 3378695.0
+        },
+        {
+          "beneficiary": "ATTAR SINGH",
+          "exposure": 3144269.0
+        },
+        {
+          "beneficiary": "CHANDER DHAR",
+          "exposure": 2821739.0
+        },
+        {
+          "beneficiary": "BRAHMA CHANDRA",
+          "exposure": 2570694.0
+        },
+        {
+          "beneficiary": "RAM ISHWAR BHAGAT",
+          "exposure": 2427010.0
+        },
+        {
+          "beneficiary": "RAGHUVIR SINGH",
+          "exposure": 2392486.0
+        },
+        {
+          "beneficiary": "PARBHU RAM",
+          "exposure": 2340668.0
+        },
+        {
+          "beneficiary": "VIDHI CHAND SHARMA",
+          "exposure": 2271281.0
+        },
+        {
+          "beneficiary": "RAVI KANT",
+          "exposure": 2240869.0
+        },
+        {
+          "beneficiary": "RAM SEVAK",
+          "exposure": 2122304.0
+        }
+      ]
+    },
+    {
+      "hospital_code": "hos.6653",
+      "hv_claims": 20,
+      "exposure_cr": 1.81,
+      "deducted_cr": 1.81,
+      "avg_ded_pct": 100.0,
+      "full_ded_claims": 20,
+      "is_polyclinic": false,
+      "named_full_ded": [
+        {
+          "beneficiary": "HOSHIAR SINGH YADAV",
+          "exposure": 1883108.0
+        },
+        {
+          "beneficiary": "SANJAY KUMAR",
+          "exposure": 1476027.0
+        },
+        {
+          "beneficiary": "SURAT RAM YADAV",
+          "exposure": 1405284.0
+        },
+        {
+          "beneficiary": "R ILANGOVAN",
+          "exposure": 1271411.0
+        },
+        {
+          "beneficiary": "GIRDHARI LAL",
+          "exposure": 1232133.0
+        },
+        {
+          "beneficiary": "VEER DEV",
+          "exposure": 1181052.0
+        },
+        {
+          "beneficiary": "BALRAJ SINGH",
+          "exposure": 1124650.0
+        },
+        {
+          "beneficiary": "SURESH CHADHA",
+          "exposure": 968017.0
+        },
+        {
+          "beneficiary": "RAM CHANDER",
+          "exposure": 846141.0
+        },
+        {
+          "beneficiary": "PARVINDER KUMAR",
+          "exposure": 845096.0
+        }
+      ]
+    }
+  ],
+  "polyclinic": {
+    "claims": 4499,
+    "exposure_cr": 412.15,
+    "deducted_cr": 237.1,
+    "avg_ded_pct": 57.53,
+    "top_logins": [
+      {
+        "hospital_code": "p.giddalur",
+        "avg_ded_pct": 81.56,
+        "hv_claims": 10,
+        "deducted_cr": 0.77
+      },
+      {
+        "hospital_code": "pol.3341",
+        "avg_ded_pct": 80.15,
+        "hv_claims": 21,
+        "deducted_cr": 2.36
+      },
+      {
+        "hospital_code": "p.kumba",
+        "avg_ded_pct": 76.96,
+        "hv_claims": 12,
+        "deducted_cr": 0.86
+      },
+      {
+        "hospital_code": "p.agra1",
+        "avg_ded_pct": 75.19,
+        "hv_claims": 15,
+        "deducted_cr": 1.35
+      },
+      {
+        "hospital_code": "p.golconda",
+        "avg_ded_pct": 75.05,
+        "hv_claims": 30,
+        "deducted_cr": 2.57
+      },
+      {
+        "hospital_code": "pol.3325",
+        "avg_ded_pct": 74.34,
+        "hv_claims": 74,
+        "deducted_cr": 5.57
+      }
+    ]
+  }
+}

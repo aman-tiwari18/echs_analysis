@@ -114,6 +114,22 @@ def load_summary():
     return json.load(open(p)) if os.path.exists(p) else {}
 
 
+def load_json(name):
+    p = os.path.join(DATA, name)
+    return json.load(open(p)) if os.path.exists(p) else {}
+
+
+def fact_style():
+    return TableStyle([
+        ('FONTSIZE', (0, 0), (-1, -1), 8), ('LEADING', (0, 0), (-1, -1), 10),
+        ('TEXTCOLOR', (0, 0), (0, -1), NAVY), ('FONTNAME', (0, 0), (0, -1), 'Helvetica-Bold'),
+        ('BACKGROUND', (0, 0), (0, -1), HexColor('#eef0f5')),
+        ('GRID', (0, 0), (-1, -1), 0.3, MGRAY), ('VALIGN', (0, 0), (-1, -1), 'TOP'),
+        ('TOPPADDING', (0, 0), (-1, -1), 3), ('BOTTOMPADDING', (0, 0), (-1, -1), 3),
+        ('LEFTPADDING', (0, 0), (-1, -1), 5), ('RIGHTPADDING', (0, 0), (-1, -1), 5),
+    ])
+
+
 # ---- cover + header/footer -------------------------------------------------
 class CoverPage(Flowable):
     def __init__(self, summ): super().__init__(); self.width = W; self.height = H; self.s = summ
@@ -183,6 +199,152 @@ def h1(story, t):
     story.append(HRFlowable(width='100%', thickness=0.5, color=GOLD, spaceAfter=6))
 
 
+def bullet(story, t):
+    story.append(Paragraph('•  ' + t, bs(leading=13, leftIndent=10, spaceAfter=4)))
+
+
+def methodology(story, s):
+    h1(story, 'Methodology & Data Sources')
+    story.append(Paragraph(
+        "<b>Data.</b> High-value claims (gross claimed &gt; Rs 5 lakh) over the <b>last five years</b>, taken "
+        "from the ECHS claim_intimation and claim_submission tables and joined on the intimation ID. Regional "
+        "figures use the pre-aggregated settlement_stat table.", S_BODY))
+    story.append(Paragraph(
+        "<b>Claim pipeline.</b> A claim moves through intimation (admission notified) -&gt; submission "
+        "(hospital bills the gross amount) -&gt; UTI audit (an approved amount is set; the balance is the "
+        "deduction) -&gt; settlement. <b>Deduction %</b> = (gross claimed - approved) / gross claimed; "
+        "a 100% deduction means the audit approved nothing on a multi-lakh bill - a strong signal of billing "
+        "beyond the ECHS package ceiling.", S_BODY))
+    story.append(Paragraph(
+        "<b>Risk score.</b> Every claim, hospital login and beneficiary card receives a transparent 0-100 "
+        "weighted score - no machine learning, so every point is reconstructable from the source rows. "
+        f"Bands: {crit('CRITICAL')} &gt;= 70, {high('HIGH')} 45-69, MEDIUM &lt; 45. The exact component "
+        "weights are listed in the Composite Risk Score section.", S_BODY))
+    story.append(Paragraph('Key definitions', S_H2))
+    defs = [
+        ['Term', 'Definition'],
+        ['High-value claim', 'Gross claimed amount > Rs 5,00,000 for one admission'],
+        ['Deduction %', '(gross claimed - UTI approved) / gross claimed x 100'],
+        ['Chronic repeat claimant', 'One beneficiary card with >= 3 high-value claims'],
+        ['Single-hospital lock-in', "Share of a card's high-value claims at one hospital login"],
+        ['Bulk injection (tiers)', '>300 same-day intimations = system compromise; 100-300 = account abuse; 50-100 = watch'],
+        ['Anomalous hospital ID', 'NULL, -1/0 placeholder, or a numeric/phone-like value (not a real login)'],
+        ['Total Financial Exposure', 'Sum of gross claimed on flagged claims (approximate; recovery set at audit)'],
+    ]
+    t = Table([[P(a, bs(fontName='Helvetica-Bold', fontSize=8, textColor=white)) if i == 0 else P(a),
+                P(b, bs(fontName='Helvetica-Bold', fontSize=8, textColor=white)) if i == 0 else P(b)]
+               for i, (a, b) in enumerate(defs)], colWidths=[46 * mm, 124 * mm])
+    t.setStyle(tbl_style()); story.append(t)
+    story.append(PageBreak())
+
+
+def limitations(story):
+    h1(story, 'Limitations & Assumptions')
+    bullet(story, "<b>Red flags, not verdicts.</b> Every item is an automated investigative lead, not a confirmed "
+                  "finding. A qualified auditor must verify each case before any action.")
+    bullet(story, "<b>Deduction is not fraud.</b> A high deduction can reflect a legitimate package ceiling, a "
+                  "coding error, or incomplete documentation - it flags where billed value was removed, not why.")
+    bullet(story, "<b>Login codes are identifiers.</b> Hospital login codes (e.g. parkhosg, pol.3325) are used as "
+                  "identifiers only; this report does not assert their real-world hospital identity.")
+    bullet(story, "<b>Data quality.</b> Findings depend on the accuracy of the intimation/submission tables and the "
+                  "UTI deduction codes; systemic gaps (e.g. missing hospital IDs) can both create and hide signals.")
+    bullet(story, "<b>Scope.</b> Analysis covers the last five years only; older claims are out of scope by design.")
+    story.append(Spacer(1, 2 * mm))
+    story.append(Paragraph("ALL CASES REQUIRE VERIFICATION BY QUALIFIED AUDITORS BEFORE ANY ACTION IS TAKEN.", S_WARN))
+    story.append(PageBreak())
+
+
+def _case_block(story, title, rows, paras):
+    story.append(Paragraph(title, S_H2))
+    body = [[k, P(v)] for k, v in rows]
+    t = Table(body, colWidths=[30 * mm, 140 * mm]); t.setStyle(fact_style()); story.append(t)
+    story.append(Spacer(1, 1.5 * mm))
+    for p in paras:
+        story.append(Paragraph(p, S_BODY))
+    story.append(Spacer(1, 4 * mm))
+
+
+def case_studies(story, cases):
+    if not cases:
+        return
+    h1(story, 'Case Studies')
+    story.append(Paragraph("Representative cases drawn directly from the flagged data. Names and card numbers are "
+                           "shown as recorded; each is a lead for verification, not a verdict.", S_BODY))
+
+    c = cases.get('top_repeat_claimant')
+    if c:
+        rows = [
+            ['Beneficiary', f"{esc(c['beneficiary'])} (card {esc(c['card_id'])})"],
+            ['Pattern', f"{c['claims']} high-value claims; {c['lockin_pct']}% at one login ({esc(c['primary_hospital'])})"],
+            ['Exposure', f"Rs {c['exposure_cr']:.2f} Cr claimed / Rs {c['approved_cr']:.2f} Cr approved ({c['ded_pct']}% deducted)"],
+            ['Window', f"{c['first_admit']} to {c['last_admit']} (~{c['span_months']:.0f} months; on average one admission every {c['avg_interval_days']:.0f} days)"],
+        ]
+        para = (f"{esc(c['beneficiary'])} filed <b>{c['claims']} separate high-value claims</b> in about "
+                f"{c['span_months']:.0f} months - on average one admission every <b>{c['avg_interval_days']:.0f} days</b> - "
+                f"with {c['lockin_pct']}% at a single login. The low {c['ded_pct']}% deduction means most claims pass "
+                f"audit, so the test is documentary: either a genuine chronic condition needing case management, or "
+                f"manufactured admission episodes generating a fresh base fee each time.")
+        action = "<b>Action:</b> pull discharge summaries for a 20-claim sample and reconcile admission dates / ICU notes with the billed episodes (14 days)."
+        _case_block(story, 'Case 1 - Chronic Repeat Claimant', rows, [para, action])
+
+    g = cases.get('ghost_repeat_claimant')
+    if g:
+        rows = [
+            ['Beneficiary', f"{esc(g['beneficiary'])} (card {esc(g['card_id'])})"],
+            ['Pattern', f"{g['claims']} high-value claims, primary hospital ID = {esc(g['primary_hospital'])} (untraceable)"],
+            ['Exposure', f"Rs {g['exposure_cr']:.2f} Cr claimed ({g['ded_pct']}% deducted)"],
+        ]
+        para = (f"Every one of {esc(g['beneficiary'])}'s {g['claims']} high-value claims (Rs {g['exposure_cr']:.2f} Cr) "
+                f"carries no traceable hospital ID. High-value admissions with no identifiable provider are a classic "
+                f"<b>ghost-admission</b> pattern; the partial deduction shows the system flags but does not fully "
+                f"reject them.")
+        action = "<b>Action:</b> trace the actual servicing facility from settlement/bank records; if none exists, treat as fabricated claims (30 days)."
+        _case_block(story, 'Case 2 - Ghost-Hospital Repeat Claimant', rows, [para, action])
+
+    d = cases.get('top_duplicate')
+    if d:
+        ids = ", ".join(str(x) for x in d.get('intimation_ids', []))
+        rows = [
+            ['Beneficiary', f"{esc(d['beneficiary'])} (card {esc(d['card_id'])})"],
+            ['Duplicate', f"{d['dup_count']} identical {inr(d['exposure'])} claims on {d['admission_date']} at {esc(d['hospital'])}"],
+            ['Intimation IDs', f"{ids}" + ("  (near-consecutive)" if d.get('consecutive') else "")],
+        ]
+        para = (f"The same card, same admission date and same amount ({inr(d['exposure'])}) were submitted under "
+                f"{d['dup_count']} different intimation IDs - the textbook signature of duplicate billing to collect "
+                f"reimbursement more than once.")
+        action = "<b>Action:</b> confirm whether more than one submission was paid and recover the surplus; sweep this login for other same-day duplicates (7 days)."
+        _case_block(story, 'Case 3 - Same-Day Duplicate Billing', rows, [para, action])
+
+    cv = cases.get('card_variation')
+    if cv:
+        rows = [
+            ['Beneficiary', f"{esc(cv['beneficiary'])}"],
+            ['Two cards', f"{esc(cv['card_a'])}  vs  {esc(cv['card_b'])} (differ by one character)"],
+            ['Combined', f"{cv['claims']} high-value claims, Rs {cv['exposure_cr']:.2f} Cr, at {', '.join(esc(h) for h in cv['hospitals'])}"],
+        ]
+        para = (f"The same beneficiary name appears on two card numbers that differ by a single character "
+                f"(<b>{esc(cv['card_a'])}</b> vs <b>{esc(cv['card_b'])}</b>). This can indicate duplicate card "
+                f"issuance / card-ID manipulation used to split a fraud trail across two IDs - or, less likely, two "
+                f"distinct people sharing a common name. It is a lead, not a conclusion.")
+        action = "<b>Action:</b> verify both cards against the service record - one pensioner or two? (immediate)."
+        _case_block(story, 'Case 4 - Possible Card-ID Manipulation', rows, [para, action])
+
+    b = cases.get('top_bulk')
+    if b:
+        rows = [
+            ['Beneficiary', f"{esc(b['beneficiary'])}"],
+            ['Event', f"{b['count']} intimation IDs in ONE day ({b['date']}) at {esc(b['hospital'])}"],
+            ['ID range', f"{b['first_id']} - {b['last_id']}" + ("  (near-consecutive)" if b.get('consecutive') else "")],
+            ['Tier', b['tier']],
+        ]
+        para = (f"<b>{b['count']} claim-intimation records created for one card on a single day</b> is far beyond "
+                f"manual web-portal entry. The near-consecutive ID range is the signature of programmatic batch "
+                f"insertion - i.e. portal credential compromise or insider database access, not ordinary claim fraud.")
+        action = "<b>Action:</b> obtain portal access logs (IP/session/timestamps) for that date, suspend the login, and escalate to ECHS IT / CERT-In (immediate)."
+        _case_block(story, 'Case 5 - Extreme Bulk Claim Injection', rows, [para, action])
+    story.append(PageBreak())
+
+
 def exec_summary(story, s, q13b, q13d, bulk):
     h1(story, 'EXECUTIVE SUMMARY')
     story.append(Paragraph(
@@ -208,7 +370,14 @@ def exec_summary(story, s, q13b, q13d, bulk):
         ['Bulk claim-injection events', f"{s.get('n_bulk_events',0):,}  (system-compromise tier: {s.get('n_bulk_system_compromise',0)})"],
     ]
     t = Table(rows, colWidths=[95 * mm, 75 * mm]); t.setStyle(tbl_style()); story.append(t)
-    story.append(Spacer(1, 4 * mm))
+    story.append(Spacer(1, 3 * mm))
+    cbd = s.get('claimants_band_dist', {})
+    hbd = s.get('hospitals_band_dist', {})
+    story.append(Paragraph(
+        f"By composite risk band: {cbd.get('CRITICAL',0)+cbd.get('HIGH',0):,} beneficiary cards and "
+        f"{hbd.get('CRITICAL',0)+hbd.get('HIGH',0):,} hospital logins fall in the CRITICAL/HIGH tiers and head the "
+        f"verification queue. Flagged claims span {s.get('earliest_admit','')} to {s.get('latest_admit','')}.", S_BODY))
+    story.append(Spacer(1, 2 * mm))
     story.append(Paragraph('Four systemic patterns concentrate the risk:', S_H2))
     pats = []
     if len(q13b):
@@ -285,13 +454,13 @@ def signals_section(story, s, q13a, q13b, q13d, dups, bulk):
     story.append(PageBreak())
 
 
-def q13a_section(story, q13a, dups):
+def q13a_section(story, q13a, dups, ghosts):
     h1(story, 'Q13a - Top High-Value Individual Claims (> Rs 5 Lakh)')
-    story.append(Paragraph("Ranked by gross claimed amount. <b>Ded%</b> = (claimed - approved) / claimed. "
-                           "A 100% deduction means the approval stage recorded zero approved - a signal of "
-                           "billing far beyond the ECHS package rate.", S_BODY))
+    story.append(Paragraph("Ranked by gross claimed amount (= exposure). <b>Ded%</b> = (claimed - approved) / "
+                           "claimed. A 100% deduction means the approval stage recorded zero approved - a signal "
+                           "of billing far beyond the ECHS package rate.", S_BODY))
     head = [['Score', 'Beneficiary', 'Hospital', 'Admission', 'Diagnosis', 'Exposure', 'Ded%']]
-    for _, r in q13a.head(25).iterrows():
+    for _, r in q13a.head(30).iterrows():
         sc = band_html(r['risk_band']) + f" {r['risk_score']}"
         head.append([P(sc), P(short(r['beneficiary'], 22)), P(short(r['hospital_code'], 12)),
                      P(str(r['admission_date'])[:10]), P(short(r['diagnosis'], 22)),
@@ -311,10 +480,22 @@ def q13a_section(story, q13a, dups):
         t.setStyle(tbl_style()); story.append(t)
     else:
         story.append(Paragraph('No same-day duplicate high-value groups detected.', S_BODY))
+
+    if len(ghosts):
+        story.append(Spacer(1, 5 * mm))
+        story.append(Paragraph('Ghost &amp; Anomalous-Hospital Claims', S_H2))
+        story.append(Paragraph("High-value claims whose hospital ID is missing (NULL), a placeholder, or a phone "
+                               "number - i.e. no traceable provider. These are prime ghost-admission leads.", S_BODY))
+        gg = [['Beneficiary', 'Hospital ID', 'Type', 'Admission', 'Exposure', 'Ded%']]
+        for _, r in ghosts.head(12).iterrows():
+            gg.append([P(short(r['beneficiary'], 22)), P(short(r['hospital_code'], 16)), P(short(r['category'], 14)),
+                       P(str(r['admission_date'])[:10]), P(inr(r['exposure'])), P(r['ded_pct'])])
+        t = Table(gg, colWidths=[36 * mm, 32 * mm, 26 * mm, 22 * mm, 30 * mm, 14 * mm])
+        t.setStyle(tbl_style()); story.append(t)
     story.append(PageBreak())
 
 
-def q13b_section(story, q13b):
+def q13b_section(story, q13b, deep):
     h1(story, 'Q13b - Hospital Risk Scorecard (Avg Deduction > 25%)')
     story.append(Paragraph("Hospital logins with at least 10 high-value claims and an average deduction "
                            "above 25%, ranked by absolute deduction. High deduction rates indicate "
@@ -329,7 +510,34 @@ def q13b_section(story, q13b):
                      P(crit(r['avg_ded_pct']) if float(r['avg_ded_pct']) >= 50 else r['avg_ded_pct']),
                      P(r['full_ded_claims'])])
     t = Table(head, colWidths=[22 * mm, 30 * mm, 18 * mm, 28 * mm, 28 * mm, 20 * mm, 18 * mm])
-    t.setStyle(tbl_style()); story.append(t); story.append(PageBreak())
+    t.setStyle(tbl_style()); story.append(t)
+
+    if deep and deep.get('hospitals'):
+        story.append(Spacer(1, 5 * mm))
+        story.append(Paragraph('Hospital deep-dives', S_H2))
+        for h in deep['hospitals'][:3]:
+            para = (f"<b>{esc(h['hospital_code'])}</b> - {h['hv_claims']:,} high-value claims, "
+                    f"Rs {h['exposure_cr']:.2f} Cr exposure, Rs {h['deducted_cr']:.2f} Cr deducted "
+                    f"({h['avg_ded_pct']}% average), of which <b>{h['full_ded_claims']}</b> were approved at Rs 0. ")
+            if h.get('named_full_ded'):
+                names = ", ".join(f"{esc(n['beneficiary'])} ({inr(n['exposure'])})" for n in h['named_full_ded'][:6])
+                para += f"Beneficiaries with a 100% deduction here include {names}. "
+            if h['full_ded_claims'] >= 5:
+                para += ("Different beneficiaries at one login all hitting 100% deduction points to systematic "
+                         "billing above the package ceiling rather than isolated patient fraud.")
+            story.append(Paragraph(para, S_BODY))
+
+    poly = (deep or {}).get('polyclinic') or {}
+    if poly.get('claims'):
+        story.append(Paragraph('ECHS polyclinic login pattern', S_H2))
+        tops = ", ".join(f"{esc(x['hospital_code'])} ({x['avg_ded_pct']}%)" for x in poly.get('top_logins', [])[:5])
+        story.append(Paragraph(
+            f"Login codes of the form <b>p.</b> / <b>pol.</b> (ECHS polyclinics) carry {poly['claims']:,} high-value "
+            f"claims with Rs {poly['deducted_cr']:.2f} Cr deducted at a {poly['avg_ded_pct']}% average - far above "
+            f"private-hospital norms" + (f". Highest-deduction polyclinic logins: {tops}" if tops else "") + ". "
+            "Polyclinic credentials routing high-value IPD claims that are then almost entirely rejected suggests "
+            "these internal channels are being used to bypass pre-authorisation controls.", S_BODY))
+    story.append(PageBreak())
 
 
 def q13c_section(story, reg):
@@ -349,10 +557,23 @@ def q13c_section(story, reg):
                      P(f"Rs {float(r['exposure_cr']):,.0f} Cr"), P(f"Rs {float(r['deducted_cr']):,.0f} Cr"),
                      P(high(r['ded_pct']) if dp >= 15 else r['ded_pct'])])
     t = Table(head, colWidths=[16 * mm, 44 * mm, 28 * mm, 30 * mm, 30 * mm, 16 * mm])
-    t.setStyle(tbl_style()); story.append(t); story.append(PageBreak())
+    t.setStyle(tbl_style()); story.append(t)
+
+    reg['ded_f'] = pd.to_numeric(reg['ded_pct'], errors='coerce').fillna(0)
+    hi_ded = reg.sort_values('ded_f', ascending=False).iloc[0]
+    hi_vol = reg.iloc[0]   # already sorted by exposure desc
+    story.append(Spacer(1, 4 * mm))
+    story.append(Paragraph('Regional implications', S_H2))
+    story.append(Paragraph(
+        f"<b>{esc(str(hi_ded['command']))}</b> shows the highest deduction rate ({hi_ded['ded_pct']}%) - the command "
+        f"where claim scrutiny removes the largest share of billed value. <b>{esc(str(hi_vol['command']))}</b> carries "
+        f"the largest absolute exposure (Rs {float(hi_vol['exposure_cr']):,.0f} Cr): a concentration of high-volume "
+        f"hospital logins makes it the biggest absolute leakage surface even at a moderate rate. High-deduction "
+        f"commands warrant a region-level audit of their top high-value hospitals.", S_BODY))
+    story.append(PageBreak())
 
 
-def q13d_section(story, q13d):
+def q13d_section(story, q13d, cases):
     h1(story, 'Q13d - Chronic Repeat High-Value Claimants (>= 3 Claims)')
     story.append(Paragraph("Beneficiary cards with three or more high-value claims, ranked by total "
                            "claimed. <b>Lock-in</b> = share of claims at a single hospital; a high lock-in "
@@ -367,10 +588,23 @@ def q13d_section(story, q13d):
                      P(f"Rs {float(r['exposure_cr']):,.2f} Cr"), P(f"Rs {float(r['deducted_cr']):,.2f} Cr"),
                      P(short(r['primary_hospital'], 12)), P(f"{int(float(r['lockin'])*100)}%"), P(span)])
     t = Table(head, colWidths=[18 * mm, 24 * mm, 24 * mm, 12 * mm, 22 * mm, 22 * mm, 16 * mm, 12 * mm, 20 * mm])
-    t.setStyle(tbl_style()); story.append(t); story.append(PageBreak())
+    t.setStyle(tbl_style()); story.append(t)
+
+    le = (cases or {}).get('lockin_examples')
+    if le:
+        ex = "; ".join(f"{esc(x['beneficiary'])} ({x['claims']} claims, {x['lockin_pct']}% at {esc(x['hospital'])})"
+                       for x in le)
+        story.append(Spacer(1, 4 * mm))
+        story.append(Paragraph('Single-hospital lock-in', S_H2))
+        story.append(Paragraph(
+            "Natural medical histories spread across providers. Near-perfect single-hospital concentration over "
+            "dozens of high-value admissions is the strongest repeat-claimant signal - it points to a fixed "
+            f"beneficiary-hospital relationship that should be examined for any financial arrangement. Examples: "
+            f"{ex}.", S_BODY))
+    story.append(PageBreak())
 
 
-def q13f_section(story, bulk):
+def q13f_section(story, bulk, cases):
     h1(story, 'Q13f - Extreme Bulk Claim Injection (Same-Day Mass Intimation)')
     story.append(Paragraph("Hundreds of claim-intimation records created for a single card, on a single "
                            "day, at a single hospital login - far beyond manual entry. Tiers: "
@@ -386,7 +620,29 @@ def q13f_section(story, bulk):
                      P(str(r['creation_date'])[:10]), P(crit(r['intimation_count'])),
                      P(f"{r['first_intimation_id']}-{r['last_intimation_id']}"), P(tlab)])
     t = Table(head, colWidths=[30 * mm, 26 * mm, 22 * mm, 20 * mm, 20 * mm, 30 * mm, 22 * mm])
-    t.setStyle(tbl_style()); story.append(t); story.append(PageBreak())
+    t.setStyle(tbl_style()); story.append(t)
+
+    tb = (cases or {}).get('top_bulk')
+    spread = (cases or {}).get('bulk_spread')
+    story.append(Spacer(1, 4 * mm))
+    story.append(Paragraph('Why this matters', S_H2))
+    if tb:
+        story.append(Paragraph(
+            f"The top event - <b>{esc(tb['beneficiary'])}</b> at <b>{esc(tb['hospital'])}</b> on {tb['date']} - "
+            f"created <b>{tb['count']} intimation IDs in a single day</b>"
+            + (f", spanning IDs {tb['first_id']}-{tb['last_id']} (near-consecutive). " if tb.get('consecutive') else ". ")
+            + "Creating hundreds of records in one day is impossible through manual web-portal entry; near-consecutive "
+              "ID ranges are the signature of programmatic batch insertion - portal credential compromise or insider "
+              "database access, not ordinary claim fraud.", S_BODY))
+    if spread and spread.get('prefixes'):
+        known = [p['region'] for p in spread['prefixes'] if p['region']]
+        rtxt = (", including " + ", ".join(known[:5])) if known else ""
+        story.append(Paragraph(
+            f"These {spread['n_events']} events span <b>{len(spread['prefixes'])} distinct card-prefix codes</b> "
+            f"(each encoding an issuing ECHS region{rtxt}) - so this is not a single compromised login but a "
+            f"multi-region pattern. Response: pull portal access logs (IP, session, timestamps) for these dates and "
+            f"escalate to ECHS IT / CERT-In as a security incident.", S_BODY))
+    story.append(PageBreak())
 
 
 def scoring_section(story, s):
@@ -407,35 +663,69 @@ def scoring_section(story, s):
     story.append(PageBreak())
 
 
-def recommendations(story):
+def recommendations(story, s, cases, deep):
     h1(story, 'Strategic Recommendations')
-    recs = [
-        ('CRITICAL', 'Freeze & audit top-scored hospital logins', 'Suspend new high-value claim processing on logins with >50% average deduction pending physical audit.'),
-        ('CRITICAL', 'Investigate bulk-injection events as credential compromise', 'Treat any login with >300 same-day intimations as a security incident; rotate credentials and trace the source IP/session.'),
-        ('CRITICAL', 'Recover on same-day duplicate claims', 'Reclaim paid amounts where the same card+date+amount was submitted under multiple intimation IDs.'),
-        ('HIGH', 'Cap & pre-authorise claims above Rs 5 lakh', 'Mandatory pre-authorisation and senior medical review for every claim exceeding Rs 5 lakh.'),
-        ('HIGH', 'Profile chronic repeat claimants', 'Manually review cards with >= 3 high-value claims and high single-hospital lock-in.'),
-        ('HIGH', 'Validate hospital identifiers', 'Reject claims carrying NULL or numeric (phone-like) hospital IDs at intake.'),
-        ('MEDIUM', 'Operationalise the risk score', 'Run the composite score nightly and route CRITICAL-band claims to auditors before settlement.'),
-    ]
-    data = [['Priority', 'Recommendation', 'Action']]
-    for pr, t1, t2 in recs:
-        data.append([P(band_html(pr)), P(bold(t1)), P(t2)])
-    t = Table(data, colWidths=[20 * mm, 55 * mm, 95 * mm]); t.setStyle(tbl_style()); story.append(t)
+    story.append(Paragraph("Prioritised by composite risk and tied to the specific cases surfaced above. SLAs are "
+                           "indicative response windows.", S_BODY))
+    c = cases or {}
+    tb, rc, du, cv = c.get('top_bulk'), c.get('top_repeat_claimant'), c.get('top_duplicate'), c.get('card_variation')
+    hosps = (deep or {}).get('hospitals', [])
+    hosp = hosps[0] if hosps else None
+    poly = (deep or {}).get('polyclinic') or {}
+    recs = []
+    if tb:
+        recs.append(('CRITICAL', 'Immediate', 'Portal-security investigation of bulk injection',
+                     f"{esc(tb['beneficiary'])} created {tb['count']} intimation IDs in one day at {esc(tb['hospital'])}. "
+                     f"Pull portal access logs (IP/session) for all {s.get('n_bulk_events',0)} events, suspend the involved "
+                     f"logins, and escalate to ECHS IT / CERT-In."))
+    if du:
+        recs.append(('CRITICAL', '7 days', 'Recover same-day duplicate payments',
+                     f"{esc(du['beneficiary'])}: {du['dup_count']} identical {inr(du['exposure'])} claims on "
+                     f"{du['admission_date']} at {esc(du['hospital'])}. Confirm which submissions were paid, recover the "
+                     f"surplus, and sweep that login for other same-day duplicates."))
+    if rc:
+        recs.append(('CRITICAL', '14 days', 'Physically verify the top chronic claimant',
+                     f"{esc(rc['beneficiary'])} - {rc['claims']} high-value claims at {esc(rc['primary_hospital'])}. Obtain "
+                     f"discharge summaries for a 20-claim sample and reconcile admission dates / ICU notes."))
+    if cv:
+        recs.append(('CRITICAL', 'Immediate', 'Investigate possible card-ID manipulation',
+                     f"{esc(cv['beneficiary'])} appears on two near-identical cards ({esc(cv['card_a'])} / "
+                     f"{esc(cv['card_b'])}). Verify against the service record - one pensioner or two?"))
+    if hosp:
+        recs.append(('HIGH', '60 days', 'Empanelment & billing audit of the top-deduction hospital',
+                     f"{esc(hosp['hospital_code'])} - Rs {hosp['deducted_cr']:.2f} Cr deducted across {hosp['hv_claims']:,} "
+                     f"claims ({hosp['full_ded_claims']} at 100%). Audit the empanelment package rates and a 10-claim "
+                     f"line-item sample."))
+    if poly.get('claims'):
+        recs.append(('HIGH', '60 days', 'Segregate ECHS polyclinic claim channels',
+                     f"Polyclinic logins carry {poly['claims']:,} high-value claims at {poly['avg_ded_pct']}% deduction. "
+                     f"Restrict polyclinic logins to OPD/pharmacy and quarantine high-value IPD claims submitted through them."))
+    recs.append(('HIGH', '30 days', 'Reject invalid hospital identifiers at intake',
+                 f"{s.get('n_anomalous_hv_claims',0):,} high-value claims (Rs {s.get('anomalous_exposure_cr',0):,.0f} Cr) "
+                 f"carry NULL or phone-like hospital IDs. Block submission where the hospital ID is not a valid portal login."))
+    recs.append(('MEDIUM', 'Ongoing', 'Operationalise the risk score',
+                 'Run the composite score nightly and route CRITICAL-band claims to auditors before settlement.'))
+    data = [['Priority', 'SLA', 'Recommendation', 'Action']]
+    for pr, sla, t1, t2 in recs:
+        data.append([P(band_html(pr)), P(sla), P(bold(t1)), P(t2)])
+    t = Table(data, colWidths=[18 * mm, 16 * mm, 44 * mm, 92 * mm]); t.setStyle(tbl_style()); story.append(t)
     story.append(Spacer(1, 6 * mm))
-    story.append(Paragraph("This report is produced by an automated screening system. Every flagged case "
-                           "is an investigative lead, not a confirmed finding, and must be reviewed by a "
-                           "qualified auditor before any action is taken.", S_WARN))
+    story.append(Paragraph("This report is produced by an automated screening system. Every flagged case is an "
+                           "investigative lead, not a confirmed finding, and must be reviewed by a qualified auditor "
+                           "before any action is taken.", S_WARN))
 
 
 def build():
     s = load_summary()
+    cases = load_json('module13_cases.json')
+    deep = load_json('module13_hospital_deepdive.json')
     q13a = load_csv('q13a_top_claims.csv')
     dups = load_csv('q13a2_duplicates.csv')
     q13b = load_csv('q13b_hospital_scorecard.csv')
     reg = load_csv('q13c_regional.csv')
     q13d = load_csv('q13d_chronic_claimants.csv')
     bulk = load_csv('q13f_bulk_injection.csv')
+    ghosts = load_csv('module13_ghost_claims.csv')
 
     os.makedirs(os.path.dirname(OUT), exist_ok=True)
     doc = BaseDocTemplate(OUT, pagesize=A4, topMargin=25 * mm, bottomMargin=25 * mm,
@@ -448,14 +738,17 @@ def build():
 
     story = [CoverPage(s), PageBreak()]
     exec_summary(story, s, q13b, q13d, bulk)
+    methodology(story, s)
+    limitations(story)
     signals_section(story, s, q13a, q13b, q13d, dups, bulk)
-    q13a_section(story, q13a, dups)
-    q13b_section(story, q13b)
+    case_studies(story, cases)
+    q13a_section(story, q13a, dups, ghosts)
+    q13b_section(story, q13b, deep)
     q13c_section(story, reg)
-    q13d_section(story, q13d)
-    q13f_section(story, bulk)
+    q13d_section(story, q13d, cases)
+    q13f_section(story, bulk, cases)
     scoring_section(story, s)
-    recommendations(story)
+    recommendations(story, s, cases, deep)
     doc.build(story)
     print(f'PDF saved: {OUT}')
 

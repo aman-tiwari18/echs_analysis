@@ -1,5 +1,5 @@
 {
-  "scope": "Full history (all years)",
+  "scope": "Last 5 years (CI_CR_DATE >= current date - 5 years)",
   "hv_threshold_rs": 500000.0,
   "total_hv_claims": 74593,
   "total_exposure_cr": 5630.76,
@@ -8,13 +8,42 @@
   "full_deduction_hv_claims": 9717,
   "n_anomalous_hv_claims": 23959,
   "anomalous_exposure_cr": 1729.34,
+  "anomalous_breakdown": {
+    "NULL (missing)": {
+      "claims": 23763,
+      "exposure_cr": 1708.95
+    },
+    "Phone-like": {
+      "claims": 196,
+      "exposure_cr": 20.39
+    }
+  },
   "top_single_claim_cr": 0.99,
+  "earliest_admit": "2011-09-08",
+  "latest_admit": "2026-03-31",
   "n_flagged_hospitals": 392,
   "n_chronic_claimants": 3135,
   "n_duplicate_groups": 71,
   "n_bulk_events": 19,
   "n_bulk_system_compromise": 5,
   "n_regions": 31,
+  "claims_band_dist": {
+    "CRITICAL": 18,
+    "HIGH": 143,
+    "MEDIUM": 39
+  },
+  "hospitals_band_dist": {
+    "CRITICAL": 0,
+    "HIGH": 15,
+    "MEDIUM": 377
+  },
+  "claimants_band_dist": {
+    "CRITICAL": 2,
+    "HIGH": 130,
+    "MEDIUM": 3003
+  },
+  "n_polyclinic_claims": 4499,
+  "polyclinic_deducted_cr": 237.1,
   "weights": {
     "claim": {
       "deduction": 35,
