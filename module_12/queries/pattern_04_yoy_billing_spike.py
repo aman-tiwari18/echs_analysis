@@ -27,7 +27,8 @@ SELECT
     ROUND(curr.total_claimed/1e5,2) AS curr_claimed_lakh,
     ROUND((curr.total_claimed-prev.total_claimed)/NULLIF(prev.total_claimed,0)*100,1) AS yoy_amount_growth_pct,
     ROUND((curr.total_claims-prev.total_claims)/NULLIF(prev.total_claims,0)*100,1)  AS yoy_claim_growth_pct,
-    ROUND(curr.deduction_pct,2) AS curr_deduction_pct
+    ROUND(curr.deduction_pct,2) AS curr_deduction_pct,
+    curr.claim_ids
 FROM (
     SELECT om.OM_OFFICE_ID AS hospital_id, om.OM_OFFICE_NAME AS hospital_name,
            om.OM_HOSP_TYPE AS hosp_type, COALESCE(om.OM_HOSP_TYPES,'—') AS hosp_type_desc,
@@ -37,7 +38,8 @@ FROM (
            COALESCE(SUM(cs.CS_GR_CLAIM_AMT),0) AS total_claimed,
            ROUND(CASE WHEN SUM(cs.CS_GR_CLAIM_AMT)>0
                  THEN (SUM(cs.CS_GR_CLAIM_AMT)-SUM(cs.CS_UTI_APP_AMT))/SUM(cs.CS_GR_CLAIM_AMT)*100
-                 ELSE 0 END, 2) AS deduction_pct
+                 ELSE 0 END, 2) AS deduction_pct,
+           GROUP_CONCAT(DISTINCT ci.CI_INTIMATION_ID SEPARATOR ', ') AS claim_ids
     FROM claim_intimation ci
     JOIN office_master om ON ci.CI_CR_OFFICE_ID = om.OM_OFFICE_ID
     LEFT JOIN claim_submission cs ON ci.CI_INTIMATION_ID = cs.CS_INTIMATION_ID
@@ -57,7 +59,7 @@ JOIN (
 ) prev ON curr.hospital_id=prev.hospital_id AND curr.yr=prev.yr+1
 WHERE prev.total_claims >= 50
   AND (curr.total_claimed-prev.total_claimed)/NULLIF(prev.total_claimed,0) >= 1.0
-ORDER BY yoy_amount_growth_pct DESC LIMIT 100;
+ORDER BY yoy_amount_growth_pct DESC;
 """
 
 QUERY_4B = """
@@ -104,7 +106,7 @@ def main():
             rows = run_query(client, sql); elapsed = datetime.datetime.now() - t0
             if len(rows) > 1:
                 fname = os.path.join(data_dir, f'{name}_{ts}.csv')
-                with open(fname, 'w', newline='', encoding='utf-8') as f: csv.writer(f).writerows(rows)
+                with open(fname, 'w', newline='', encoding='utf-8') as f: csv.writer(f, quoting=csv.QUOTE_ALL).writerows(rows)
                 print(f"  ✅ {len(rows)-1} rows → {os.path.basename(fname)}  ({elapsed})")
             else: print(f"  ⚠ No data for {name}")
     except Exception as e: print(f"Error: {e}")

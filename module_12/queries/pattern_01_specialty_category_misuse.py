@@ -51,7 +51,8 @@ SELECT
              ELSE 0 END, 2
     )                        AS deduction_pct,
     MIN(ci.CI_ADMISSION_DATE) AS first_ipd_date,
-    MAX(ci.CI_ADMISSION_DATE) AS last_ipd_date
+    MAX(ci.CI_ADMISSION_DATE) AS last_ipd_date,
+    GROUP_CONCAT(DISTINCT ci.CI_INTIMATION_ID SEPARATOR ', ') as claim_ids
 FROM claim_intimation ci
 JOIN office_master om ON ci.CI_CR_OFFICE_ID = om.OM_OFFICE_ID
 LEFT JOIN claim_submission cs ON ci.CI_INTIMATION_ID = cs.CS_INTIMATION_ID
@@ -86,8 +87,7 @@ JOIN office_master om ON ci.CI_CR_OFFICE_ID = om.OM_OFFICE_ID
 LEFT JOIN claim_submission cs ON ci.CI_INTIMATION_ID = cs.CS_INTIMATION_ID
 WHERE ci.CI_PATIENT_TYPE = 'I'
   AND om.OM_HOSP_TYPE IN ('3','03')
-ORDER BY gross_claimed DESC
-LIMIT 500;
+ORDER BY gross_claimed DESC;
 """
 
 # ── Query 1C: Full NABH vs Non-NABH deduction rate by hospital type ───────────
@@ -137,8 +137,7 @@ WHERE ci.CI_CR_DATE >= DATE_SUB(CURDATE(), INTERVAL 5 YEAR)
 GROUP BY om.OM_OFFICE_ID, om.OM_OFFICE_NAME, om.OM_HOSP_TYPE,
          om.OM_HOSP_TYPES, om.OM_NABH, om.OM_OFFICE_CITY
 HAVING total_claims >= 100
-ORDER BY deduction_pct DESC
-LIMIT 100;
+ORDER BY deduction_pct DESC;
 """
 
 QUERIES = {
@@ -180,7 +179,7 @@ def main():
             if len(rows) > 1:
                 fname = os.path.join(data_dir, f'{name}_{ts}.csv')
                 with open(fname, 'w', newline='', encoding='utf-8') as f:
-                    csv.writer(f).writerows(rows)
+                    csv.writer(f, quoting=csv.QUOTE_ALL).writerows(rows)
                 print(f"  ✅ {len(rows)-1} rows → {os.path.basename(fname)}  ({elapsed})")
             else:
                 print(f"  ⚠ No data returned")

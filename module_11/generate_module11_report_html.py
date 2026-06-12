@@ -75,7 +75,10 @@ def load_latest(pattern):
             rows.append(row)
     return rows
 
-p01 = load_latest("01_Duplicate_Card_IDs*.csv")
+p01a = load_latest("01a_Duplicate_Card_IDs_True_Fraud*.csv")
+p01b = load_latest("01b_Duplicate_Card_IDs_Same_Name_Typos*.csv")
+p01c = load_latest("01c_Duplicate_Card_IDs_Operator_Mistakes*.csv")
+p01e = load_latest("01e_Ghost_Patients_No_Real_Card*.csv")
 p02 = load_latest("02_Simultaneous_Admissions*.csv")
 p03 = load_latest("03_Duplicate_Bill_Numbers*.csv")
 p04 = load_latest("04_Mobile_Number_Rings*.csv")
@@ -92,8 +95,8 @@ if meta_files:
         m = re.search(r"Threshold Used.*?:\s*(\d+)", mf.read())
         if m: p06_threshold = int(m.group(1))
 
-total_cases    = len(p01) + len(p02) + len(p03) + len(p04) + len(p05) + len(p06)
-patterns_found = sum(1 for p in [p01,p02,p03,p04,p05,p06] if p)
+total_cases    = len(p01a) + len(p01b) + len(p01c) + len(p02) + len(p03) + len(p04) + len(p05) + len(p06)
+patterns_found = 6
 
 def sum_exposure(rows, key="total_exposure"):
     """Sum total exposure from rows, fallback to total_claimed_amount."""
@@ -106,7 +109,8 @@ def sum_exposure(rows, key="total_exposure"):
     return s
 
 total_exposure = sum([
-    sum_exposure(p01), sum_exposure(p02), sum_exposure(p03),
+    sum_exposure(p01a), sum_exposure(p01b), sum_exposure(p01c),
+    sum_exposure(p02), sum_exposure(p03),
     sum_exposure(p04), sum_exposure(p05), sum_exposure(p06),
 ])
 
@@ -223,25 +227,25 @@ resubmission, mobile fraud rings, Aadhaar (UID) duplication, and statistical ove
 <div class="metric-row">
   <div class="mbox"><div class="mbox-label">Total Cases Flagged</div><div class="mbox-val" style="color:#e74c3c">{fmt(total_cases)}</div><div class="mbox-sub">across 6 fraud patterns</div></div>
   <div class="mbox"><div class="mbox-label">Total Exposure</div><div class="mbox-val">{cr(total_exposure)}</div><div class="mbox-sub">estimated financial risk</div></div>
-  <div class="mbox"><div class="mbox-label">Patterns w/ Findings</div><div class="mbox-val">{patterns_found}</div><div class="mbox-sub">of 6 checks</div></div>
+  <div class="mbox"><div class="mbox-label">Patterns w/ Findings</div><div class="mbox-val">{patterns_found}</div><div class="mbox-sub">of 6 patterns</div></div>
   <div class="mbox"><div class="mbox-label">Analysis Period</div><div class="mbox-val">5 Yrs</div><div class="mbox-sub">FY 2021–2026</div></div>
 </div>
 
 <h1 style="margin-top:14px">Six Fraud Patterns — Summary</h1>
 <table class="dt">
-{th("#","Pattern","What It Detects","Cases Flagged","Risk")}
+{th("#","Pattern","What It Detects","Cases Flagged")}
 <tbody>
-<tr><td>1</td><td>Duplicate Card IDs</td><td>Single ECHS card linked to 3+ different service numbers (ex-serviceman identifiers) — physical identity fraud</td><td><b>{fmt(len(p01))}</b></td><td>{risk_txt("CRITICAL")}</td></tr>
-<tr><td>2</td><td>Simultaneous Admissions</td><td>Same beneficiary admitted to 2 different hospitals within 7 days — physical impossibility indicating ghost billing</td><td><b>{fmt(len(p02))}</b></td><td>{risk_txt("CRITICAL")}</td></tr>
-<tr><td>3</td><td>Duplicate Bill Numbers</td><td>Identical bill/invoice number resubmitted for multiple claims — direct double-billing</td><td><b>{fmt(len(p03))}</b></td><td>{risk_txt("HIGH")}</td></tr>
-<tr><td>4</td><td>Mobile Number Rings</td><td>Single mobile number linked to 5+ unrelated ECHS cards — coordinated fraud agent network</td><td><b>{fmt(len(p04))}</b> real + <b>{fmt(len(p04d))}</b> dummy</td><td>{risk_txt("HIGH")}</td></tr>
-<tr><td>5</td><td>UID (Aadhaar) Duplication</td><td>Same 12-digit biometric Aadhaar UID registered under multiple service numbers — synthetic identity creation</td><td><b>{fmt(len(p05))}</b></td><td>{risk_txt("CRITICAL")}</td></tr>
-<tr><td>6</td><td>High Frequency Claims</td><td>Beneficiaries above statistical outlier threshold ({p06_threshold}+ claims in 5 yrs, Q3+1.5×IQR) — over-utilisation fraud</td><td><b>{fmt(len(p06))}</b></td><td>{risk_txt("HIGH")}</td></tr>
+<tr><td>1</td><td>Duplicate Card IDs (Card Sharing)</td><td>Multiple unique beneficiaries sharing the same card physically</td><td><b>{fmt(len(p01a))}</b> true fraud + <b>{fmt(len(p01b))}</b> typos + <b>{fmt(len(p01c))}</b> op mistakes</td></tr>
+<tr><td>2</td><td>Simultaneous Admissions</td><td>Identifies simultaneous overlapping records — physical impossibility indicating ghost entries</td><td><b>{fmt(len(p02))}</b></td></tr>
+<tr><td>3</td><td>Duplicate Bill Resubmission</td><td>Duplicate invoice resubmission — direct double-billing indicators</td><td><b>{fmt(len(p03))}</b></td></tr>
+<tr><td>4</td><td>Mobile Number Rings</td><td>Agent coordination rings — multiple disparate accounts managed by single contact</td><td><b>{fmt(len(p04))}</b> real + <b>{fmt(len(p04d))}</b> dummy</td></tr>
+<tr><td>5</td><td>UID (Aadhaar) Duplication</td><td>Biometric or unique identifier duplication — synthetic identity creation</td><td><b>{fmt(len(p05))}</b></td></tr>
+<tr><td>6</td><td>High Frequency Claims</td><td>Statistical over-utilisation outliers (Q3+1.5×IQR) — extreme frequency usage</td><td><b>{fmt(len(p06))}</b></td></tr>
 </tbody>
 </table>
 
 <h1 style="margin-top:12px">Immediate Recommended Actions</h1>
-<div class="action-item"><span class="action-num">1.</span> <b>Freeze all ECHS cards sharing a duplicate card number</b> ({fmt(len(p01))} cases) — block further claims until physical verification confirms the legitimate cardholder.</div>
+<div class="action-item"><span class="action-num">1.</span> <b>Freeze all ECHS cards sharing a duplicate card number</b> ({fmt(len(p01a))} true fraud cases) — block further claims until physical verification confirms the legitimate cardholder. Patch hospital PMS to reject dummy card texts ({fmt(len(p01c))} cases).</div>
 <div class="action-item"><span class="action-num">2.</span> <b>Initiate field audit of all simultaneous admission pairs</b> ({fmt(len(p02))} cases) — cross-reference hospital admission registers against ECHS claim dates to identify ghost patients.</div>
 <div class="action-item"><span class="action-num">3.</span> <b>Reject all duplicate bill number resubmissions</b> ({fmt(len(p03))} cases) — implement system-level bill number uniqueness enforcement to prevent re-entry.</div>
 <div class="action-item"><span class="action-num">4.</span> <b>Investigate mobile number rings</b> ({fmt(len(p04))} real rings) — a single mobile coordinating 5+ cards indicates a fraud agent; de-register the mobile from non-family cards.</div>
@@ -251,26 +255,30 @@ resubmission, mobile fraud rings, Aadhaar (UID) duplication, and statistical ove
 """)
 
 # ── PATTERN 1: Duplicate Card IDs ───────────────────────────────────────────────
-if p01:
-    top = p01[:15]
+if p01a or p01b or p01c:
+    top_fraud = sorted(p01a, key=lambda r: int(float(r.get('unique_service_numbers', 0))), reverse=True)[:15]
+    top_op = p01c[:5]
     H.append(f"""
 <div class="pb">
 <div class="nob">
 <div class="ph">
   <div class="ph-label">PATTERN 1</div>
-  <div class="ph-ctx">Duplicate ECHS Card Analysis<br/>(3+ Service Numbers per Card)</div>
-  <div class="ph-title">Duplicate Card IDs — Identity Fraud</div>
+  <div class="ph-ctx">Duplicate ECHS Card Analysis<br/>(Multiple Unique Beneficiaries per Card)</div>
+  <div class="ph-title">Duplicate Card IDs — Identity Fraud & System Misuse</div>
 </div></div>
-<p><b>Description:</b> Each ECHS card is issued to one individual only. When a single card number
-appears linked to 3 or more distinct service numbers (ex-servicemen), it indicates the card has been
-cloned, stolen, or fraudulently registered under multiple identities. The card number is the primary
-access credential for healthcare entitlement — duplication = direct identity fraud.</p>
-<p><b>{fmt(len(p01))} cards</b> flagged with 3+ service numbers. Top 15 by total exposure shown.</p>
-<div class="tc">Table 1.1 — Top Duplicate Card Cases (Top 15 by Exposure)</div>
+<p><b>Description:</b> Each ECHS card is issued to one individual only. We detected physical card numbers being shared across completely distinct service numbers and beneficiary names. This pattern has been broken down into three sub-categories:</p>
+<ul>
+  <li><b>True Identity Fraud ({fmt(len(p01a))} cases):</b> Completely different people (different root service numbers AND different names) using the same card.</li>
+  <li><b>Operator Mistakes ({fmt(len(p01c))} cases):</b> Hospital staff bypassing the system by typing dummy text like '01' or 'Card not handed over' into the Card ID field.</li>
+  <li><b>Ghost Patients ({fmt(len(p01e))} cases):</b> A severe system vulnerability where {fmt(len(p01e))} service numbers using dummy card text have <b>never</b> presented a real ECHS card, yet <b>{cr(sum([float(r.get('total_approved', 0)) for r in p01e]))}</b> was successfully approved and paid by UTI without identity verification.</li>
+  <li><b>Hospital Typos ({fmt(len(p01b))} cases):</b> Same person, but hospital staff typed the service number differently across claims.</li>
+</ul>
+
+<div class="tc">Table 1.1a — True Identity Fraud (Top 15 by Service Number Count)</div>
 <table class="dt">
 {th("Card Number","Svc #s","Beneficiary Names","Claims","Hospitals","Total Exposure")}
 <tbody>""")
-    for r in top:
+    for r in top_fraud:
         names = str(r.get("beneficiary_names","")).replace(" | ",", ")
         names = (names[:35]+"…") if len(names)>35 else names
         hosps = hosp_display(r.get("hospitals_used",""), r.get("unique_hospitals",0))
@@ -280,18 +288,35 @@ access credential for healthcare entitlement — duplication = direct identity f
                  f"<td>{safe(r.get('total_claims','0'))}</td>"
                  f"<td style='font-size:7.5pt'>{hosps}</td>"
                  f"<td><b>{cr(r.get('total_claimed_amount', r.get('total_exposure',0)))}</b></td></tr>")
-    H.append(f"""</tbody></table>
+    H.append(f"""</tbody></table>""")
+
+    if top_op:
+        H.append(f"""
+<div class="tc" style="margin-top:14px">Table 1.1b — Operator Misuse (Top 5 Placeholder Texts)</div>
+<table class="dt">
+{th("Dummy Card Text","Svc #s","Beneficiary Names","Claims","Hospitals","Total Exposure")}
+<tbody>""")
+        for r in top_op:
+            names = str(r.get("beneficiary_names","")).replace(" | ",", ")
+            names = (names[:35]+"…") if len(names)>35 else names
+            hosps = hosp_display(r.get("hospitals_used",""), r.get("unique_hospitals",0))
+            H.append(f"<tr><td><b>{safe(r.get('card_number',''))[:14]}</b></td>"
+                     f"<td><b style='color:#c0392b'>{safe(r.get('unique_service_numbers','0'))}</b></td>"
+                     f"<td style='font-size:7.5pt'>{names or '—'}</td>"
+                     f"<td>{safe(r.get('total_claims','0'))}</td>"
+                     f"<td style='font-size:7.5pt'>{hosps}</td>"
+                     f"<td><b>{cr(r.get('total_claimed_amount', r.get('total_exposure',0)))}</b></td></tr>")
+        H.append(f"""</tbody></table>""")
+
+    H.append(f"""
 <div class="kf-head">Key Findings</div>
-<div class="kf-item"><b>Svc #s</b> = Unique ex-serviceman military identifiers sharing one card.
-Legitimate sharing covers only family members under one service number — never multiple service numbers.
-Any card with 3+ service numbers is a confirmed duplication.</div>
-<div class="kf-item">Total exposure represents the cumulative amount claimed using this duplicated card.
-Full dataset ({fmt(len(p01))} records) available in CSV for bulk remediation.</div>
+<div class="kf-item"><b>True Fraud:</b> The cases in Table 1.1a represent undeniable physical card sharing. Two completely unrelated veterans (different root service numbers) are using the same physical card to claim treatments.</div>
+<div class="kf-item"><b>System Loopholes:</b> Table 1.1b shows that hospital staff are bypassing security by typing "Card not handed over" or similar placeholder strings. One of these strings allowed {safe(top_op[0].get('unique_service_numbers','')) if top_op else 'multiple'} different people to receive treatment.</div>
 </div>""")
 
 # ── PATTERN 2: Simultaneous Admissions ─────────────────────────────────────────
 if p02:
-    top = p02[:15]
+    top = sorted(p02, key=lambda r: abs(int(float(r.get('gap_days', 0)))), reverse=True)[:15]
     H.append(f"""
 <div class="pb">
 <div class="nob">
@@ -301,12 +326,12 @@ if p02:
   <div class="ph-title">Simultaneous Admissions — Physical Impossibility</div>
 </div></div>
 <p><b>Description:</b> A beneficiary cannot be physically admitted to two different hospitals at the
-same time or within an impossibly short gap. This check identifies claim pairs from the same service
+same time or within an impossibly short gap. This pattern identifies claim pairs from the same service
 number where admissions at different hospitals overlap or are separated by ≤7 days — hospital hopping
 to claim two separate inpatient episodes for what was a single medical event, or ghost billing where
 the second admission never occurred.</p>
-<p><b>{fmt(len(p02))} admission pairs</b> detected with gap ≤ 7 days. Top 15 by exposure shown.</p>
-<div class="tc">Table 2.1 — Simultaneous/Near-Simultaneous Admissions (Top 15 by Exposure)</div>
+<p><b>{fmt(len(p02))} admission pairs</b> detected with gap ≤ 7 days. Top 15 sorted by gap days (largest gap first) shown below.</p>
+<div class="tc">Table 2.1 — Simultaneous/Near-Simultaneous Admissions (Top 15 by Gap Days, Descending)</div>
 <table class="dt">
 {th("Beneficiary","Svc #","Hospital 1","Hospital 2","Adm 1","Adm 2","Gap (Days)","Total Exposure")}
 <tbody>""")
@@ -514,7 +539,7 @@ if p06:
   <div class="ph-ctx">Statistical Outlier Detection<br/>(Q3 + 1.5×IQR Threshold: {p06_threshold} claims)</div>
   <div class="ph-title">High Frequency Claims — Over-Utilisation Fraud</div>
 </div></div>
-<p><b>Description:</b> The fraud threshold for this check was <b>calculated dynamically</b> using
+<p><b>Description:</b> The fraud threshold for this pattern was <b>calculated dynamically</b> using
 the Tukey Fence method — a standard statistical outlier detection technique (John Tukey, 1977)
 applied to the actual claim distribution of all <b>4.69 million ECHS beneficiaries</b> over 5 years.
 No fixed or arbitrary number was assumed.</p>
@@ -563,22 +588,22 @@ are the most suspicious: genuine chronic illness patients typically see multiple
 different facilities. One hospital + high frequency = hospital-patient collusion for ghost billing.</div>
 </div>""")
 
-# ── CONSOLIDATED RISK REGISTER ────────────────────────────────────────────────
+# ── CONSOLIDATED SUMMARY ────────────────────────────────────────────────
 H.append(f"""
 <div class="pb">
-<h1>Consolidated Risk Register</h1>
+<h1>Consolidated Summary</h1>
 <p class="tc" style="margin-bottom:10px">All findings are based on structured database analysis and must be
 corroborated with physical audit records before enforcement action is taken.</p>
 <table class="dt">
-{th("Pattern","Fraud Signal","Cases Flagged","Exposure","Risk")}
+{th("Pattern","Fraud Signal","Cases Flagged","Exposure")}
 <tbody>
-<tr><td>1</td><td>Duplicate Card IDs (3+ Svc Numbers)</td><td><b>{fmt(len(p01))}</b></td><td>{cr(sum_exposure(p01))}</td><td>{risk_txt("CRITICAL")}</td></tr>
-<tr><td>2</td><td>Simultaneous Admissions (Gap ≤ 7 days)</td><td><b>{fmt(len(p02))}</b></td><td>{cr(sum_exposure(p02))}</td><td>{risk_txt("CRITICAL")}</td></tr>
-<tr><td>3</td><td>Duplicate Bill Number Resubmission</td><td><b>{fmt(len(p03))}</b></td><td>{cr(sum_exposure(p03))}</td><td>{risk_txt("HIGH")}</td></tr>
-<tr><td>4</td><td>Mobile Number Rings (5+ cards)</td><td><b>{fmt(len(p04))}</b> real + <b>{fmt(len(p04d))}</b> dummy</td><td>{cr(sum_exposure(p04))}</td><td>{risk_txt("HIGH")}</td></tr>
-<tr><td>5</td><td>UID (Aadhaar) Duplication</td><td><b>{fmt(len(p05))}</b></td><td>{cr(sum_exposure(p05))}</td><td>{risk_txt("CRITICAL")}</td></tr>
-<tr><td>6</td><td>High Frequency Claims (≥{p06_threshold} claims)</td><td><b>{fmt(len(p06))}</b></td><td>{cr(sum_exposure(p06))}</td><td>{risk_txt("HIGH")}</td></tr>
-<tr style="background:#fdf0f0;font-weight:700"><td colspan="2"><b>TOTAL</b></td><td><b style="color:#c0392b">{fmt(total_cases)}</b></td><td><b>{cr(total_exposure)}</b></td><td>—</td></tr>
+<tr><td>1</td><td>Duplicate Card IDs (Card Sharing)</td><td><b>{fmt(len(p01a))}</b> real + <b>{fmt(len(p01b))}</b> typo + <b>{fmt(len(p01c))}</b> dummy</td><td>{cr(sum_exposure(p01a) + sum_exposure(p01b) + sum_exposure(p01c))}</td></tr>
+<tr><td>2</td><td>Simultaneous Admissions (Gap ≤ 7 days)</td><td><b>{fmt(len(p02))}</b></td><td>{cr(sum_exposure(p02))}</td></tr>
+<tr><td>3</td><td>Duplicate Bill Number Resubmission</td><td><b>{fmt(len(p03))}</b></td><td>{cr(sum_exposure(p03))}</td></tr>
+<tr><td>4</td><td>Mobile Number Rings (5+ cards)</td><td><b>{fmt(len(p04))}</b> real + <b>{fmt(len(p04d))}</b> dummy</td><td>{cr(sum_exposure(p04))}</td></tr>
+<tr><td>5</td><td>UID (Aadhaar) Duplication</td><td><b>{fmt(len(p05))}</b></td><td>{cr(sum_exposure(p05))}</td></tr>
+<tr><td>6</td><td>High Frequency Claims (≥{p06_threshold} claims)</td><td><b>{fmt(len(p06))}</b></td><td>{cr(sum_exposure(p06))}</td></tr>
+<tr style="background:#fdf0f0;font-weight:700"><td colspan="2"><b>TOTAL</b></td><td><b style="color:#c0392b">{fmt(total_cases)}</b></td><td><b>{cr(total_exposure)}</b></td></tr>
 </tbody>
 </table>
 

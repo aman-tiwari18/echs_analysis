@@ -54,7 +54,7 @@ def run_query():
         print(f"Connecting to SSH {SSH_HOST}...")
         client.connect(SSH_HOST, port=SSH_PORT, username=SSH_USER, password=SSH_PASS)
         
-        mysql_cmd = f"mysql -u {DB_USER} -p'{DB_PASS}' {DB_NAME} -e \"{query.replace('\"', '\\\"')}\" | tr '\t' ','"
+        mysql_cmd = f"mysql -u {DB_USER} -p'{DB_PASS}' {DB_NAME} -e \"{query.replace('\"', '\\\"')}\""
         
         print("Executing pattern 03 query (Duplicate Bill Numbers)...")
         start_time = datetime.datetime.now()
@@ -76,9 +76,10 @@ def run_query():
             
             filename = os.path.join(data_dir, f'03_Duplicate_Bill_Numbers_{timestamp}.csv')
             
-            with open(filename, 'w', encoding='utf-8') as f:
+            with open(filename, 'w', newline='', encoding='utf-8') as f:
+                writer = csv.writer(f, quoting=csv.QUOTE_ALL)
                 for line in lines:
-                    f.write(line + '\n')
+                    writer.writerow(line.split('\t'))
                     
             end_time = datetime.datetime.now()
             print(f"Query completed in {end_time - start_time}")

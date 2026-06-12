@@ -55,7 +55,7 @@ def run_query():
         client.connect(SSH_HOST, port=SSH_PORT, username=SSH_USER, password=SSH_PASS)
         
         # Prepare MySQL command
-        mysql_cmd = f"mysql -u {DB_USER} -p'{DB_PASS}' {DB_NAME} -e \"{query.replace('\"', '\\\"')}\" | tr '\t' ','"
+        mysql_cmd = f"mysql -u {DB_USER} -p'{DB_PASS}' {DB_NAME} -e \"{query.replace('\"', '\\\"')}\""
         
         print("Executing pattern 01 query...")
         start_time = datetime.datetime.now()
@@ -75,13 +75,51 @@ def run_query():
             data_dir = os.path.join(os.path.dirname(os.path.dirname(os.path.abspath(__file__))), 'data')
             os.makedirs(data_dir, exist_ok=True)
             
-            filename = os.path.join(data_dir, f'01_Duplicate_Card_IDs_{timestamp}.csv')
+            f_true = os.path.join(data_dir, f'01a_Duplicate_Card_IDs_True_Fraud_{timestamp}.csv')
+            f_typos = os.path.join(data_dir, f'01b_Duplicate_Card_IDs_Same_Name_Typos_{timestamp}.csv')
+            f_op = os.path.join(data_dir, f'01c_Duplicate_Card_IDs_Operator_Mistakes_{timestamp}.csv')
             
-            with open(filename, 'w', encoding='utf-8') as f:
-                for line in lines:
-                    f.write(line + '\n')
+            import re
+            def clean_name(name):
+                return re.sub(r'[^a-zA-Z0-9]', '', name.lower())
+
+            with open(f_true, 'w', newline='', encoding='utf-8') as f1, \
+                 open(f_typos, 'w', newline='', encoding='utf-8') as f2, \
+                 open(f_op, 'w', newline='', encoding='utf-8') as f3:
+                
+                w1 = csv.writer(f1, quoting=csv.QUOTE_ALL)
+                w2 = csv.writer(f2, quoting=csv.QUOTE_ALL)
+                w3 = csv.writer(f3, quoting=csv.QUOTE_ALL)
+                
+                headers = lines[0].split('\t')
+                w1.writerow(headers)
+                w2.writerow(headers)
+                w3.writerow(headers)
+                
+                count1 = count2 = count3 = 0
+                
+                for line in lines[1:]:
+                    row = line.split('\t')
+                    # Assuming select order: card_number is idx 0, beneficiary_names is idx 8
+                    card_number = str(row[0]).strip()
+                    beneficiary_names = str(row[8])
                     
-            print(f"Saved {len(lines) - 1} records to {filename}")
+                    if len(card_number) <= 4 or "not " in card_number.lower():
+                        w3.writerow(row)
+                        count3 += 1
+                        continue
+                        
+                    names_raw = [n.strip() for n in beneficiary_names.split('|')]
+                    cleaned_names = set(clean_name(n) for n in names_raw)
+                    
+                    if len(cleaned_names) == 1:
+                        w2.writerow(row)
+                        count2 += 1
+                    else:
+                        w1.writerow(row)
+                        count1 += 1
+                        
+            print(f"Saved True Fraud: {count1}, Typos: {count2}, Operator Mistakes: {count3}")
         else:
             print("No data found for this query.")
             

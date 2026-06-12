@@ -1,0 +1,825 @@
+FA-10
+Time-Series Surge Analytics
+Financial Impact & Fraud Report
+(Data Period: Jan 2021 - Mar 2026)
+
+RESTRICTED
+
+ECHS Auditing Division
+Generated Date: 03 June 2026
+
+FA-10 Time-Series Surge Analytics (Jan 2021 - Mar 2026) - CONFIDENTIAL
+
+Analysis Overview
+The following executive summary details the exact scope and financial exposure identified within the ECHS claims database during the specified
+timeframe (Jan 2021 - Mar 2026).
+
+TOTAL NUMBER OF CLAIMS
+ANALYSED
+
+TOTAL NUMBER OF HOSPITALS
+ANALYSED
+
+Over 2.6Cr
+
+4,091
+
+TOTAL EXPOSURE (POTENTIAL
+FRAUD)
+
+Over ₹1,342 Crores
+
+RESTRICTED - For internal audit and investigative use only.
+
+03-Jun-2026
+
+Page 2
+
+FA-10 Time-Series Surge Analytics (Jan 2021 - Mar 2026) - CONFIDENTIAL
+
+Pattern 1 (End-of-Quarter Surge)
+This pattern identifies End-of-Quarter Surges, specifically highlighting instances where 66% or more of a hospital's total
+quarterly claims were submitted in the last month of that respective quarter.
+
+Hospital Name
+
+Year
+
+Quarter
+
+Quarterly Claims
+
+Month 3 Claims
+
+EOQ Claim %
+
+Quarterly Billed
+
+Exposure
+
+FORTIS HOSPITAL LTD - JAIPUR
+
+2025
+
+1
+
+2,596
+
+1,778
+
+68.49%
+
+₹ 94,565,265
+
+₹ 44,672,603.55
+
+SMSG MULTISPECIALITY HOSPITAL
+
+2025
+
+2
+
+246
+
+172
+
+69.92%
+
+₹ 37,829,018
+
+₹ 23,209,092.18
+
+R P ARORA MEDICITY
+
+2023
+
+4
+
+412
+
+378
+
+91.75%
+
+₹ 35,740,258
+
+₹ 21,809,210.95
+
+KONARC MULTISPECIALITY HOSPITAL
+
+2023
+
+4
+
+210
+
+147
+
+70.00%
+
+₹ 29,416,063
+
+₹ 18,620,120.03
+
+TATA MEMORIAL HOSPITAL, PAREL, MUMBAI
+
+2023
+
+2
+
+343
+
+232
+
+67.64%
+
+₹ 26,158,171
+
+₹ 17,553,676.00
+
+Basavatarakam INDO - American Cancer Hospital
+
+2024
+
+4
+
+321
+
+216
+
+67.29%
+
+₹ 31,338,986
+
+₹ 14,456,712.25
+
+R J SUPER SPECIALITY HOSPITAL
+
+2023
+
+4
+
+235
+
+165
+
+70.21%
+
+₹ 26,705,703
+
+₹ 13,947,995.59
+
+POSITRON HOSPITAL
+
+2023
+
+1
+
+514
+
+455
+
+88.52%
+
+₹ 17,312,435
+
+₹ 13,154,777.44
+
+RPS HOSPITAL MATERNITY & TRAUMA CENTRE
+
+2023
+
+1
+
+158
+
+108
+
+68.35%
+
+₹ 24,108,731
+
+₹ 12,967,567.50
+
+MEHTA MULTISPECIALITY HOSPITAL
+
+2023
+
+4
+
+323
+
+240
+
+74.30%
+
+₹ 21,124,120
+
+₹ 12,379,724.76
+
+RESTRICTED - For internal audit and investigative use only.
+
+03-Jun-2026
+
+Page 3
+
+FA-10 Time-Series Surge Analytics (Jan 2021 - Mar 2026) - CONFIDENTIAL
+
+Pattern 2 (End-of-Month Dump)
+This pattern identifies the End-of-Month Dump, specifically isolating hospitals where 75% or more of the claims were submitted
+in the last week of that month.
+
+Hospital Name
+
+Billing Month
+
+Total Claims
+
+Last Week Claims
+
+Dump %
+
+MAX HEALTH CARE INSTITUTE LTD - DEHRADUN
+
+2022-04
+
+483
+
+423
+
+87.58%
+
+₹ 9,167,027
+
+₹ 6,600,890.89
+
+NORTH BENGAL NEURO RESEARCH CENTRE PVT LTD
+
+2025-03
+
+242
+
+189
+
+78.10%
+
+₹ 8,936,539
+
+₹ 3,409,132.79
+
+Secunderabad Main
+
+2023-08
+
+2,059
+
+1,595
+
+77.46%
+
+₹ 12,224,564
+
+₹ 3,113,483.00
+
+PARAS HEALTHCARE PVT LTD - SUSHANT LOK -I
+
+2024-06
+
+231
+
+187
+
+80.95%
+
+₹ 12,061,182
+
+₹ 2,186,135.20
+
+AMRITA HOSPITAL
+
+2025-10
+
+481
+
+394
+
+81.91%
+
+₹ 5,839,736
+
+₹ 1,999,051.67
+
+GUPTA HOSPITAL & RESEARCH CENTRE - KATHUA
+
+2021-02
+
+136
+
+110
+
+80.88%
+
+₹ 3,453,471
+
+₹ 1,726,139.80
+
+Gurgaon (Sohana Rd)
+
+2023-04
+
+431
+
+399
+
+92.58%
+
+₹ 2,381,748
+
+₹ 1,698,580.00
+
+PRAKASH HOSPITAL P LTD - Noida
+
+2024-11
+
+119
+
+108
+
+90.76%
+
+₹ 3,801,479
+
+₹ 1,649,365.27
+
+RUBAN MEMORIAL HOSPITAL RATAN STONE CLINIC
+
+2021-09
+
+309
+
+245
+
+79.29%
+
+₹ 2,964,838
+
+₹ 1,448,224.93
+
+GIRIDHAR EYE INSTITUTE PRIVATE LIMITED
+
+2023-02
+
+240
+
+194
+
+80.83%
+
+₹ 1,714,111
+
+₹ 1,209,227.26
+
+RESTRICTED - For internal audit and investigative use only.
+
+03-Jun-2026
+
+Total Billed
+
+Exposure
+
+Page 4
+
+FA-10 Time-Series Surge Analytics (Jan 2021 - Mar 2026) - CONFIDENTIAL
+
+Pattern 3 (Abnormal Monthly Spikes)
+This pattern detects Abnormal Monthly Spikes, specifically showing only hospitals which have submitted claims over triple (3x)
+their historical median for a single month.
+
+Hospital Name
+
+Spike Month
+
+Spike Claims
+
+Historical Median
+
+STAR HOSPITAL (A UNIT OF OM MEDICENTRE PVT LTD)
+
+2025-06
+
+543
+
+37
+
+STAR HOSPITAL (A UNIT OF OM MEDICENTRE PVT LTD)
+
+2025-03
+
+562
+
+STAR HOSPITAL (A UNIT OF OM MEDICENTRE PVT LTD)
+
+2025-07
+
+STAR HOSPITAL (A UNIT OF OM MEDICENTRE PVT LTD)
+
+Amount Billed
+
+Exposure
+
+14.68x
+
+₹ 145,246,379
+
+₹ 92,769,595.72
+
+37
+
+15.19x
+
+₹ 138,167,621
+
+₹ 80,469,302.29
+
+540
+
+37
+
+14.59x
+
+₹ 123,476,340
+
+₹ 80,096,717.14
+
+2025-05
+
+405
+
+37
+
+10.95x
+
+₹ 110,775,585
+
+₹ 72,125,497.64
+
+STAR HOSPITAL (A UNIT OF OM MEDICENTRE PVT LTD)
+
+2025-09
+
+541
+
+37
+
+14.62x
+
+₹ 111,910,940
+
+₹ 69,782,718.44
+
+STAR HOSPITAL (A UNIT OF OM MEDICENTRE PVT LTD)
+
+2025-02
+
+426
+
+37
+
+11.51x
+
+₹ 109,512,368
+
+₹ 62,209,102.78
+
+STAR HOSPITAL (A UNIT OF OM MEDICENTRE PVT LTD)
+
+2025-10
+
+579
+
+37
+
+15.65x
+
+₹ 109,990,310
+
+₹ 61,754,402.45
+
+DR S P YADAV HOSPITAL
+
+2025-10
+
+495
+
+67.5
+
+7.33x
+
+₹ 97,232,915
+
+₹ 57,552,450.54
+
+DESUN HOSPITAL - KOLKATA
+
+2025-11
+
+1,158
+
+336
+
+3.45x
+
+₹ 90,740,588
+
+₹ 57,224,333.01
+
+PARAS HMRI HOSPITAL - PATNA
+
+2025-09
+
+5,603
+
+1,790
+
+3.13x
+
+₹ 70,242,543
+
+₹ 55,996,682.74
+
+RESTRICTED - For internal audit and investigative use only.
+
+03-Jun-2026
+
+Multiplier (x)
+
+Page 5
+
+FA-10 Time-Series Surge Analytics (Jan 2021 - Mar 2026) - CONFIDENTIAL
+
+Pattern 4 (Abnormal YoY Spikes)
+This pattern identifies Abnormal YoY Spikes, focusing on hospitals which submitted triple (3x) or more claims than the previous
+year.
+
+STAR HOSPITAL (A UNIT OF OM MEDICENTRE PVT LTD) - 5 Year Claim Volume
+6000
+
+5673
+
+Claims
+
+3000
+1646
+
+0
+
+349
+
+280
+
+397
+
+2021
+
+2022
+
+2023
+
+2024
+
+2025
+
+Year
+
+Hospital Name
+STAR HOSPITAL (A UNIT OF
+OM MEDICENTRE PVT LTD)
+GRECIAN SUPER - SPECIALITY
+HOSPITAL
+
+Year -4
+
+Year -3
+
+Year -2
+
+Previous Year
+
+Spike Year
+
+YoY Growth %
+
+2021: 349
+
+2022: 280
+
+2023: 397
+
+2024: 1646
+
+2025: 5673
+
+2018: 11584
+
+2019: 8284
+
+2020: 156
+
+2024: 1951
+
+2018: 4239
+
+2019: 3427
+
+2020: 1436
+
+2021: 969
+
+RESTRICTED - For internal audit and investigative use only.
+
+03-Jun-2026
+
+Amount Billed
+
+Exposure
+
+244.65%
+
+₹ 1,349,741,946
+
+₹ 762,182,272.41
+
+2025: 5857
+
+200.21%
+
+₹ 475,279,739
+
+₹ 371,854,007.04
+
+2022: 3318
+
+242.41%
+
+₹ 439,415,642
+
+₹ 365,667,913.90
+
+Page 6
+
+FA-10 Time-Series Surge Analytics (Jan 2021 - Mar 2026) - CONFIDENTIAL
+
+Hospital Name
+
+Year -4
+
+Year -3
+
+Year -2
+
+Previous Year
+
+Spike Year
+
+YoY Growth %
+
+Amount Billed
+
+Exposure
+
+2020: 20045
+
+2021: 26992
+
+2022: 788
+
+2024: 223
+
+2025: 15539
+
+6868.16%
+
+₹ 441,055,046
+
+₹ 364,981,028.46
+
+No Data
+
+2021: 165
+
+2022: 240
+
+2023: 536
+
+2024: 1896
+
+253.73%
+
+₹ 361,889,554
+
+₹ 229,535,327.46
+
+2019: 2065
+
+2020: 3327
+
+2021: 5482
+
+2022: 8087
+
+2023: 26026
+
+221.83%
+
+₹ 274,629,397
+
+₹ 223,809,000.62
+
+2020: 476
+
+2021: 349
+
+2022: 280
+
+2023: 397
+
+2024: 1646
+
+314.61%
+
+₹ 345,320,316
+
+₹ 217,271,595.04
+
+2019: 636
+
+2020: 115
+
+2021: 54
+
+2022: 407
+
+2023: 3165
+
+677.64%
+
+₹ 257,944,153
+
+₹ 212,565,775.63
+
+2021: 524
+
+2022: 431
+
+2023: 319
+
+2024: 370
+
+2025: 1835
+
+395.95%
+
+₹ 357,685,456
+
+₹ 170,924,676.05
+
+2021: 297
+
+2022: 145
+
+2023: 80
+
+2024: 833
+
+2025: 3731
+
+347.90%
+
+₹ 204,248,540
+
+₹ 145,992,480.79
+
+EMC Super Speciality Hospital
+Pvt. Ltd.
+MAX SUPER SPECIALITY
+HOSPITAL - MOHALI
+SINGHANIA UNIVERSITY
+HOSPITAL AND RESEARCH
+CENTRE
+BABY MEMORIAL HOSPITAL
+LTD, KOZHIKODE
+STAR HOSPITAL (A UNIT OF
+OM MEDICENTRE PVT LTD)
+DESUN HOSPITAL - KOLKATA
+SHRI K M MEMORIAL JAIN
+HEART & GEN HOSPITAL
+YASHODA HOSPITAL AND
+CANCER INSTITUTE
+
+RESTRICTED - For internal audit and investigative use only.
+
+03-Jun-2026
+
+Page 7
+
+

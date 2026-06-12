@@ -13,7 +13,7 @@ except ImportError:
     exit(1)
 
 BASE        = os.path.dirname(os.path.abspath(__file__))
-DATA_DIR    = os.path.join(BASE, "data")
+DATA_DIR    = os.path.join(BASE, "data", "report_data")
 REPORTS_DIR = os.path.join(BASE, "reports")
 os.makedirs(REPORTS_DIR, exist_ok=True)
 
@@ -69,9 +69,29 @@ p01a = load_latest("01a_specialty_misuse_hospitals*.csv")
 p01a = [r for r in p01a if float(r.get('total_claimed', 0)) > 0]
 p01a = sorted(p01a, key=lambda r: float(r.get('total_claimed', 0)), reverse=True)
 
+p02a = load_latest("02a_nabh_benchmark_by_type*.csv")
 p02b = load_latest("02b_nabh_high_deduction_anomalies*.csv")
 p02d = load_latest("02d_military_hospital_breakdown*.csv")
-p03b = load_latest("03b_ipd_without_ipd_empanelment*.csv")
+p03b_all = load_latest("03b_ipd_without_ipd_empanelment*.csv")
+# Refine: The empanelment registry uses clinical specialty names (e.g. 'General Medicine'),
+# NOT 'IPD'/'Indoor'/'Inpatient'. So the SQL LIKE filter flags ALL hospitals.
+# Classify into 3 tiers based on empanelment content.
+p03b_no_emp = [r for r in p03b_all if str(r.get('actual_empaneled_services','')).strip().upper() in ('', 'NULL', 'NONE', '—')]
+p03b_has_emp = [r for r in p03b_all if str(r.get('actual_empaneled_services','')).strip().upper() not in ('', 'NULL', 'NONE', '—')]
+
+# Further split has_emp into IPD-capable vs OPD-only
+IPD_INHERENT_KW = ['icu', 'intensive care', 'critical care', 'coronary care', 'burn unit',
+    'surgery', 'surgical', 'nicu', 'picu', 'micu', 'nsicu', 'cticu', 'iccu',
+    'obstetrics', 'neonatal', 'neonatology', 'joint replacement', 'arthroplasty',
+    'arthroscop', 'spine', 'transplant', 'chemotherapy', 'radiation oncology',
+    'radiotherapy', 'bone marrow', 'heart transplant', 'trauma', 'cochlear implant']
+def _has_ipd_capability(emp_str):
+    s = str(emp_str).lower()
+    return any(kw in s for kw in IPD_INHERENT_KW)
+
+p03b_opd_only = [r for r in p03b_has_emp if not _has_ipd_capability(r.get('actual_empaneled_services',''))]
+p03b_ipd_capable = [r for r in p03b_has_emp if _has_ipd_capability(r.get('actual_empaneled_services',''))]
+p03b = p03b_no_emp  # Primary flagged set for exposure calculation
 p04a = load_latest("04a_hospital_yoy_billing_spike*.csv")
 p05b = load_latest("05b_low_tier_hospitals_high_value*.csv")
 
@@ -88,11 +108,13 @@ def sum_exposure(rows, key="total_claimed"):
     return s
 
 total_exposure = sum([
-    sum_exposure(p01a), sum_exposure(p02b, "claimed_lakh"), sum_exposure(p03b),
+    sum_exposure(p01a), sum_exposure(p02b, "claimed_lakh"),
+    sum_exposure(p03b), sum_exposure(p03b_opd_only),  # Tier A + Tier B only
     sum_exposure(p04a, "curr_claimed_lakh"), sum_exposure(p05b, "total_claimed_lakh")
 ])
 
-total_hospitals_flagged = len(p01a) + len(p02b) + len(p03b) + len(p04a) + len(p05b)
+p03b_flagged_total = len(p03b) + len(p03b_opd_only)  # Only CRITICAL + HIGH tiers
+total_hospitals_flagged = len(p01a) + len(p02b) + p03b_flagged_total + len(p04a) + len(p05b)
 patterns_found = sum(1 for p in [p01a, p02b, p03b, p04a, p05b] if p)
 
 # ── CSS ───────────────────────────────────────────────────────────────────────
@@ -168,10 +190,11 @@ H.append(f"""
   <div class="cover-topbar"></div>
   <div class="cover-title">ECHS FRAUD ANALYTICS</div>
   <div class="cover-sub">Hospital Specialty Misuse &amp; Service Empanelment Analysis</div>
-  <div class="cover-mod">MODULE 12 COMPREHENSIVE REPORT — FY 2021–2026 EDITION</div>
+  <div class="cover-mod">COMPREHENSIVE REPORT — FY 2021–2026 EDITION (LAST 5 YEARS)</div>
   <div class="cover-boxes">
     <div class="cover-box"><div class="cover-box-label">Classification</div><div class="cover-box-val">RESTRICTED</div></div>
     <div class="cover-box"><div class="cover-box-label">Period</div><div class="cover-box-val">FY 2021–26</div></div>
+    <div class="cover-box"><div class="cover-box-label">Records Scanned</div><div class="cover-box-val">25.9M+</div></div>
     <div class="cover-box"><div class="cover-box-label">Patterns Run</div><div class="cover-box-val">5 Patterns</div></div>
     <div class="cover-box"><div class="cover-box-label">Entities Flagged</div><div class="cover-box-val">{fmt(total_hospitals_flagged)}</div></div>
   </div>
@@ -182,8 +205,7 @@ H.append(f"""
 """)
 
 # ── EXECUTIVE SUMMARY ─────────────────────────────────────────────────────────
-H.append(f"""
-<div class="pb">
+H.append(f"""<div class="pb">
 <h1>Executive Summary</h1>
 <p>This report investigates hospital specialty misuse — cases where facilities bill for services outside their
 designated category, and anomalous deduction patterns across hospitals. Five primary fraud patterns are confirmed.</p>
@@ -191,26 +213,26 @@ designated category, and anomalous deduction patterns across hospitals. Five pri
 <div class="metric-row">
   <div class="mbox"><div class="mbox-label">Hospitals Flagged</div><div class="mbox-val" style="color:#e74c3c">{fmt(total_hospitals_flagged)}</div><div class="mbox-sub">across 5 fraud patterns</div></div>
   <div class="mbox"><div class="mbox-label">Total Exposure</div><div class="mbox-val">{cr(total_exposure)}</div><div class="mbox-sub">estimated financial risk</div></div>
-  <div class="mbox"><div class="mbox-label">Patterns w/ Findings</div><div class="mbox-val">{patterns_found}</div><div class="mbox-sub">of 5 checks</div></div>
+  <div class="mbox"><div class="mbox-label">Patterns w/ Findings</div><div class="mbox-val">{patterns_found}</div><div class="mbox-sub">of 5 patterns</div></div>
   <div class="mbox"><div class="mbox-label">Analysis Period</div><div class="mbox-val">5 Yrs</div><div class="mbox-sub">FY 2021–2026</div></div>
 </div>
 
 <h1 style="margin-top:14px">Five Fraud Patterns — Summary</h1>
 <table class="dt">
-{th("#","Pattern","What It Detects","Cases Flagged","Risk")}
+{th("#","Pattern","What It Detects","Cases Flagged")}
 <tbody>
-<tr><td>1</td><td>Specialty Category Billing Fraud</td><td>Type-3 facilities (dental clinics and diagnostic labs) billing IPD admissions.</td><td><b>{fmt(len(p01a))}</b> facilities</td><td>{risk_txt("CRITICAL")}</td></tr>
-<tr><td>2</td><td>NABH vs Non-NABH Divergence</td><td>NABH-accredited facilities show consistently lower deduction rates, but some anomalies exist.</td><td><b>{fmt(len(p02b))}</b> anomalous</td><td>{risk_txt("HIGH")}</td></tr>
-<tr><td>3</td><td>Out of Scope Empanelment</td><td>Hospitals billing for IPD services when they are NOT empaneled for IPD.</td><td><b>{fmt(len(p03b))}</b> facilities</td><td>{risk_txt("CRITICAL")}</td></tr>
-<tr><td>4</td><td>Year-over-Year Billing Spike</td><td>Sudden 100%+ annual growth in claim amount indicating deliberate strategy change.</td><td><b>{fmt(len(p04a))}</b> facilities</td><td>{risk_txt("HIGH")}</td></tr>
-<tr><td>5</td><td>High-Value Claims at Low-Tier</td><td>Type-3 facilities billing abnormally high individual claim amounts (over ₹1L).</td><td><b>{fmt(len(p05b))}</b> facilities</td><td>{risk_txt("HIGH")}</td></tr>
+<tr><td>1</td><td>Specialty Category Billing Fraud</td><td>Type-3 facilities (dental clinics and diagnostic labs) billing IPD admissions.</td><td><b>{fmt(len(p01a))}</b> facilities</td></tr>
+<tr><td>2</td><td>NABH vs Non-NABH Divergence</td><td>NABH-accredited facilities show consistently lower deduction rates, but some anomalies exist.</td><td><b>{fmt(len(p02b))}</b> anomalous</td></tr>
+<tr><td>3</td><td>Out of Scope Empanelment</td><td>Hospitals billing for IPD services when they are NOT empaneled for IPD.</td><td><b>{fmt(p03b_flagged_total)}</b> facilities</td></tr>
+<tr><td>4</td><td>Year-over-Year Billing Spike</td><td>Sudden 100%+ annual growth in claim amount indicating deliberate strategy change.</td><td><b>{fmt(len(p04a))}</b> facilities</td></tr>
+<tr><td>5</td><td>High-Value Claims at Low-Tier</td><td>Type-3 facilities billing abnormally high individual claim amounts (over ₹1L).</td><td><b>{fmt(len(p05b))}</b> facilities</td></tr>
 </tbody>
 </table>
 
 <h1 style="margin-top:12px">Immediate Recommended Actions</h1>
 <div class="action-item"><span class="action-num">1.</span> <b>Audit all Type-3 IPD Billings</b> ({fmt(len(p01a))} cases) — Deny all IPD claims from dental clinics unless explicitly authorized.</div>
 <div class="action-item"><span class="action-num">2.</span> <b>Investigate anomalous NABH hospitals</b> ({fmt(len(p02b))} cases) — A high deduction rate despite NABH status suggests potential bill padding.</div>
-<div class="action-item"><span class="action-num">3.</span> <b>Block out-of-scope empanelment billing</b> ({fmt(len(p03b))} facilities) — Enforce system-level blocks preventing non-IPD hospitals from submitting IPD bills.</div>
+<div class="action-item"><span class="action-num">3.</span> <b>Block out-of-scope empanelment billing</b> ({fmt(p03b_flagged_total)} facilities) — Enforce system-level blocks preventing non-IPD hospitals from submitting IPD bills.</div>
 <div class="action-item"><span class="action-num">4.</span> <b>Review YoY billing spike</b> ({fmt(len(p04a))} facilities) — Request clinical justification for hospital billing that has doubled year-over-year.</div>
 <div class="action-item"><span class="action-num">5.</span> <b>Flag high-value Type-3 claims</b> ({fmt(len(p05b))} facilities) — Require manual pre-authorization for any Type-3 claim exceeding ₹50k.</div>
 </div>
@@ -218,8 +240,7 @@ designated category, and anomalous deduction patterns across hospitals. Five pri
 
 # ── PATTERN 1 ─────────────────────────────────────────────────────────────────
 if p01a:
-    H.append(f"""
-<div class="pb">
+    H.append(f"""<div class="pb">
 <div class="nob">
 <div class="ph">
   <div class="ph-label">PATTERN 1</div>
@@ -243,19 +264,29 @@ policy violations.</b></p>
                  f"<td><b style='color:#c0392b'>{safe(r.get('ipd_claims','0'))}</b></td>"
                  f"<td><b>{cr(r.get('total_claimed',0))}</b></td>"
                  f"<td>{safe(r.get('deduction_pct','0'))}%</td></tr>")
+    # Sub-type breakdown
+    p01a_dental = [r for r in p01a if r.get('hosp_type_desc','') == 'D']
+    p01a_lab = [r for r in p01a if r.get('hosp_type_desc','') == 'L']
+    p01a_other = [r for r in p01a if r.get('hosp_type_desc','') not in ('D', 'L')]
     H.append(f"""</tbody></table>
 <div class="kf-head">Key Findings</div>
-<div class="kf-item"><b>IPD Claims at Dental Clinics:</b> Dental clinics and diagnostic centers are solely 
-empaneled for OPD (Outpatient Department) procedures. Billing for IPD admissions from a Type-3 facility 
-implies fraudulent coding or systemic misuse of the hospital classification.</div>
-<div class="kf-item">Facilities flagged here must be immediately audited to ensure they are not admitting 
-patients overnight in unlicensed premises.</div>
+<div class="kf-item"><b>Sub-Type Breakdown:</b> Of the {fmt(len(p01a))} Type-3 facilities flagged,
+<b>{fmt(len(p01a_dental))}</b> are Dental clinics (D), <b>{fmt(len(p01a_lab))}</b> are Diagnostic
+Laboratories (L), and <b>{fmt(len(p01a_other))}</b> have other/miscategorised descriptions. Dental clinics
+filing IPD is the most clear-cut fraud signal — these have no beds, no wards, no operating theatres.</div>
+<div class="kf-item"><b>Possible Misclassification:</b> Some entries (e.g. medical colleges categorised
+as Type-3) may reflect database misclassification rather than fraud. However, the billing itself
+remains a policy violation until the hospital type is officially corrected.</div>
+<div class="kf-item"><b>Recommended Action:</b> Deny all IPD claims from dental/diagnostic clinics unless
+explicitly authorised. Conduct site inspections to verify if overnight facilities exist. Correct hospital
+type misclassifications in the office_master table.</div>
 </div>""")
 
 # ── PATTERN 2 ─────────────────────────────────────────────────────────────────
 if p02b:
-    H.append(f"""
-<div class="pb">
+    nabh_count = sum(int(r.get('hospital_count', 0)) for r in p02a if r.get('nabh_status') == 'NABH')
+    non_nabh_count = sum(int(r.get('hospital_count', 0)) for r in p02a if r.get('nabh_status') == 'Non-NABH')
+    H.append(f"""<div class="pb">
 <div class="nob">
 <div class="ph">
   <div class="ph-label">PATTERN 2</div>
@@ -266,6 +297,7 @@ if p02b:
 typically resulting in lower deduction rates (the difference between claimed and approved amounts). 
 When an NABH hospital consistently suffers extremely high deductions (over 15%), it indicates chronic
 over-billing, unbundled charging, or billing for non-entitled items despite their accreditation.</p>
+<p><b>System-wide Context:</b> There are <b style="color:{NAV}">{fmt(nabh_count)}</b> NABH-accredited hospitals and <b style="color:{NAV}">{fmt(non_nabh_count)}</b> Non-NABH hospitals currently active in the dataset.</p>
 <p><b>Total Anomalous Hospitals:</b> <span style="color:#c0392b;font-weight:700">{fmt(len(p02b))}</span></p>
 <div class="tc">Table 2.1 — NABH Hospitals with Anomalously High Deduction Rates (Top 15)</div>
 <table class="dt">
@@ -289,47 +321,78 @@ focus here; these are private empanelled NABH facilities exhibiting predatory bi
 </div>""")
 
 # ── PATTERN 3 ─────────────────────────────────────────────────────────────────
-if p03b:
-    H.append(f"""
-<div class="pb">
+if p03b or p03b_opd_only:
+    p03b_sorted = sorted(p03b, key=lambda r: float(r.get('total_claimed', 0)), reverse=True)
+    p03b_opd_sorted = sorted(p03b_opd_only, key=lambda r: float(r.get('total_claimed', 0)), reverse=True)
+    H.append(f"""<div class="pb">
 <div class="nob">
 <div class="ph">
   <div class="ph-label">PATTERN 3</div>
-  <div class="ph-ctx">Services vs Claims<br/>(IPD Billing by Non-IPD Facilities)</div>
+  <div class="ph-ctx">Services vs Claims<br/>(IPD Billing Scope Violations)</div>
   <div class="ph-title">Services Outside Empaneled Scope</div>
 </div></div>
-<p><b>Description:</b> Hospitals must be explicitly empaneled for the services they provide. This check 
-identifies hospitals that are billing for inpatient (IPD) services but are <b>NOT</b> empaneled for IPD 
-in the ECHS registry. This represents direct scope creep fraud.</p>
-<p><b>Total Facilities Flagged:</b> <span style="color:#c0392b;font-weight:700">{fmt(len(p03b))}</span></p>
-<div class="tc">Table 3.1 — IPD Claims without IPD Empanelment (Top 15)</div>
+<p><b>Description:</b> Hospitals must be registered in the ECHS empanelment system
+(<code>empanel_hospital_service</code>) to bill for any service. The registry tracks <b>300 clinical
+specialties</b> grouped under 10 headers, but does <b>not</b> use "IPD" as a service category.
+Out of <b>{fmt(len(p03b_all))}</b> hospitals filing IPD claims, <b>{fmt(len(p03b_ipd_capable))}</b>
+have IPD-inherent services (ICU, Surgery, Critical Care) in their empanelment and are considered
+legitimate — these are <b>excluded</b> from this analysis. The remaining
+<b style="color:#c0392b">{fmt(p03b_flagged_total)}</b> hospitals are flagged below.</p>
+
+<p>
+<span style="color:#c0392b;font-weight:700">● CRITICAL:</span> {fmt(len(p03b))} hospitals — Zero empanelment record
+&nbsp;&nbsp;|&nbsp;&nbsp;
+<span style="color:#d4680a;font-weight:700">● HIGH:</span> {fmt(len(p03b_opd_only))} hospitals — OPD-only empanelment billing IPD
+</p>
+
+<p><b>Total Facilities Flagged:</b> <span style="color:#c0392b;font-weight:700">{fmt(p03b_flagged_total)}</span></p>
+
+<div class="tc">Table 3.1 — CRITICAL: IPD Claims from Hospitals with Zero Empanelment (Top 5)</div>
 <table class="dt">
-{th("Hospital","Type","City","IPD Claims","Claimed Amt","Empaneled Services")}
+{th("Hospital","Type","City","IPD Claims","Claimed Amt","Status")}
 <tbody>""")
-    for r in p03b[:15]:
-        emp = safe(r.get('actual_empaneled_services','None'))
-        if not emp or emp.lower() in ('none', 'null', '—', ''):
-            emp = 'No Empaneled Services'
-        if len(emp) > 40: emp = emp[:37] + '...'
-        H.append(f"<tr><td><b>{safe(r.get('hospital_name',''))[:25]}</b></td>"
+    for r in p03b_sorted[:5]:
+        H.append(f"<tr><td><b>{safe(r.get('hospital_name',''))[:30]}</b></td>"
                  f"<td>{safe(r.get('hosp_type_desc',''))[:15]}</td>"
                  f"<td>{safe(r.get('city',''))}</td>"
                  f"<td><b style='color:#c0392b'>{safe(r.get('ipd_claims_filed','0'))}</b></td>"
                  f"<td><b>{cr(r.get('total_claimed',0))}</b></td>"
-                 f"<td style='font-size:7.5pt'>{emp}</td></tr>")
+                 f"<td style='font-size:7pt;color:#c0392b;font-weight:700'>No Empanelment Record</td></tr>")
     H.append(f"""</tbody></table>
+
+<div class="tc">Table 3.2 — HIGH: OPD-Only Empanelment but Billing IPD (Top 5)</div>
+<table class="dt">
+{th("Hospital","Type","City","IPD Claims","Claimed Amt","Empaneled Services")}
+<tbody>""")
+    for r in p03b_opd_sorted[:5]:
+        emp = safe(r.get('actual_empaneled_services',''))
+        if len(emp) > 45: emp = emp[:42] + '...'
+        H.append(f"<tr><td><b>{safe(r.get('hospital_name',''))[:30]}</b></td>"
+                 f"<td>{safe(r.get('hosp_type_desc',''))[:15]}</td>"
+                 f"<td>{safe(r.get('city',''))}</td>"
+                 f"<td><b style='color:#d4680a'>{safe(r.get('ipd_claims_filed','0'))}</b></td>"
+                 f"<td><b>{cr(r.get('total_claimed',0))}</b></td>"
+                 f"<td style='font-size:6.5pt'>{emp}</td></tr>")
+    H.append(f"""</tbody></table>
+
 <div class="kf-head">Key Findings</div>
-<div class="kf-item"><b>Empaneled Services:</b> Indicates the specific medical facilities the hospital 
-is legally permitted to bill ECHS for. If "IPD" or "Indoor" is missing from this list, the hospital 
-is strictly an OPD facility.</div>
-<div class="kf-item">Billing IPD without IPD empanelment is a critical compliance failure. ECHS processing 
-centers should implement hard-blocks to reject IPD claims from these facilities automatically.</div>
+<div class="kf-item"><b>Zero Empanelment (CRITICAL):</b> {fmt(len(p03b))} hospitals have no entry in the
+<code>empanel_hospital_service</code> table. They bill ECHS for inpatient services without any formal
+authorisation. Major hospitals (Artemis, Park Hospital, Paras Healthcare) appear in this list,
+suggesting the empanelment registry itself is incomplete for a large portion of the ECHS network.</div>
+<div class="kf-item"><b>OPD-Only Empanelment (HIGH):</b> {fmt(len(p03b_opd_only))} hospitals are empaneled
+only for consultative/diagnostic services (e.g. Cardiology, Dialysis, Ophthalmology) that do not
+inherently require overnight admission, yet they are filing IPD claims. These are the most actionable
+fraud signals — the hospital's own empanelment proves it lacks IPD infrastructure.</div>
+<div class="kf-item"><b>Excluded from flagging:</b> {fmt(len(p03b_ipd_capable))} hospitals with IPD-inherent
+services (ICU, Surgery, Obstetrics, Critical Care) in their empanelment are considered legitimate IPD
+facilities and are not flagged. The registry's lack of an explicit "IPD" category is a design gap,
+not a fraud indicator for these hospitals.</div>
 </div>""")
 
 # ── PATTERN 4 ─────────────────────────────────────────────────────────────────
 if p04a:
-    H.append(f"""
-<div class="pb">
+    H.append(f"""<div class="pb">
 <div class="nob">
 <div class="ph">
   <div class="ph-label">PATTERN 4</div>
@@ -342,14 +405,15 @@ spike of this magnitude indicates a deliberate change in aggressive billing stra
 <p><b>Total Facilities Flagged:</b> <span style="color:#c0392b;font-weight:700">{fmt(len(p04a))}</span></p>
 <div class="tc">Table 4.1 — Hospital YoY Billing Spike (Top 15)</div>
 <table class="dt">
-{th("Hospital","City","Prev Yr Amt","Curr Yr Amt","Amt Growth %","Claims Growth %")}
+{th("Hospital","City","Prev Yr","Curr Yr","Prev Yr Amt","Curr Yr Amt","Claims Growth %")}
 <tbody>""")
     for r in p04a[:15]:
         H.append(f"<tr><td><b>{safe(r.get('hospital_name',''))[:30]}</b></td>"
                  f"<td>{safe(r.get('city',''))}</td>"
+                 f"<td>{safe(r.get('prev_year',''))}</td>"
+                 f"<td>{safe(r.get('curr_year',''))}</td>"
                  f"<td>{cr(float(r.get('prev_claimed_lakh',0))*100000)}</td>"
                  f"<td><b>{cr(float(r.get('curr_claimed_lakh',0))*100000)}</b></td>"
-                 f"<td><b style='color:#c0392b'>+{safe(r.get('yoy_amount_growth_pct','0'))}%</b></td>"
                  f"<td>+{safe(r.get('yoy_claim_growth_pct','0'))}%</td></tr>")
     H.append(f"""</tbody></table>
 <div class="kf-head">Key Findings</div>
@@ -362,8 +426,7 @@ has started charging significantly more per patient (inflation of severity, unbu
 
 # ── PATTERN 5 ─────────────────────────────────────────────────────────────────
 if p05b:
-    H.append(f"""
-<div class="pb">
+    H.append(f"""<div class="pb">
 <div class="nob">
 <div class="ph">
   <div class="ph-label">PATTERN 5</div>
@@ -372,7 +435,8 @@ if p05b:
 </div></div>
 <p><b>Description:</b> Small or specialist-only hospitals (Type 3: Dental, Diagnostic, Polyclinics) 
 billing individual claim amounts that exceed their clinical capabilities. A dental clinic billing 
-₹1 Lakh+ for a single admission is a strong indicator of fabricated bills or incorrect hospital classification.</p>
+₹50,000+ for a single admission is a strong indicator of fabricated bills or incorrect hospital classification.</p>
+<p><b>Detection Thresholds Applied:</b> Flagged hospitals are Type-3 facilities where: (a) at least <b>3 individual claims each exceed ₹50,000</b>, and (b) any single claim reaches up to or beyond <b>₹1,00,000</b>. These limits reflect the maximum plausible billing capacity for a dental clinic or diagnostic lab.</p>
 <p><b>Total Facilities Flagged:</b> <span style="color:#c0392b;font-weight:700">{fmt(len(p05b))}</span></p>
 <div class="tc">Table 5.1 — Low-Tier Hospitals with High-Value Claims (Top 15)</div>
 <table class="dt">
@@ -393,10 +457,33 @@ For Type-3 facilities, claims exceeding ₹50,000 are extremely rare and highly 
 high-value bills, as their infrastructure typically does not support procedures of this cost magnitude.</div>
 </div>""")
 
-H.append("</body></html>")
+# ── CONSOLIDATED SUMMARY ────────────────────────────────────────────────
+H.append(f"""<div class="pb">
+<h1>Consolidated Summary</h1>
+<p class="tc" style="margin-bottom:10px">All findings are based on structured database analysis and must be
+corroborated with physical audit records before enforcement action is taken.</p>
+<table class="dt">
+{th("Pattern","Fraud Pattern","Cases Flagged","Exposure")}
+<tbody>
+<tr><td>1</td><td>Specialty Category Billing Fraud</td><td><b>{fmt(len(p01a))}</b></td><td>{cr(sum_exposure(p01a))}</td></tr>
+<tr><td>2</td><td>NABH vs Non-NABH Divergence</td><td><b>{fmt(len(p02b))}</b></td><td>{cr(sum_exposure(p02b, 'claimed_lakh'))}</td></tr>
+<tr><td>3</td><td>Out of Scope Empanelment</td><td><b>{fmt(p03b_flagged_total)}</b> ({fmt(len(p03b))} Critical + {fmt(len(p03b_opd_only))} High)</td><td>{cr(sum_exposure(p03b) + sum_exposure(p03b_opd_only))}</td></tr>
+<tr><td>4</td><td>Year-over-Year Billing Spike</td><td><b>{fmt(len(p04a))}</b></td><td>{cr(sum_exposure(p04a, 'curr_claimed_lakh'))}</td></tr>
+<tr><td>5</td><td>High-Value Claims at Low-Tier</td><td><b>{fmt(len(p05b))}</b></td><td>{cr(sum_exposure(p05b, 'total_claimed_lakh'))}</td></tr>
+<tr style="background:#fdf0f0;font-weight:700"><td colspan="2"><b>TOTAL</b></td><td><b style="color:#c0392b">{fmt(total_hospitals_flagged)}</b></td><td><b>{cr(total_exposure)}</b></td></tr>
+</tbody>
+</table>
+
+<p style="margin-top:16px;font-size:7.5pt;color:#555;text-align:center">
+Prepared by IIT Kanpur — Data Analytics &amp; Fraud Intelligence Division | {today_str}<br/>
+All findings are based on structured database analysis and must be corroborated with physical audit records before enforcement action.
+</p>
+</div>
+
+</body></html>""")
 
 # ── RENDER ────────────────────────────────────────────────────────────────────
-full_html = "\n".join(H)
+full_html = "".join(H)
 print("Generating PDF ...")
 HTML(string=full_html, base_url=BASE).write_pdf(PDF_OUT)
 print(f"✅ Saved → {PDF_OUT}")

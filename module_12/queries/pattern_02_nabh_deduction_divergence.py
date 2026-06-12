@@ -65,7 +65,8 @@ SELECT
     ROUND(
         (SUM(cs.CS_GR_CLAIM_AMT)-SUM(cs.CS_UTI_APP_AMT))/SUM(cs.CS_GR_CLAIM_AMT)*100, 2
     )                                    AS deduction_pct,
-    ROUND(AVG(cs.CS_GR_CLAIM_AMT),0)    AS avg_claim_amt
+    ROUND(AVG(cs.CS_GR_CLAIM_AMT),0)    AS avg_claim_amt,
+    GROUP_CONCAT(DISTINCT ci.CI_INTIMATION_ID SEPARATOR ', ') as claim_ids
 FROM claim_intimation ci
 JOIN office_master om ON ci.CI_CR_OFFICE_ID = om.OM_OFFICE_ID
 LEFT JOIN claim_submission cs ON ci.CI_INTIMATION_ID = cs.CS_INTIMATION_ID
@@ -75,8 +76,7 @@ WHERE ci.CI_CR_DATE >= DATE_SUB(CURDATE(), INTERVAL 5 YEAR)
 GROUP BY om.OM_OFFICE_ID, om.OM_OFFICE_NAME, om.OM_HOSP_TYPE,
          om.OM_HOSP_TYPES, om.OM_OFFICE_CITY
 HAVING total_claims >= 100 AND deduction_pct > 15
-ORDER BY deduction_pct DESC
-LIMIT 50;
+ORDER BY deduction_pct DESC;
 """
 
 # ── Query 2C: Non-NABH hospitals with LOWEST deduction (unexpectedly clean) ──
@@ -92,7 +92,8 @@ SELECT
     ROUND(SUM(cs.CS_UTI_APP_AMT)/1e5,2)  AS approved_lakh,
     ROUND(
         (SUM(cs.CS_GR_CLAIM_AMT)-SUM(cs.CS_UTI_APP_AMT))/SUM(cs.CS_GR_CLAIM_AMT)*100, 2
-    )                                    AS deduction_pct
+    )                                    AS deduction_pct,
+    GROUP_CONCAT(DISTINCT ci.CI_INTIMATION_ID SEPARATOR ', ') as claim_ids
 FROM claim_intimation ci
 JOIN office_master om ON ci.CI_CR_OFFICE_ID = om.OM_OFFICE_ID
 LEFT JOIN claim_submission cs ON ci.CI_INTIMATION_ID = cs.CS_INTIMATION_ID
@@ -102,8 +103,7 @@ WHERE ci.CI_CR_DATE >= DATE_SUB(CURDATE(), INTERVAL 5 YEAR)
 GROUP BY om.OM_OFFICE_ID, om.OM_OFFICE_NAME, om.OM_HOSP_TYPE,
          om.OM_HOSP_TYPES, om.OM_OFFICE_CITY
 HAVING total_claims >= 200 AND deduction_pct < 5
-ORDER BY deduction_pct ASC
-LIMIT 30;
+ORDER BY deduction_pct ASC;
 """
 
 # ── Query 2D: Military hospitals (type M) detailed breakdown ──────────────────
@@ -121,7 +121,8 @@ SELECT
              THEN (SUM(cs.CS_GR_CLAIM_AMT)-SUM(cs.CS_UTI_APP_AMT))/SUM(cs.CS_GR_CLAIM_AMT)*100
              ELSE 0 END, 2
     )                                    AS deduction_pct,
-    ROUND(AVG(cs.CS_GR_CLAIM_AMT),0)    AS avg_claim_amt
+    ROUND(AVG(cs.CS_GR_CLAIM_AMT),0)    AS avg_claim_amt,
+    GROUP_CONCAT(DISTINCT ci.CI_INTIMATION_ID SEPARATOR ', ') as claim_ids
 FROM claim_intimation ci
 JOIN office_master om ON ci.CI_CR_OFFICE_ID = om.OM_OFFICE_ID
 LEFT JOIN claim_submission cs ON ci.CI_INTIMATION_ID = cs.CS_INTIMATION_ID
@@ -129,8 +130,7 @@ WHERE om.OM_HOSP_TYPE IN ('M','m')
   AND cs.CS_GR_CLAIM_AMT IS NOT NULL
 GROUP BY om.OM_OFFICE_ID, om.OM_OFFICE_NAME, om.OM_NABH, om.OM_OFFICE_CITY
 HAVING total_claims >= 10
-ORDER BY deduction_pct DESC
-LIMIT 50;
+ORDER BY deduction_pct DESC;
 """
 
 QUERIES = {
@@ -171,7 +171,7 @@ def main():
             if len(rows) > 1:
                 fname = os.path.join(data_dir, f'{name}_{ts}.csv')
                 with open(fname, 'w', newline='', encoding='utf-8') as f:
-                    csv.writer(f).writerows(rows)
+                    csv.writer(f, quoting=csv.QUOTE_ALL).writerows(rows)
                 print(f"  ✅ {len(rows)-1} rows → {os.path.basename(fname)}  ({elapsed})")
             else:
                 print(f"  ⚠ No data returned for {name}")

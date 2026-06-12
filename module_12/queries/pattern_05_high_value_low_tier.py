@@ -48,8 +48,7 @@ LEFT JOIN claim_submission cs ON ci.CI_INTIMATION_ID=cs.CS_INTIMATION_ID
 WHERE ci.CI_CR_DATE >= DATE_SUB(CURDATE(), INTERVAL 5 YEAR)
   AND om.OM_HOSP_TYPE IN ('3','03')
   AND cs.CS_GR_CLAIM_AMT >= 100000
-ORDER BY gross_claimed DESC
-LIMIT 200;
+ORDER BY gross_claimed DESC;
 """
 
 QUERY_5B = """
@@ -67,7 +66,8 @@ SELECT
     ROUND(SUM(cs.CS_UTI_APP_AMT)/1e5,2)    AS total_approved_lakh,
     ROUND(CASE WHEN SUM(cs.CS_GR_CLAIM_AMT)>0
           THEN (SUM(cs.CS_GR_CLAIM_AMT)-SUM(cs.CS_UTI_APP_AMT))/SUM(cs.CS_GR_CLAIM_AMT)*100
-          ELSE 0 END, 2)                    AS deduction_pct
+          ELSE 0 END, 2)                    AS deduction_pct,
+    GROUP_CONCAT(DISTINCT ci.CI_INTIMATION_ID SEPARATOR ', ') AS claim_ids
 FROM claim_intimation ci
 JOIN office_master om ON ci.CI_CR_OFFICE_ID=om.OM_OFFICE_ID
 LEFT JOIN claim_submission cs ON ci.CI_INTIMATION_ID=cs.CS_INTIMATION_ID
@@ -77,8 +77,7 @@ WHERE ci.CI_CR_DATE >= DATE_SUB(CURDATE(), INTERVAL 5 YEAR)
 GROUP BY om.OM_OFFICE_ID, om.OM_OFFICE_NAME, om.OM_HOSP_TYPE,
          om.OM_HOSP_TYPES, om.OM_NABH, om.OM_OFFICE_CITY
 HAVING high_val_claims >= 3
-ORDER BY total_claimed_lakh DESC
-LIMIT 50;
+ORDER BY total_claimed_lakh DESC;
 """
 
 QUERY_5C = """
@@ -93,7 +92,8 @@ SELECT
     ROUND(SUM(cs.CS_UTI_APP_AMT)/1e7,2)    AS approved_cr,
     ROUND(CASE WHEN SUM(cs.CS_GR_CLAIM_AMT)>0
           THEN (SUM(cs.CS_GR_CLAIM_AMT)-SUM(cs.CS_UTI_APP_AMT))/SUM(cs.CS_GR_CLAIM_AMT)*100
-          ELSE 0 END, 2)                    AS deduction_pct
+          ELSE 0 END, 2)                    AS deduction_pct,
+    GROUP_CONCAT(DISTINCT ci.CI_INTIMATION_ID SEPARATOR ', ') AS claim_ids
 FROM claim_intimation ci
 JOIN office_master om ON ci.CI_CR_OFFICE_ID=om.OM_OFFICE_ID
 LEFT JOIN claim_submission cs ON ci.CI_INTIMATION_ID=cs.CS_INTIMATION_ID
@@ -102,8 +102,7 @@ WHERE ci.CI_CR_DATE >= DATE_SUB(CURDATE(), INTERVAL 5 YEAR)
 GROUP BY om.OM_OFFICE_ID, om.OM_OFFICE_NAME, om.OM_HOSP_TYPE,
          om.OM_HOSP_TYPES, om.OM_OFFICE_CITY
 HAVING total_claims >= 100 AND deduction_pct >= 80
-ORDER BY claimed_cr DESC
-LIMIT 50;
+ORDER BY claimed_cr DESC;
 """
 
 QUERIES = {
@@ -133,7 +132,7 @@ def main():
             rows = run_query(client, sql); elapsed = datetime.datetime.now() - t0
             if len(rows) > 1:
                 fname = os.path.join(data_dir, f'{name}_{ts}.csv')
-                with open(fname, 'w', newline='', encoding='utf-8') as f: csv.writer(f).writerows(rows)
+                with open(fname, 'w', newline='', encoding='utf-8') as f: csv.writer(f, quoting=csv.QUOTE_ALL).writerows(rows)
                 print(f"  ✅ {len(rows)-1} rows → {os.path.basename(fname)}  ({elapsed})")
             else: print(f"  ⚠ No data for {name}")
     except Exception as e: print(f"Error: {e}")
