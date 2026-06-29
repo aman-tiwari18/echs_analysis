@@ -1,0 +1,54 @@
+[
+  {
+    "district_code": "AL",
+    "district_name": "ALMORA"
+  },
+  {
+    "district_code": "BA",
+    "district_name": "BAGESHWAR"
+  },
+  {
+    "district_code": "CL",
+    "district_name": "CHAMOLI"
+  },
+  {
+    "district_code": "CP",
+    "district_name": "CHAMPAWAT"
+  },
+  {
+    "district_code": "DD",
+    "district_name": "DEHRADUN"
+  },
+  {
+    "district_code": "HA",
+    "district_name": "HARIDWAR"
+  },
+  {
+    "district_code": "NA",
+    "district_name": "NAINITAL"
+  },
+  {
+    "district_code": "PG",
+    "district_name": "PAURI GARHWAL"
+  },
+  {
+    "district_code": "PI",
+    "district_name": "PITHORAGARH"
+  },
+  {
+    "district_code": "RP",
+    "district_name": "RUDRAPRAYAG"
+  },
+  {
+    "district_code": "TG",
+    "district_name": "TEHRI GARHWAL"
+  },
+  {
+    "district_code": "US",
+    "district_name": "UDHAM SINGH NAGAR"
+  },
+  {
+    "district_code": "UT",
+    "district_name": "UTTARKASHI"
+  }
+]
