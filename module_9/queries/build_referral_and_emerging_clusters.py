@@ -85,7 +85,7 @@ def build_emerging_clusters():
         out.append({
             'hospital_id': oid,
             'hospital_name': r.get('Hospital Name', ''),
-            'source': 'M10 Time-Series Surge (YoY)',
+            'source': 'Time-Series Billing Surge',
             'spike_year': r.get('Spike Year', ''),
             'yoy_growth_pct': to_float(r.get('YoY Growth %', 0)),
             'exposure_cr': exposure_cr,
@@ -105,7 +105,7 @@ def build_emerging_clusters():
         out.append({
             'hospital_id': oid,
             'hospital_name': r.get('hospital_name', ''),
-            'source': 'M12 Hospital YoY Billing Spike',
+            'source': 'Hospital Specialty Misuse',
             'spike_year': r.get('curr_year', ''),
             'yoy_growth_pct': to_float(r.get('yoy_amount_growth_pct', 0)),
             'exposure_cr': exposure_cr,

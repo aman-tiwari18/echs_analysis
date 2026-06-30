@@ -1,13 +1,14 @@
 """
 Module 9 — Pattern 01: Regional Fraud Hotspot Analysis (Q9a)
 ==============================================================
-Aggregates every claim in settlement_stat by ECHS region code (SS_REGION_ID),
+Aggregates claims in settlement_stat by ECHS region code (SS_REGION_ID),
 computing total claimed, approved, deducted, and deduction rate per region —
-full database coverage, no date filter. Regions with high deduction rates
-represent geographic concentrations of overbilling.
+last 5 financial years (FY 2021-22 to FY 2025-26), matching the analysis
+window used across the rest of the ECHS fraud-analytics programme. Regions
+with high deduction rates represent geographic concentrations of overbilling.
 
 Tables used:
-  - settlement_stat : SS_REGION_ID, SS_OFFICE_ID, SS_CLAIM_AMT, SS_APPR_AMT, SS_DED_AMT
+  - settlement_stat : SS_REGION_ID, SS_OFFICE_ID, SS_FY_YEAR, SS_CLAIM_AMT, SS_APPR_AMT, SS_DED_AMT
 """
 
 import paramiko, csv, io, datetime, os
@@ -37,6 +38,7 @@ SELECT
              ELSE 0 END, 2
     )                                      AS deduction_pct
 FROM settlement_stat ss
+WHERE ss.SS_FY_YEAR >= 2021
 GROUP BY ss.SS_REGION_ID
 ORDER BY total_deducted DESC;
 """

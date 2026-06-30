@@ -1,14 +1,14 @@
 """
-Module 9 — Pattern 02: Top Hospitals by Total Deduction Amount (Q9c)
+Module 9 — Hospital Claims Baseline (full coverage, no top-N limit)
 =======================================================================
-Ranks all empanelled hospitals by total amount deducted across their entire
-history with ECHS — full database coverage, no date filter. High total
-deductions indicate either very high claim volumes or high deduction rates
-(overbilling). Chain detection (e.g. Park Hospital appearing under multiple
-legal entities) is performed in Python post-processing on hospital names.
+Total claim volume, claimed/approved/deducted amounts and deduction rate
+for EVERY empanelled hospital with settlement activity in the last 5
+financial years (FY 2021-22 to FY 2025-26). This is the baseline "Total
+Claims" figure cross-referenced against "Fraud Occurrence" (flagged claim
+volume) throughout the report's hospital/region/chain tables.
 
 Tables used:
-  - settlement_stat : SS_OFFICE_ID, SS_CLAIM_AMT, SS_APPR_AMT, SS_DED_AMT
+  - settlement_stat : SS_OFFICE_ID, SS_FY_YEAR, SS_CLAIM_AMT, SS_APPR_AMT, SS_DED_AMT
   - office_master   : OM_OFFICE_ID, OM_OFFICE_NAME, OM_OFFICE_STATE_ID
 """
 
@@ -24,7 +24,7 @@ DB_USER  = os.getenv('DB_USER')
 DB_PASS  = os.getenv('DB_PASS')
 DB_NAME  = os.getenv('DB_NAME')
 
-# ── Query 2A: Top 100 hospitals by total deducted, full history ──────────────
+# ── Query: full hospital claims baseline, no LIMIT ────────────────────────────
 QUERY_2A = """
 SELECT
     om.OM_OFFICE_ID                       AS hospital_id,
@@ -43,14 +43,14 @@ SELECT
 FROM settlement_stat ss
 JOIN office_master om ON ss.SS_OFFICE_ID = om.OM_OFFICE_ID
 LEFT JOIN state_master sm ON om.OM_OFFICE_STATE_ID = sm.SM_STATE_ID
+WHERE ss.SS_FY_YEAR >= 2021
 GROUP BY om.OM_OFFICE_ID, om.OM_OFFICE_NAME, om.OM_OFFICE_STATE_ID, sm.SM_STATE_NAME
 HAVING total_claimed > 0
-ORDER BY total_deducted DESC
-LIMIT 100;
+ORDER BY total_deducted DESC;
 """
 
 QUERIES = {
-    '02a_Top_Hospitals_By_Deduction': QUERY_2A,
+    '02a_Hospital_Claims_Baseline': QUERY_2A,
 }
 
 def run_query(client, sql):
